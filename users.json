@@ -1,0 +1,44 @@
+{
+  "users": [
+    {
+      "user_id": "",
+      "name": "name",
+      "xp": 0,
+      "rank": 0,
+      "messages": 0,
+      "voice_call_hours": 0,
+      "invites": 0,
+      "special_xp": 0
+    },
+    {
+      "user_id": "",
+      "name": "name",
+      "xp": 0,
+      "rank": 0,
+      "messages": 0,
+      "voice_call_hours": 0,
+      "invites": 0,
+      "special_xp": 0
+    },
+    {
+      "user_id": 126068015094693888,
+      "name": "Lolzep",
+      "xp": 0,
+      "rank": 0,
+      "messages": 0,
+      "voice_call_hours": 0,
+      "invites": 0,
+      "special_xp": 0
+    },
+    {
+      "user_id": 696844465016537138,
+      "name": "Lonazup",
+      "xp": 0,
+      "rank": 0,
+      "messages": 0,
+      "voice_call_hours": 0,
+      "invites": 0,
+      "special_xp": 0
+    }
+  ]
+}
