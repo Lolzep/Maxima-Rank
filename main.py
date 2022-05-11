@@ -1,8 +1,9 @@
 import discord
 import os
+import asyncio
 
 from dotenv import load_dotenv
-from myfunctions import update_user, json_dump, json_read
+from myfunctions import update_user, json_dump, json_read, restart_bot
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
@@ -13,57 +14,56 @@ intents.reactions = True
 
 bot = discord.Bot(intents=intents)
 
-# Used to make sure that files are not open at multiple times
-# "open" statements must wait until the current "open" statement is finished
-global file_lock
-
 @bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
 @bot.event
 async def on_message(message):
-	# Ignore bots
-	if message.author.bot == True:
-		return
+	try:
+		# Ignore bots
+		if message.author.bot == True:
+			return
 
-	message_count, image_count, embeds_count = 0, 0, 0
-	# Message counts
-	data, user = await update_user(message.author.id, message.author.name, "messages", False)
-	message_count += 1
+		message_count, image_count, embeds_count = 0, 0, 0
+		# Message counts
+		data, user = await update_user(message.author.id, message.author.name, "messages", False)
+		message_count += 1
 
-	# Image counts
-	if message.attachments:
-		data, user = await update_user(message.author.id, message.author.name, "images", False)
-		image_count += 1
-	
-	# Embed counts
-	if message.embeds:
-		data, user = await update_user(message.author.id, message.author.name, "embeds", False)
-		embeds_count += 1
+		# Image counts
+		if message.attachments:
+			data, user = await update_user(message.author.id, message.author.name, "images", False)
+			image_count += 1
+		
+		# Embed counts
+		if message.embeds:
+			data, user = await update_user(message.author.id, message.author.name, "embeds", False)
+			embeds_count += 1
 
-	# XP
-	# ActivityRank: Messages are 10 XP
-	xp = 0
-	xp = (message_count * 5) + (image_count * 10) + (embeds_count * 10)
-	user["xp"] += xp 
+		# XP
+		# ActivityRank: Messages are 10 XP
+		xp = 0
+		xp = (message_count * 5) + (image_count * 10) + (embeds_count * 10)
+		user["xp"] += xp 
 
-	# Rank
-	# ActivityRank: Level Factor
-	current_level = user["level"]
-	current_xp = user["xp"]
-	data_level = await json_read("levels.json")
-	next_xp = data_level["levels"][current_level]["total_xp"]
+		# Rank
+		# ActivityRank: Level Factor
+		current_level = user["level"]
+		current_xp = user["xp"]
+		data_level = await json_read("levels.json")
+		next_xp = data_level["levels"][current_level]["total_xp"]
 
+		if next_xp < current_xp:
+			data, user = await update_user(message.author.id, message.author.name, "level", False)
 
-	if next_xp < current_xp:
-		data, user = await update_user(message.author.id, message.author.name, "level", False)
+		await json_dump(data)
 
-	await json_dump(data)
-
-	if message.content.startswith('$hello'):
-		await message.channel.send('Hello!')
-
+		if message.content.startswith('$hello'):
+			await message.channel.send('Hello!')
+	except PermissionError:
+		print("Error!!")
+		await restart_bot()
+		pass
 
 @bot.event
 async def on_reaction_add(reaction, user):
