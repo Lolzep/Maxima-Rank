@@ -7,7 +7,7 @@ import os
 # Must add "global file_lock" to all definitions that use an "open" statement
 file_lock = threading.Lock()
 
-def new_json_file(filename, name: str):
+async def new_json_file(filename, name: str):
 	global file_lock
 	file_lock.acquire()
 	with open(filename, "w"):
@@ -15,7 +15,7 @@ def new_json_file(filename, name: str):
 	file_lock.release()	
 
 # Create a new json array while keeping the file_lock
-def new_json_objects(filename, name: str):
+async def new_json_objects(filename, name: str):
 	global file_lock
 	new_template = {name:[]}
 	file_lock.acquire()
@@ -24,7 +24,7 @@ def new_json_objects(filename, name: str):
 	file_lock.release()
 
 # Dump the data into json while keeping the file_lock
-def json_dump(data):
+async def json_dump(data):
 	global file_lock
 	file_lock.acquire()
 	with open("users.json", "w") as f:
@@ -32,7 +32,7 @@ def json_dump(data):
 	file_lock.release()	
 
 # Read the data from a json file while keeping the file lock
-def json_read(filename):
+async def json_read(filename):
 	global file_lock
 	file_lock.acquire()
 	with open(filename, "r") as f:
@@ -41,7 +41,7 @@ def json_read(filename):
 	return data
 
 # Used to append new users into the users.json file, keep file_lock
-def write_json(new_data, filename, name: str):
+async def write_json(new_data, filename, name: str):
 	global file_lock
 	file_lock.acquire()
 	with open(filename, "r+") as f:
@@ -61,11 +61,11 @@ async def update_user(main_id, main_user, key : str, dump_file: bool):
 	# Check if missing or empty, if so, create new file and/or run new_json
 	try:
 		if os.stat("users.json").st_size == 0:
-			new_json_objects("users.json", "users")
+			await new_json_objects("users.json", "users")
 	except FileNotFoundError:
-		new_json_file("users.json", "users")
+		await new_json_file("users.json", "users")
 		if os.stat("users.json").st_size == 0:
-			new_json_objects("users.json", "users")
+			await new_json_objects("users.json", "users")
 
 	# Load initial users.json
 	file_lock.acquire()
@@ -82,7 +82,7 @@ async def update_user(main_id, main_user, key : str, dump_file: bool):
 	# If the id is not in the list, make a new json object with empty values, then return this instead
 	if main_id not in user_ids:
 		new_user = template
-		write_json(new_user, "users.json", "users")
+		await write_json(new_user, "users.json", "users")
 		user_ids.append(new_user["user_id"])
 		user_id_index = user_ids.index(main_id)
 		# Load the appended json, then find the user id with the index
@@ -110,7 +110,7 @@ async def update_user(main_id, main_user, key : str, dump_file: bool):
 # Create new levels with "level, xp and role_id" as the objects in a levels.json file
 # For use in knowing the current levels and where each user's level currently stands
 # TODO: roleid should be changed to actual roleids in Discord (probably need new definition)
-def new_levels(level_factor: int):
+async def new_levels(level_factor: int):
 	global file_lock
 	# Create new levels key and a level object template starting at 0 for all
 	i = 0
@@ -144,5 +144,5 @@ def new_levels(level_factor: int):
 		# Create a new new_data object to then append and modify in the next loop
 		new_data = {"level": n_level, "level_xp": level_xp, "total_xp": total_xp, "role_id": next_id}
 
-		write_json(new_data, "levels.json", "levels")
+		await write_json(new_data, "levels.json", "levels")
 		i += 1

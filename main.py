@@ -52,14 +52,14 @@ async def on_message(message):
 	# ActivityRank: Level Factor
 	current_level = user["level"]
 	current_xp = user["xp"]
-	data_level = json_read("levels.json")
+	data_level = await json_read("levels.json")
 	next_xp = data_level["levels"][current_level]["total_xp"]
 
 
 	if next_xp < current_xp:
 		data, user = await update_user(message.author.id, message.author.name, "level", False)
 
-	json_dump(data)
+	await json_dump(data)
 
 	if message.content.startswith('$hello'):
 		await message.channel.send('Hello!')
