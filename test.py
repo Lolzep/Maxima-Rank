@@ -45,11 +45,13 @@ async def on_message(message):
 	# XP
 	# ActivityRank: Messages are 10 XP
 	xp = 0
-	xp = (message_count * 10) + (image_count * 15) + (embeds_count * 15)
+	xp = (message_count * 5) + (image_count * 10) + (embeds_count * 10)
 	user["xp"] += xp 
 
 	# Rank
 	# ActivityRank: Level Factor
+	
+
 
 	json_dump(data)
 
