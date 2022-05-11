@@ -9,7 +9,7 @@ Probably will be appended into [kanadeBot](kanadeBot) at some point, but should 
 - Be able to calculate each of the values inside the users.json file
 - Transfer over/export current ActivityRank levels to this bot (will need to be done manually but not too hard)
 - Read off this json file to do things in the Monke server, such as change roles depending on level
-- Track new things that ActivityRanker does not: Reaction counts, images/embeds sent, amount of channels active in?, 
+- Track new things that ActivityRanker does not: Reaction counts, images/embeds sent counts, amount of channels active in the past week, guess future ranks by extrapolation?
 - Special things for boosted members, such as extra xp
 - Create embeds that show users level, xp, message count, etc.
 - Return of a special ranking...
