@@ -2,3 +2,4 @@
 main2.py
 testy.py
 *.json
+/__pycache__
