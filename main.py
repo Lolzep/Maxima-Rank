@@ -2,7 +2,7 @@ import discord
 import os
 
 from dotenv import load_dotenv
-from myfunctions import update_user, json_dump
+from myfunctions import update_user, json_dump, json_read
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
@@ -50,8 +50,14 @@ async def on_message(message):
 
 	# Rank
 	# ActivityRank: Level Factor
-	
+	current_level = user["level"]
+	current_xp = user["xp"]
+	data_level = json_read("levels.json")
+	next_xp = data_level["levels"][current_level]["total_xp"]
 
+
+	if next_xp < current_xp:
+		data, user = await update_user(message.author.id, message.author.name, "level", False)
 
 	json_dump(data)
 
