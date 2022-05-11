@@ -1,5 +1,6 @@
 import json
 import threading
+import os
 
 # Used to make sure that files are not open at multiple times
 # "open" statements must wait until the current "open" statement is finished
@@ -68,3 +69,38 @@ async def update_user(main_id, main_user, key : str, dump_file: bool):
 		file_lock.release()
 	else:
 		return data, user;
+
+# Create new levels with "level, xp and role_id" as the objects in a levels.json file
+# For use in knowing the current levels and where each user's level currently stands
+# TODO: roleid should be changed to actual roleids in Discord (probably need new definition)
+def new_levels(level_factor: int):
+	# Create new levels key and a level object template starting at 0 for all
+	i = 0
+	new_data = {"level": 0, "xp": 0, "role_id": 0}
+	level_template = {"levels": []}
+
+	# If the levels.json already exists, remove it to redo all calculations. Create new levels.json with level_template
+	if os.path.exists("levels.json"):
+		os.remove("levels.json")
+	with open ("levels.json", "w") as f:
+		json.dump(level_template, f, indent=2)
+
+	# While i <= total_levels, create a new level object for each level 0 - i and calculate each variable as needed
+	while i <= 301:
+		previous_level = new_data["level"]
+		next_level = new_data["level"] + 1
+
+		previous_xp = new_data["xp"]
+		next_xp = previous_xp + (previous_level * level_factor) + 100
+
+		previous_roleid = new_data["role_id"]
+		next_id = new_data["role_id"]
+
+		new_data = {"level": next_level, "xp": next_xp, "role_id": next_id}
+
+		with open("levels.json", "r+") as f:
+			file_data = json.load(f)
+			file_data["levels"].append(new_data)
+			f.seek(0)
+			json.dump(file_data, f, indent=2)
+		i += 1
