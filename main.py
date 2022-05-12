@@ -26,17 +26,17 @@ async def on_message(message):
 
 		message_count, image_count, embeds_count = 0, 0, 0
 		# Message counts
-		data, user = await update_user(message.author.id, message.author.name, "messages", False)
+		data, user = update_user(message.author.id, message.author.name, "messages", False)
 		message_count += 1
 
 		# Image counts
 		if message.attachments:
-			data, user = await update_user(message.author.id, message.author.name, "images", False)
+			data, user = update_user(message.author.id, message.author.name, "images", False)
 			image_count += 1
 		
 		# Embed counts
 		if message.embeds:
-			data, user = await update_user(message.author.id, message.author.name, "embeds", False)
+			data, user = update_user(message.author.id, message.author.name, "embeds", False)
 			embeds_count += 1
 
 		# XP
@@ -49,25 +49,24 @@ async def on_message(message):
 		# ActivityRank: Level Factor
 		current_level = user["level"]
 		current_xp = user["xp"]
-		data_level = await json_read("levels.json")
+		data_level = json_read("levels.json")
 		next_xp = data_level["levels"][current_level]["total_xp"]
 
 		if next_xp < current_xp:
-			data, user = await update_user(message.author.id, message.author.name, "level", False)
+			data, user = update_user(message.author.id, message.author.name, "level", False)
 
-		await json_dump(data)
+		json_dump(data)
 
 		if message.content.startswith('$hello'):
 			await message.channel.send('Hello!')
 	except PermissionError:
 		print("Error!!")
 		await restart_bot()
-		pass
 
 @bot.event
 async def on_reaction_add(reaction, user):
-	await update_user(user.id, user.name, "reactionsadded", True)
-	await update_user(reaction.message.author.id, reaction.message.author.name, "reactionsrecieved", True)
+	update_user(user.id, user.name, "reactionsadded", True)
+	update_user(reaction.message.author.id, reaction.message.author.name, "reactionsrecieved", True)
 
 
 @bot.event
