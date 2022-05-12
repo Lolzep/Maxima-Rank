@@ -1,6 +1,5 @@
 import discord
 import os
-import asyncio
 
 from dotenv import load_dotenv
 from myfunctions import update_user, json_dump, json_read, restart_bot
