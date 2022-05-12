@@ -37,12 +37,19 @@ def write_json(new_data, filename, name: str):
 		f.seek(0)
 		json.dump(file_data, f, indent=2)
 
-# Adds new users to the master json file
-# Finds the current user in the json file from discord context (message, reactions, etc.)
-# Returns data: New .json file with modifyed values or the .json values, user: the current user object in the json file by user_id
-def update_user(main_id, main_user, key : str, dump_file: bool, amount_to_add: int):
+# Updates the user objects for the specified user in users.json file and writes new ones if not found
+#? ARGUMENTS
+# main_id: user id retrieved from discord api
+# name: user name retrieved from discord api
+# key: The key to modify in the user object
+# dump_file: True : Dump the current changes into user.json
+# dump_file: False : Return data of json file and the current user object being modified as variables
+# amount_to_add: Amount of value to add to the specified key in the user object
+# amount_of_xp: Amount of value to add to the xp in the user object, which can be...
+# multiplier: ...multiplied by this value (useful for adding correct xp for >1 key value)
+def update_user(main_id, main_user, key : str, dump_file: bool, amount_to_add: int, amount_of_xp: int, multiplier: int):
 	template = {"user_id": main_id, "name": main_user, "xp": 0, "level": 0, "role_id": 0, "messages": 0, "reactionsadded": 0, "reactionsrecieved": 0, "stickers": 0, "images": 0, "embeds": 0, "voice_minutes":0, "invites":0, "special_xp":0}
-	# Check if missing or empty, if so, create new file and/or run new_json
+	#* Check if missing or empty, if so, create new file and/or run new_json
 	try:
 		if os.stat("users.json").st_size == 0:
 			new_json_objects("users.json", "users")
@@ -51,15 +58,16 @@ def update_user(main_id, main_user, key : str, dump_file: bool, amount_to_add: i
 		if os.stat("users.json").st_size == 0:
 			new_json_objects("users.json", "users")
 
-	# Load initial users.json
+	#* Load initial users.json
 	with open("users.json") as f:
 		data = json.load(f)
 
-	# Get a list of all user ids, if current user not found, create a new json object
+	#* Get a list of all user ids
 	user_ids = []
 	for items in data["users"]:
 		user_ids.append(items["user_id"])
 
+	#* Check if user not in users.json using user_id list, append new user if not
 	# Index the user id list, find the current user for use in updating
 	# If the id is not in the list, make a new json object with empty values, then return this instead
 	if main_id not in user_ids:
@@ -76,6 +84,20 @@ def update_user(main_id, main_user, key : str, dump_file: bool, amount_to_add: i
 		user = data["users"][user_id_index]
 
 	user[key] += amount_to_add
+
+	#* XP Block
+	# Based on amount_of_xp given
+	# Add xp to the specified user
+	user["xp"] += amount_of_xp * multiplier
+
+	# Update using the levels.json
+	current_level = user["level"]
+	current_xp = user["xp"]
+	data_level = json_read("levels.json")
+	next_xp = data_level["levels"][current_level]["total_xp"]
+	if next_xp < current_xp:
+		user["level"] += 1
+	#* XP Block
 
 	# Using the dump_file boolean argument, should the current file be overwritten after completion?
 	# If not, return data, user; to continue operation
