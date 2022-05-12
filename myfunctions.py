@@ -2,32 +2,34 @@ import json
 import os
 import sys
 
+# Restart Monke Rank
 def restart_bot():
 	print("Restarting")
 	os.execv(sys.executable, ['python3'] + sys.argv)
 
+# Create a new json file
 def new_json_file(filename, name: str):
 	with open(filename, "w"):
 		pass
 
-# Create a new json array while keeping the file_lock
+# Create a new json array 
 def new_json_objects(filename, name: str):
 	new_template = {name:[]}
 	with open(filename, "w") as f:
 		json.dump(new_template, f, indent=2)
 
-# Dump the data into json while keeping the file_lock
+# Dump the data into json
 def json_dump(data):
 	with open("users.json", "w") as f:
 		json.dump(data, f, indent=2)	
 
-# Read the data from a json file while keeping the file lock
+# Read the data from a json file
 def json_read(filename):
 	with open(filename, "r") as f:
 		data = json.load(f)
 	return data
 
-# Used to append new users into the users.json file, keep file_lock
+# Used to append new users into the users.json file
 def write_json(new_data, filename, name: str):
 	with open(filename, "r+") as f:
 		file_data = json.load(f)
@@ -38,8 +40,8 @@ def write_json(new_data, filename, name: str):
 # Adds new users to the master json file
 # Finds the current user in the json file from discord context (message, reactions, etc.)
 # Returns data: New .json file with modifyed values or the .json values, user: the current user object in the json file by user_id
-def update_user(main_id, main_user, key : str, dump_file: bool):
-	template = {"user_id": main_id, "name": main_user, "xp": 0, "level": 0, "role_id": 0, "messages": 0, "reactionsadded": 0, "reactionsrecieved": 0, "images": 0, "embeds": 0, "voice_call_hours":0, "invites":0, "special_xp":0}
+def update_user(main_id, main_user, key : str, dump_file: bool, amount_to_add: int):
+	template = {"user_id": main_id, "name": main_user, "xp": 0, "level": 0, "role_id": 0, "messages": 0, "reactionsadded": 0, "reactionsrecieved": 0, "stickers": 0, "images": 0, "embeds": 0, "voice_minutes":0, "invites":0, "special_xp":0}
 	# Check if missing or empty, if so, create new file and/or run new_json
 	try:
 		if os.stat("users.json").st_size == 0:
@@ -73,7 +75,7 @@ def update_user(main_id, main_user, key : str, dump_file: bool):
 		user_id_index = user_ids.index(main_id)
 		user = data["users"][user_id_index]
 
-	user[key] += 1
+	user[key] += amount_to_add
 
 	# Using the dump_file boolean argument, should the current file be overwritten after completion?
 	# If not, return data, user; to continue operation

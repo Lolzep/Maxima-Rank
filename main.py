@@ -1,5 +1,8 @@
 import discord
 import os
+import asyncio
+from datetime import datetime
+import time
 
 from dotenv import load_dotenv
 from myfunctions import update_user, json_dump, json_read, restart_bot
@@ -24,25 +27,34 @@ async def on_message(message):
 		if message.author.bot == True:
 			return
 
-		message_count, image_count, embeds_count = 0, 0, 0
+		message_count, image_count, embeds_count, stickers_count = 0, 0, 0, 0
+		xp_message, xp_image, xp_embeds, xp_stickers = 5, 10, 10, 10
+		
 		# Message counts
-		data, user = update_user(message.author.id, message.author.name, "messages", False)
+		data, user = update_user(message.author.id, message.author.name, "messages", False, 1)
 		message_count += 1
+		xp = xp_message
 
 		# Image counts
 		if message.attachments:
-			data, user = update_user(message.author.id, message.author.name, "images", False)
+			data, user = update_user(message.author.id, message.author.name, "images", False, 1)
 			image_count += 1
+			xp = xp_image
 		
 		# Embed counts
 		if message.embeds:
-			data, user = update_user(message.author.id, message.author.name, "embeds", False)
+			data, user = update_user(message.author.id, message.author.name, "embeds", False, 1)
 			embeds_count += 1
+			xp = xp_embeds
+
+		# Sticker counts
+		if message.stickers:
+			data, user = update_user(message.author.id, message.author.name, "embeds", False, 1)
+			stickers_count += 1
+			xp = xp_stickers
 
 		# XP
 		# ActivityRank: Messages are 10 XP
-		xp = 0
-		xp = (message_count * 5) + (image_count * 10) + (embeds_count * 10)
 		user["xp"] += xp 
 
 		# Rank
@@ -53,7 +65,7 @@ async def on_message(message):
 		next_xp = data_level["levels"][current_level]["total_xp"]
 
 		if next_xp < current_xp:
-			data, user = update_user(message.author.id, message.author.name, "level", False)
+			data, user = update_user(message.author.id, message.author.name, "level", False, 1)
 
 		json_dump(data)
 
@@ -66,22 +78,31 @@ async def on_message(message):
 @bot.event
 async def on_reaction_add(reaction, user):
 	update_user(user.id, user.name, "reactionsadded", True)
-	update_user(reaction.message.author.id, reaction.message.author.name, "reactionsrecieved", True)
+	update_user(reaction.message.author.id, reaction.message.author.name, "reactionsrecieved", True, 1)
 
 
 @bot.event
 async def on_voice_state_update(member, before, after):
 	# ActivityRank: Voiceminutes are 5 XP
-	# When user joins vc...
-	if before.channel is None and after.channel is not None:
-		print("start")
-	# When user moves vc...
-	elif before.channel is not None and after.channel is not None:
-		print("moved")
-	# When user leaves vc...
-	else:
-		print("end")
-
+	voice_minutes = 0
+	voice_xp = 5
+	# While the user is in a voice chat (including switching to different voice chats)...
+	# Add 1 voice_minute every 60 seconds
+	while before.channel is None and after.channel is not None:
+		print("in_channel")
+		await asyncio.sleep(60)
+		voice_minutes += 1
+		print(f"Voice Minutes: {voice_minutes}")
+		# When the user leaves voice chat...
+		# Update users.json with update voice_minutes and xp
+		if before.channel is None and after.channel is None:
+			data, user = update_user(member.id, member.name, "voice_minutes", False, voice_minutes)
+			voice_xp = voice_xp * voice_minutes
+			xp = voice_xp
+			user["xp"] += xp 
+			json_dump(data)
+			print("out_of_channel")
+			break
 
 # @bot.slash_command(guild_ids=[273567091368656898])
 # async def level(ctx):
