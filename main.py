@@ -1,11 +1,11 @@
 import discord
 import os
 import asyncio
-from datetime import datetime
-import time
 
+from discord.commands import Option
 from dotenv import load_dotenv
-from myfunctions import update_user, restart_bot
+from myfunctions import update_user
+from embeds import *
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
@@ -14,7 +14,23 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.reactions = True
 
-bot = discord.Bot(intents=intents)
+bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 828667775605669888])
+
+#? Command ideas!
+
+#? Small projects
+#* def about(): Show information about the bot (Defintion, Github commits and changes, Contributors) in an embed
+#* def restart(): Put restart_bot def in a command
+#* def help(): Shows all commands and generic help info in an embed
+#* def booster(): Retrieve all boosters in a discord server from json, give specified "special_xp" to each booster
+# "special_xp" also gets added to "xp"!
+#* def invite(ctx, name): Increase "invites" count by 1 for specified user and give specified xp
+
+#? Large projects 
+#* def set_xp(): Set all xp values in a slash command embed (admin panel)
+#* def top_rankers(): Leaderboard of activity, similar to ActivityRank's style
+#* def my_rank(ctx): Shows your ranking and detailed statistics about yourself in an embed
+#* def my_progress(ctx): Shows progress to next level and role in an embed
 
 @bot.event
 async def on_ready():
@@ -22,31 +38,28 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-	try:
-		# Ignore bots
-		# if message.author.bot == True:
-		# 	return
+	# Ignore bots
+	if message.author.bot == True:
+		return
 
-		# Image counts
-		if message.attachments:
-			update_user(message.guild, message.author.id, message.author.name, "images", True, 1, 10, 1)
-		
-		# Embed counts
-		if message.embeds:
-			update_user(message.guild, message.author.id, message.author.name, "embeds", True, 1, 10, 1)
+	# Image counts
+	if message.attachments:
+		update_user(message.guild, message.author.id, message.author.name, "images", True, 1, 10, 1)
+	
+	# Embed counts
+	if message.embeds:
+		update_user(message.guild, message.author.id, message.author.name, "embeds", True, 1, 10, 1)
 
-		# Sticker counts
-		if message.stickers:
-			update_user(message.guild, message.author.id, message.author.name, "embeds", True, 1, 10, 1)
+	# Sticker counts
+	if message.stickers:
+		update_user(message.guild, message.author.id, message.author.name, "embeds", True, 1, 10, 1)
 
-		# Message counts
-		update_user(message.guild, message.author.id, message.author.name, "messages", True, 1, 5, 1)
+	# Message counts
+	update_user(message.guild, message.author.id, message.author.name, "messages", True, 1, 5, 1)
 
-		if message.content.startswith('$hello'):
-			await message.channel.send('Hello!')
-	except PermissionError:
-		print("Error!!")
-		await restart_bot()
+	if message.content.startswith("$test"):
+		File = discord.File("Images/about.png")
+		await message.channel.send(File)
 
 @bot.event
 async def on_reaction_add(reaction, user):
@@ -73,9 +86,14 @@ async def on_voice_state_update(member, before, after):
 			print("out_of_channel")
 			break
 
-# @bot.slash_command(guild_ids=[273567091368656898])
-# async def level(ctx):
-#     await ctx.respond(f"Your level is {level}")
+@bot.command(description="Sends information about the bot")
+async def about(ctx):
+	aboutEMBED, aboutFILE = infoEmbeds.aboutEMBED()
+	await ctx.respond(file=aboutFILE, embed=aboutEMBED)
+
+# @bot.slash_command(name='greet', description='Greet someone!', guild_ids=[273567091368656898])
+# async def greet(ctx, name: Option(str, "Enter your friend's name", required = False, default = '')):
+#     await ctx.respond(f'Hello {name}!')
 
 bot.run(TOKEN)
 

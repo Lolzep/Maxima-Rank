@@ -9,30 +9,30 @@ def restart_bot():
 
 # Create a new json file
 def new_json_file(filename, name: str):
-	with open(filename, "w", encoding="utf-8"):
+	with open(filename, "w"):
 		pass
 
 # Create a new json array 
 def new_json_objects(filename, name: str):
 	new_template = {name:[]}
-	with open(filename, "w", encoding="utf-8") as f:
+	with open(filename, "w") as f:
 		json.dump(new_template, f, indent=2)
 
 # Dump the data into json
 #? Unused, would need to change users.json to match guild json
 def json_dump(guild_id, data):
-	with open("users.json", "w", encoding="utf-8") as f:
+	with open("users.json", "w") as f:
 		json.dump(data, f, indent=2)	
 
 # Read the data from a json file
 def json_read(filename):
-	with open(filename, "r", encoding="utf-8") as f:
+	with open(filename, "r") as f:
 		data = json.load(f)
 	return data
 
 # Used to append new users into the users.json file
 def write_json(new_data, filename, name: str):
-	with open(filename, "r+", encoding="utf-8") as f:
+	with open(filename, "r+") as f:
 		file_data = json.load(f)
 		file_data[name].append(new_data)
 		f.seek(0)
@@ -40,17 +40,17 @@ def write_json(new_data, filename, name: str):
 
 # Updates the user objects for the specified user in users.json file and writes new ones if not found
 #? ARGUMENTS
-# main_id: user id retrieved from discord api
-# name: user name retrieved from discord api
-# key: The key to modify in the user object
-# dump_file: True : Dump the current changes into user.json
+# guild_id: guild id retrieved from discord api command
+# main_id: user id retrieved from discord api command
+# name: user name retrieved from discord api command
+# key: The key to modify in the user json object
+# dump_file: True : Dump the current changes into X Users.json
 # dump_file: False : Return data of json file and the current user object being modified as variables
 # amount_to_add: Amount of value to add to the specified key in the user object
 # amount_of_xp: Amount of value to add to the xp in the user object, which can be...
 # multiplier: ...multiplied by this value (useful for adding correct xp for >1 key value)
 def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount_to_add: int, amount_of_xp: int, multiplier: int):
 	template = {"user_id": main_id, "name": main_user, "xp": 0, "level": 0, "role_id": 0, "messages": 0, "reactionsadded": 0, "reactionsrecieved": 0, "stickers": 0, "images": 0, "embeds": 0, "voice_minutes":0, "invites":0, "special_xp":0}
-	print(guild_id)
 	main_json = f"Data/{guild_id} Users.json"
 
 	#* Check if missing or empty, if so, create new file and/or run new_json
@@ -63,7 +63,7 @@ def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount
 			new_json_objects(main_json, "users")
 
 	#* Load initial users.json
-	with open(main_json, encoding="utf-8") as f:
+	with open(main_json) as f:
 		data = json.load(f)
 
 	#* Get a list of all user ids
@@ -80,7 +80,7 @@ def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount
 		user_ids.append(new_user["user_id"])
 		user_id_index = user_ids.index(main_id)
 		# Load the appended json, then find the user id with the index
-		with open(main_json, encoding="utf-8") as f:
+		with open(main_json) as f:
 			data = json.load(f)
 			user = data["users"][user_id_index]
 	else:
@@ -106,7 +106,7 @@ def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount
 	# Using the dump_file boolean argument, should the current file be overwritten after completion?
 	# If not, return data, user; to continue operation
 	if dump_file == True:
-		with open(main_json, "w", encoding="utf-8") as f:
+		with open(main_json, "w") as f:
 			json.dump(data, f, indent=2)
 	else:
 		return data, user;
