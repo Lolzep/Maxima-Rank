@@ -5,7 +5,7 @@ from datetime import datetime
 import time
 
 from dotenv import load_dotenv
-from myfunctions import update_user, json_dump, json_read, restart_bot
+from myfunctions import update_user, restart_bot
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
@@ -29,18 +29,18 @@ async def on_message(message):
 
 		# Image counts
 		if message.attachments:
-			update_user(message.author.id, message.author.name, "images", True, 1, 10, 1)
+			update_user(message.guild, message.author.id, message.author.name, "images", True, 1, 10, 1)
 		
 		# Embed counts
 		if message.embeds:
-			update_user(message.author.id, message.author.name, "embeds", True, 1, 10, 1)
+			update_user(message.guild, message.author.id, message.author.name, "embeds", True, 1, 10, 1)
 
 		# Sticker counts
 		if message.stickers:
-			update_user(message.author.id, message.author.name, "embeds", True, 1, 10, 1)
+			update_user(message.guild, message.author.id, message.author.name, "embeds", True, 1, 10, 1)
 
 		# Message counts
-		update_user(message.author.id, message.author.name, "messages", True, 1, 5, 1)
+		update_user(message.guild, message.author.id, message.author.name, "messages", True, 1, 5, 1)
 
 		if message.content.startswith('$hello'):
 			await message.channel.send('Hello!')
@@ -51,8 +51,8 @@ async def on_message(message):
 @bot.event
 async def on_reaction_add(reaction, user):
 	# For reactions added and reactions recieved, add values and xp to respective user
-	update_user(user.id, user.name, "reactionsadded", True, 1, 5, 1)
-	update_user(reaction.message.author.id, reaction.message.author.name, "reactionsrecieved", True, 1, 5, 1)
+	update_user(user.guild ,user.id, user.name, "reactionsadded", True, 1, 5, 1)
+	update_user(reaction.message.guild, reaction.message.author.id, reaction.message.author.name, "reactionsrecieved", True, 1, 5, 1)
 
 
 @bot.event
@@ -69,7 +69,7 @@ async def on_voice_state_update(member, before, after):
 		# When the user leaves voice chat...
 		# Update users.json with update voice_minutes and xp
 		if before.channel is None and after.channel is None:
-			update_user(member.id, member.name, "voice_minutes", True, voice_minutes, 5, voice_minutes)
+			update_user(member.guild ,member.id, member.name, "voice_minutes", True, voice_minutes, 5, voice_minutes)
 			print("out_of_channel")
 			break
 
