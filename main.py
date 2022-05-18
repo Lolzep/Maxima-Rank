@@ -4,7 +4,7 @@ import asyncio
 
 from discord.commands import Option
 from dotenv import load_dotenv
-from myfunctions import update_user
+from myfunctions import update_user, my_rank_embed_values
 from embeds import *
 
 load_dotenv()
@@ -97,8 +97,14 @@ async def help(ctx):
 	await ctx.respond(file=helpFILE, embed=helpEMBED)
 
 @bot.command(description="Statistics about yourself")
-async def myrank(ctx, member : discord.Member):
-	myrankEMBED, myrankFILE = infoEmbeds.myrankEMBED("a")
+async def myrank(ctx):
+	emoji_object = my_rank_embed_values(ctx.user.guild, ctx.user.id, True)
+	in_embed = []
+	for item in emoji_object:
+		emoji = discord.utils.get(bot.emojis, name=item)
+		in_embed.append(emoji)
+
+	myrankEMBED, myrankFILE = infoEmbeds.myrankEMBED(ctx.user.guild, ctx.user.id, ctx.user.display_avatar, in_embed)
 	await ctx.respond(file=myrankFILE, embed=myrankEMBED)
 
 

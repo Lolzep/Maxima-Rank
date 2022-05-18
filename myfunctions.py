@@ -3,6 +3,8 @@ import os
 import sys
 import discord
 
+from operator import itemgetter
+
 # Restart Monke Rank
 def restart_bot():
 	print("Restarting")
@@ -100,7 +102,7 @@ def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount
 	current_xp = user["xp"]
 	data_level = json_read("levels.json")
 	next_xp = data_level["levels"][current_level]["total_xp"]
-	if next_xp < current_xp:
+	if next_xp <= current_xp:
 		user["level"] += 1
 	#* XP Block
 
@@ -115,11 +117,10 @@ def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount
 # Create new levels with "level, xp and role_id" as the objects in a levels.json file
 # For use in knowing the current levels and where each user's level currently stands
 # TODO: roleid should be changed to actual roleids in Discord (probably need new definition)
-def new_levels(level_factor: int):
+def new_levels(level_factor: int, total_levels: int):
 	# Create new levels key and a level object template starting at 0 for all
 	i = 0
-	new_data = {"level": 0, "level_xp": 0, "total_xp": 0, "role_id": 0}
-	level_factor = 20
+	new_data = {"level": 0, "level_xp": 100, "total_xp": 100, "role_id": 0, "role_title": "Newbie"}
 	level_template = {"levels": []}
 
 	# If the levels.json already exists, remove it to redo all calculations. Create new levels.json with level_template
@@ -129,22 +130,44 @@ def new_levels(level_factor: int):
 	with open ("levels.json", "w") as f:
 		json.dump(level_template, f, indent=2)
 
+	write_json(new_data, "levels.json", "levels")
+
 	# While i <= total_levels, create a new level object for each level 0 - i and calculate each variable as needed
-	while i <= 301:
+	while i < total_levels:
 		# Create the variables
+		n = i + 1
+		role_title = ""
+		if 0 <= n <= 2:
+			role_title = "Newbie"
+		elif 3 <= n <= 4:
+			role_title = "Bronze"
+		elif 5 <= n <= 9:
+			role_title = "Silver"
+		elif 10 <= n <= 24:
+			role_title = "Gold"
+		elif 25 <= n <= 49:
+			role_title = "Platinum"
+		elif 50 <= n <= 99:
+			role_title = "Diamond"
+		elif 100 <= n <= 149:
+			role_title = "Master"
+		elif 150 <= n <= 199:
+			role_title = "Grandmaster"
+		elif n >= 200:
+			role_title = "Exalted"
+
 		p_level = new_data["level"]
 		n_level = new_data["level"] + 1
 
 		p_level_xp = new_data["level_xp"]
-		level_xp = p_level_xp + (p_level * level_factor) + 100
+		level_xp = p_level_xp + level_factor
 
 		total_xp = new_data["total_xp"] + level_xp
 
-		previous_roleid = new_data["role_id"]
 		next_id = new_data["role_id"]
 
 		# Create a new new_data object to then append and modify in the next loop
-		new_data = {"level": n_level, "level_xp": level_xp, "total_xp": total_xp, "role_id": next_id}
+		new_data = {"level": n_level, "level_xp": level_xp, "total_xp": total_xp, "role_id": next_id, "role_title": role_title}
 
 		write_json(new_data, "levels.json", "levels")
 		i += 1
@@ -176,3 +199,67 @@ def my_rank(guild_id, main_id, main_user):
 		user = data["users"][user_id_index]
 	
 	print(user)
+
+def my_rank_embed_values(guild_id, main_id, simple : bool):
+	#* Load initial json, find user who sent command
+	main_json = f"Data/{guild_id} Users.json"
+	with open(main_json) as f:
+		data = json.load(f)
+
+	user_ids = []
+	for items in data["users"]:
+		user_ids.append(items["user_id"])
+
+	user_id_index = user_ids.index(main_id)
+	user = data["users"][user_id_index]
+
+	#* Find current level in levels.json
+	level = user["level"]
+	xp = user["xp"]
+
+	data_level = json_read("levels.json")
+	data_level = data_level["levels"][level]
+
+	#* A metric ton of variables for appending as a field in embed
+	xp = user["xp"]
+	level = user["level"]
+	next_xp = data_level["total_xp"]
+	level_xp = data_level["level_xp"]
+	role_title = data_level["role_title"]
+	role_id = data_level["role_id"]
+
+	progress_to_next = level_xp - (next_xp - xp)
+
+	types = ("messages", "reactions_added", "reactions_recieved", "stickers", "images", "embeds", "voice_minutes", "invites", "special_xp")
+
+	amounts = {}
+	max_values = {}
+	ranks = {"MR_D": 0.00, "MR_C": 0.16, "MR_B": 0.33, "MR_A": 0.50, "MR_S": 0.66, "MR_SS": 0.82, "MR_MAX": 1.00}
+	embed_emj = "MR_D"
+	emoji_object = []
+
+	for key in types:
+		amounts[key] = user[key]
+
+		max_value = max(data["users"], key=itemgetter(key))
+		max_values[key] = max_value[key]
+
+	for (k,amt), (k2, mx) in zip(amounts.items(), max_values.items()):
+		try:
+			ratio = amt / mx
+		except ZeroDivisionError:
+			ratio = 0.00
+
+		for (emj, k3) in ranks.items():
+			if ratio < k3:
+				continue
+			else:
+				embed_emj = emj
+		emoji_object.append(embed_emj)
+
+	field_display = f"> **💬 Messages**: {amounts['messages']} emoji1\n> **😃 Reactions Added**: {amounts['reactions_added']} emoji2 \n> **🥰 Reactions Recieved**: {amounts['reactions_recieved']} emoji3\n> **🎭 Stickers**: {amounts['stickers']} emoji4\n> **🖼️ Images**: {amounts['images']} emoji5\n> **🔗 Embeds**: {amounts['embeds']} emoji6\n> **🎙️ Voice (minutes)**: {amounts['voice_minutes']} emoji7\n> **✉️ Invites**: {amounts['invites']} emoji8\n> **🌟 Special XP**: {amounts['special_xp']} emoji9"
+	
+	if simple == True:
+		return emoji_object
+	else:
+		return field_display, emoji_object, progress_to_next, role_title, role_id

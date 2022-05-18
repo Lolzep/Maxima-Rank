@@ -1,7 +1,7 @@
 import discord
 import os
 
-from myfunctions import templateEmbed
+from myfunctions import templateEmbed, my_rank_embed_values
 
 VERSION = os.popen('git rev-parse HEAD').read()
 COMMIT_MESSAGE = os.popen('git show --pretty=format:%s -s HEAD').read()
@@ -27,38 +27,18 @@ class infoEmbeds:
 
 		return helpEMBED, helpFILE
 	
-	def myrankEMBED(main_id):
-		# testing
-		main_id = "https://i.imgur.com/U9fnXER.jpeg"
-		# testing
+	def myrankEMBED(guild_id, main_id, avatar_id, emoji : list):
+		field_display, emoji_object, progress_to_next, role_title, role_id = my_rank_embed_values(guild_id, main_id, False)
+		myrankFILE = discord.File(f"Images/about.png", filename="image.png")
 
-		myrankEMBED = discord.Embed(color=discord.Color.purple())
-		myrankEMBED.set_author(name="Lolzep", icon_url=main_id)
+		myrankEMBED = discord.Embed(title="You are Master Rank!", description="You are 49300 XP away from Grandmaster", color=discord.Color.purple())
+		myrankEMBED.set_author(name="Lolzep", icon_url="attachment://image.png")
+		myrankEMBED.set_thumbnail(url=avatar_id)
 
 		myrankEMBED.add_field(name="Level", value="4\n", inline=True)
 		myrankEMBED.add_field(name="XP", value="1000\n", inline=True)
-		myrankEMBED.add_field(name="Progress to Next Level", value="🟩🟩🟩🟩🟩🟩⬛⬛⬛⬛", inline=False)
-		myrankEMBED.add_field(name="Server Activity", value="> Messages\n> Reactions Added\n> Reactions Recieved\n> Stickers\n> Images\n> Embeds\n> Voice (minutes)\n> Invites\n> Special XP", inline=True)
-		myrankEMBED.add_field(name="Values", value="> 2302\n> 15\n> 40\n> 23\n> 32\n> 44\n> 1020\n> 1\n> 0", inline=True)
-		myrankEMBED.add_field(name="Rate", value="> 🟩🟩🟩🟩🟩🟩🟩\n> 🟩\n> 🟩🟩\n> 🟩\n> 🟩🟩\n> 🟩🟩\n> 🟩🟩🟩🟩🟩\n> 🟩\n> ❌", inline=True)
-
-		myrankFILE = discord.File(f"Images/about.png", filename="image.png")
-		myrankEMBED.set_thumbnail(url="attachment://image.png")
-
-		return myrankEMBED, myrankFILE
-	
-	def myrankM_EMBED(main_id):	
-		# testing
-		main_id = "https://i.imgur.com/U9fnXER.jpeg"
-		# testing
-
-		myrankEMBED = discord.Embed(color=discord.Color.purple())
-		myrankEMBED.set_author(name="Lolzep", icon_url=main_id)
-
-		myrankEMBED.add_field(name="Level", value="4\n", inline=True)
-
-		myrankFILE = discord.File(f"Images/about.png", filename="image.png")
-		myrankEMBED.set_thumbnail(url="attachment://image.png")
+		myrankEMBED.add_field(name="Next Level XP", value="1340", inline=False)
+		myrankEMBED.add_field(name="Server Activity", value=field_display, inline=True)
 
 		return myrankEMBED, myrankFILE
 
