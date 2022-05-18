@@ -64,8 +64,8 @@ async def on_message(message):
 @bot.event
 async def on_reaction_add(reaction, user):
 	# For reactions added and reactions recieved, add values and xp to respective user
-	update_user(user.guild ,user.id, user.name, "reactionsadded", True, 1, 5, 1)
-	update_user(reaction.message.guild, reaction.message.author.id, reaction.message.author.name, "reactionsrecieved", True, 1, 5, 1)
+	update_user(user.guild ,user.id, user.name, "reactions_added", True, 1, 5, 1)
+	update_user(reaction.message.guild, reaction.message.author.id, reaction.message.author.name, "reactions_recieved", True, 1, 5, 1)
 
 
 @bot.event
@@ -90,6 +90,17 @@ async def on_voice_state_update(member, before, after):
 async def about(ctx):
 	aboutEMBED, aboutFILE = infoEmbeds.aboutEMBED()
 	await ctx.respond(file=aboutFILE, embed=aboutEMBED)
+
+@bot.command(description="Commands and their usage")
+async def help(ctx):
+	helpEMBED, helpFILE = infoEmbeds.helpEMBED()
+	await ctx.respond(file=helpFILE, embed=helpEMBED)
+
+@bot.command(description="Statistics about yourself")
+async def myrank(ctx, member : discord.Member):
+	myrankEMBED, myrankFILE = infoEmbeds.myrankEMBED("a")
+	await ctx.respond(file=myrankFILE, embed=myrankEMBED)
+
 
 # @bot.slash_command(name='greet', description='Greet someone!', guild_ids=[273567091368656898])
 # async def greet(ctx, name: Option(str, "Enter your friend's name", required = False, default = '')):

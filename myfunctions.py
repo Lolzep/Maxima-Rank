@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import discord
 
 # Restart Monke Rank
 def restart_bot():
@@ -50,7 +51,7 @@ def write_json(new_data, filename, name: str):
 # amount_of_xp: Amount of value to add to the xp in the user object, which can be...
 # multiplier: ...multiplied by this value (useful for adding correct xp for >1 key value)
 def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount_to_add: int, amount_of_xp: int, multiplier: int):
-	template = {"user_id": main_id, "name": main_user, "xp": 0, "level": 0, "role_id": 0, "messages": 0, "reactionsadded": 0, "reactionsrecieved": 0, "stickers": 0, "images": 0, "embeds": 0, "voice_minutes":0, "invites":0, "special_xp":0}
+	template = {"user_id": main_id, "name": main_user, "xp": 0, "level": 0, "role_id": 0, "messages": 0, "reactions_added": 0, "reactions_recieved": 0, "stickers": 0, "images": 0, "embeds": 0, "voice_minutes":0, "invites":0, "special_xp":0}
 	main_json = f"Data/{guild_id} Users.json"
 
 	#* Check if missing or empty, if so, create new file and/or run new_json
@@ -147,3 +148,31 @@ def new_levels(level_factor: int):
 
 		write_json(new_data, "levels.json", "levels")
 		i += 1
+
+def templateEmbed(command : str, description=None):
+	tempEmbed = discord.Embed(color = discord.Color.purple())
+
+	if description is not None:
+		tempEmbed.set_author(name=description)
+	else:
+		pass
+
+	tempFile = discord.File(f"Images/{command}.png", filename="image.png")
+	tempEmbed.set_thumbnail(url="attachment://image.png")
+
+	return tempEmbed, tempFile
+
+def my_rank(guild_id, main_id, main_user):
+	main_json = f"Data/{guild_id} Users.json"
+
+	user_ids = []
+	for items in data["users"]:
+		user_ids.append(items["user_id"])
+
+	user_id_index = user_ids.index(main_id)
+
+	with open(main_json) as f:
+		data = json.load(f)
+		user = data["users"][user_id_index]
+	
+	print(user)
