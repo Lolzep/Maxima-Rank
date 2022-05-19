@@ -11,12 +11,13 @@ Note: This is for a Windows install
 `TOKEN=your token here`</br>
 3. Invite the bot to whatever server you wish with the Scopes of "bot" and "applications.commands" and with the permissions of "Administrator" ([Instructions on how here](https://discordpy.readthedocs.io/en/stable/discord.html))
 4. Run the bot in [Python 3.10](https://www.python.org/downloads/) by installing Python 3.10 and entering the following into a command prompt (ex. cmd, Powershell):</br>
-`cd "dir/to/the/bot/folder/Monke Rank"`</br>
-`python main.py`</br>
-Also, install the following dependencies:</br>
+Install dependencies:</br>
 `py -3 -m pip install -U py-cord --pre` Pycord to run Discord API</br>
 `pip install asyncio` Asyncio, needed for Pycord</br>
 `pip install dotenv` dotenv, needed for reading .env file</br>
+Run bot:</br>
+`cd "dir/to/the/bot/folder/Monke Rank"`</br>
+`python main.py`</br>
 
 5. Should be running smootly and activity should start being tracked! Test out what commands you can use using /help
 6. If you want this bot to continue running, consider running it on a dedicated server to keep it up all the time. There are tutorials online for this if you wish to do so.
