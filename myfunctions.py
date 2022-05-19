@@ -125,46 +125,6 @@ def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount
 	else:
 		return data, user;
 
-# Create new levels with "level, xp and role_id" as the objects in a levels.json file
-# For use in knowing the current levels and where each user's level currently stands
-#? ARGUMENTS
-# starting_xp: What should the XP be to reach level 1?
-# level_factor: How much XP should each level increase by?
-# total_levels: How many levels should there be?
-# TODO: roleid should be changed to actual roleids in Discord (probably need new definition)
-def new_levels(starting_xp: int, level_factor: int, total_levels: int):
-	# Create new levels key and a level object template starting at 0 for all
-	i = 0
-	new_data = {"level": 0, "level_xp": starting_xp, "total_xp": starting_xp, "role_id": 0, "role_title": "Newbie"}
-	level_template = {"levels": []}
-
-	# If the levels.json already exists, remove it to redo all calculations. Create new levels.json with level_template
-	if os.path.exists("levels.json"):
-		os.remove("levels.json")
-
-	with open ("levels.json", "w") as f:
-		json.dump(level_template, f, indent=2)
-
-	write_json(new_data, "levels.json", "levels")
-
-	# While i <= total_levels, create a new level object for each level 0 - i and calculate each variable as needed
-	while i < total_levels:
-		p_level = new_data["level"]
-		n_level = new_data["level"] + 1
-
-		p_level_xp = new_data["level_xp"]
-		level_xp = p_level_xp + level_factor
-
-		total_xp = new_data["total_xp"] + level_xp
-
-		next_id = new_data["role_id"]
-
-		# Create a new new_data object to then append and modify in the next loop
-		new_data = {"level": n_level, "level_xp": level_xp, "total_xp": total_xp, "role_id": next_id, "role_title": role_title}
-
-		write_json(new_data, "levels.json", "levels")
-		i += 1
-
 # Similar to new_levels
 # Using the same level_factor and total_levels args, makes a dict of level barriers for each rank
 # Useful for knowing XP needed to next rank
@@ -172,7 +132,7 @@ def new_levels(starting_xp: int, level_factor: int, total_levels: int):
 # starting_xp: What should the XP be to reach level 1?
 # level_factor: How much XP should each level increase by?
 # total_levels: How many levels should there be?
-def level_barriers(starting_xp: int, level_factor: int, total_levels: int):
+def level_barriers(starting_xp: int, level_factor: int, total_levels: int, make_json: bool):
 	#* Create new levels key and a level object template starting at 0 for all
 	i = 0
 	new_data = {"level": 0, "level_xp": starting_xp, "total_xp": starting_xp, "role_id": 0, "role_title": "Newbie"}
@@ -219,9 +179,63 @@ def level_barriers(starting_xp: int, level_factor: int, total_levels: int):
 			role_barriers[role_title] = total_xp
 
 		new_data = {"level": n_level, "level_xp": level_xp, "total_xp": total_xp, "role_id": next_id, "role_title": role_title}
+
+		if make_json == True:
+			write_json(new_data, "levels.json", "levels")
 		i += 1
 
 	return role_barriers
+
+# Create new levels with "level, xp and role_id" as the objects in a levels.json file
+# For use in knowing the current levels and where each user's level currently stands
+#? ARGUMENTS
+# starting_xp: What should the XP be to reach level 1?
+# level_factor: How much XP should each level increase by?
+# total_levels: How many levels should there be?
+# TODO: roleid should be changed to actual roleids in Discord (probably need new definition)
+def new_levels(starting_xp: int, level_factor: int, total_levels: int):
+	# Create new levels key and a level object template starting at 0 for all
+	i = 0
+	new_data = {"level": 0, "level_xp": starting_xp, "total_xp": starting_xp, "role_id": 0, "role_title": "Newbie"}
+	level_template = {"levels": []}
+	role_barriers = level_barriers(100, 20, 300, True)
+	role_title = ""
+
+	# If the levels.json already exists, remove it to redo all calculations. Create new levels.json with level_template
+	if os.path.exists("levels.json"):
+		os.remove("levels.json")
+
+	with open ("levels.json", "w") as f:
+		json.dump(level_template, f, indent=2)
+
+	write_json(new_data, "levels.json", "levels")
+
+	# While i <= total_levels, create a new level object for each level 0 - i and calculate each variable as needed
+	while i < total_levels:
+		p_level = new_data["level"]
+		n_level = new_data["level"] + 1
+
+		p_level_xp = new_data["level_xp"]
+		level_xp = p_level_xp + level_factor
+
+		total_xp = new_data["total_xp"] + level_xp
+
+		next_id = new_data["role_id"]
+
+		# Using level_barriers(), find the role title for the current level object
+		for (title,xp) in role_barriers.items():
+			if total_xp <= xp:
+				role_title = title
+				break
+			else:
+				continue
+
+		# Create a new new_data object to then append and modify in the next loop
+		new_data = {"level": n_level, "level_xp": level_xp, "total_xp": total_xp, "role_id": next_id, "role_title": role_title}
+
+		write_json(new_data, "levels.json", "levels")
+		i += 1
+
 
 # Creates a simple embed for the most general of embed implementations (help, about, etc.)
 #? ARGUMENTS
@@ -321,4 +335,4 @@ def my_rank_embed_values(guild_id, main_id, simple : bool):
 	else:
 		return field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id
 
-level_barriers(100, 20, 300)
+new_levels(100, 20, 300)
