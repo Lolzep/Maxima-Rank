@@ -2,7 +2,9 @@
 main2.py
 testy.py
 myfunctions_await.py
-*.json
+embedfields.json
+users_backup.json
+/Data/*.json
 /__pycache__
 *.html
 /Images/fig1.png

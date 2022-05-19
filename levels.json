@@ -1,0 +1,2111 @@
+{
+  "levels": [
+    {
+      "level": 0,
+      "level_xp": 100,
+      "total_xp": 100,
+      "role_id": 0,
+      "role_title": "Newbie"
+    },
+    {
+      "level": 1,
+      "level_xp": 120,
+      "total_xp": 220,
+      "role_id": 0,
+      "role_title": "Newbie"
+    },
+    {
+      "level": 2,
+      "level_xp": 140,
+      "total_xp": 360,
+      "role_id": 0,
+      "role_title": "Newbie"
+    },
+    {
+      "level": 3,
+      "level_xp": 160,
+      "total_xp": 520,
+      "role_id": 0,
+      "role_title": "Bronze"
+    },
+    {
+      "level": 4,
+      "level_xp": 180,
+      "total_xp": 700,
+      "role_id": 0,
+      "role_title": "Bronze"
+    },
+    {
+      "level": 5,
+      "level_xp": 200,
+      "total_xp": 900,
+      "role_id": 0,
+      "role_title": "Silver"
+    },
+    {
+      "level": 6,
+      "level_xp": 220,
+      "total_xp": 1120,
+      "role_id": 0,
+      "role_title": "Silver"
+    },
+    {
+      "level": 7,
+      "level_xp": 240,
+      "total_xp": 1360,
+      "role_id": 0,
+      "role_title": "Silver"
+    },
+    {
+      "level": 8,
+      "level_xp": 260,
+      "total_xp": 1620,
+      "role_id": 0,
+      "role_title": "Silver"
+    },
+    {
+      "level": 9,
+      "level_xp": 280,
+      "total_xp": 1900,
+      "role_id": 0,
+      "role_title": "Silver"
+    },
+    {
+      "level": 10,
+      "level_xp": 300,
+      "total_xp": 2200,
+      "role_id": 0,
+      "role_title": "Gold"
+    },
+    {
+      "level": 11,
+      "level_xp": 320,
+      "total_xp": 2520,
+      "role_id": 0,
+      "role_title": "Gold"
+    },
+    {
+      "level": 12,
+      "level_xp": 340,
+      "total_xp": 2860,
+      "role_id": 0,
+      "role_title": "Gold"
+    },
+    {
+      "level": 13,
+      "level_xp": 360,
+      "total_xp": 3220,
+      "role_id": 0,
+      "role_title": "Gold"
+    },
+    {
+      "level": 14,
+      "level_xp": 380,
+      "total_xp": 3600,
+      "role_id": 0,
+      "role_title": "Gold"
+    },
+    {
+      "level": 15,
+      "level_xp": 400,
+      "total_xp": 4000,
+      "role_id": 0,
+      "role_title": "Gold"
+    },
+    {
+      "level": 16,
+      "level_xp": 420,
+      "total_xp": 4420,
+      "role_id": 0,
+      "role_title": "Gold"
+    },
+    {
+      "level": 17,
+      "level_xp": 440,
+      "total_xp": 4860,
+      "role_id": 0,
+      "role_title": "Gold"
+    },
+    {
+      "level": 18,
+      "level_xp": 460,
+      "total_xp": 5320,
+      "role_id": 0,
+      "role_title": "Gold"
+    },
+    {
+      "level": 19,
+      "level_xp": 480,
+      "total_xp": 5800,
+      "role_id": 0,
+      "role_title": "Gold"
+    },
+    {
+      "level": 20,
+      "level_xp": 500,
+      "total_xp": 6300,
+      "role_id": 0,
+      "role_title": "Gold"
+    },
+    {
+      "level": 21,
+      "level_xp": 520,
+      "total_xp": 6820,
+      "role_id": 0,
+      "role_title": "Gold"
+    },
+    {
+      "level": 22,
+      "level_xp": 540,
+      "total_xp": 7360,
+      "role_id": 0,
+      "role_title": "Gold"
+    },
+    {
+      "level": 23,
+      "level_xp": 560,
+      "total_xp": 7920,
+      "role_id": 0,
+      "role_title": "Gold"
+    },
+    {
+      "level": 24,
+      "level_xp": 580,
+      "total_xp": 8500,
+      "role_id": 0,
+      "role_title": "Gold"
+    },
+    {
+      "level": 25,
+      "level_xp": 600,
+      "total_xp": 9100,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 26,
+      "level_xp": 620,
+      "total_xp": 9720,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 27,
+      "level_xp": 640,
+      "total_xp": 10360,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 28,
+      "level_xp": 660,
+      "total_xp": 11020,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 29,
+      "level_xp": 680,
+      "total_xp": 11700,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 30,
+      "level_xp": 700,
+      "total_xp": 12400,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 31,
+      "level_xp": 720,
+      "total_xp": 13120,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 32,
+      "level_xp": 740,
+      "total_xp": 13860,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 33,
+      "level_xp": 760,
+      "total_xp": 14620,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 34,
+      "level_xp": 780,
+      "total_xp": 15400,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 35,
+      "level_xp": 800,
+      "total_xp": 16200,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 36,
+      "level_xp": 820,
+      "total_xp": 17020,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 37,
+      "level_xp": 840,
+      "total_xp": 17860,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 38,
+      "level_xp": 860,
+      "total_xp": 18720,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 39,
+      "level_xp": 880,
+      "total_xp": 19600,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 40,
+      "level_xp": 900,
+      "total_xp": 20500,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 41,
+      "level_xp": 920,
+      "total_xp": 21420,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 42,
+      "level_xp": 940,
+      "total_xp": 22360,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 43,
+      "level_xp": 960,
+      "total_xp": 23320,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 44,
+      "level_xp": 980,
+      "total_xp": 24300,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 45,
+      "level_xp": 1000,
+      "total_xp": 25300,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 46,
+      "level_xp": 1020,
+      "total_xp": 26320,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 47,
+      "level_xp": 1040,
+      "total_xp": 27360,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 48,
+      "level_xp": 1060,
+      "total_xp": 28420,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 49,
+      "level_xp": 1080,
+      "total_xp": 29500,
+      "role_id": 0,
+      "role_title": "Platinum"
+    },
+    {
+      "level": 50,
+      "level_xp": 1100,
+      "total_xp": 30600,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 51,
+      "level_xp": 1120,
+      "total_xp": 31720,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 52,
+      "level_xp": 1140,
+      "total_xp": 32860,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 53,
+      "level_xp": 1160,
+      "total_xp": 34020,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 54,
+      "level_xp": 1180,
+      "total_xp": 35200,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 55,
+      "level_xp": 1200,
+      "total_xp": 36400,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 56,
+      "level_xp": 1220,
+      "total_xp": 37620,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 57,
+      "level_xp": 1240,
+      "total_xp": 38860,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 58,
+      "level_xp": 1260,
+      "total_xp": 40120,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 59,
+      "level_xp": 1280,
+      "total_xp": 41400,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 60,
+      "level_xp": 1300,
+      "total_xp": 42700,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 61,
+      "level_xp": 1320,
+      "total_xp": 44020,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 62,
+      "level_xp": 1340,
+      "total_xp": 45360,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 63,
+      "level_xp": 1360,
+      "total_xp": 46720,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 64,
+      "level_xp": 1380,
+      "total_xp": 48100,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 65,
+      "level_xp": 1400,
+      "total_xp": 49500,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 66,
+      "level_xp": 1420,
+      "total_xp": 50920,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 67,
+      "level_xp": 1440,
+      "total_xp": 52360,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 68,
+      "level_xp": 1460,
+      "total_xp": 53820,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 69,
+      "level_xp": 1480,
+      "total_xp": 55300,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 70,
+      "level_xp": 1500,
+      "total_xp": 56800,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 71,
+      "level_xp": 1520,
+      "total_xp": 58320,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 72,
+      "level_xp": 1540,
+      "total_xp": 59860,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 73,
+      "level_xp": 1560,
+      "total_xp": 61420,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 74,
+      "level_xp": 1580,
+      "total_xp": 63000,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 75,
+      "level_xp": 1600,
+      "total_xp": 64600,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 76,
+      "level_xp": 1620,
+      "total_xp": 66220,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 77,
+      "level_xp": 1640,
+      "total_xp": 67860,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 78,
+      "level_xp": 1660,
+      "total_xp": 69520,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 79,
+      "level_xp": 1680,
+      "total_xp": 71200,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 80,
+      "level_xp": 1700,
+      "total_xp": 72900,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 81,
+      "level_xp": 1720,
+      "total_xp": 74620,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 82,
+      "level_xp": 1740,
+      "total_xp": 76360,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 83,
+      "level_xp": 1760,
+      "total_xp": 78120,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 84,
+      "level_xp": 1780,
+      "total_xp": 79900,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 85,
+      "level_xp": 1800,
+      "total_xp": 81700,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 86,
+      "level_xp": 1820,
+      "total_xp": 83520,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 87,
+      "level_xp": 1840,
+      "total_xp": 85360,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 88,
+      "level_xp": 1860,
+      "total_xp": 87220,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 89,
+      "level_xp": 1880,
+      "total_xp": 89100,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 90,
+      "level_xp": 1900,
+      "total_xp": 91000,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 91,
+      "level_xp": 1920,
+      "total_xp": 92920,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 92,
+      "level_xp": 1940,
+      "total_xp": 94860,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 93,
+      "level_xp": 1960,
+      "total_xp": 96820,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 94,
+      "level_xp": 1980,
+      "total_xp": 98800,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 95,
+      "level_xp": 2000,
+      "total_xp": 100800,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 96,
+      "level_xp": 2020,
+      "total_xp": 102820,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 97,
+      "level_xp": 2040,
+      "total_xp": 104860,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 98,
+      "level_xp": 2060,
+      "total_xp": 106920,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 99,
+      "level_xp": 2080,
+      "total_xp": 109000,
+      "role_id": 0,
+      "role_title": "Diamond"
+    },
+    {
+      "level": 100,
+      "level_xp": 2100,
+      "total_xp": 111100,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 101,
+      "level_xp": 2120,
+      "total_xp": 113220,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 102,
+      "level_xp": 2140,
+      "total_xp": 115360,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 103,
+      "level_xp": 2160,
+      "total_xp": 117520,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 104,
+      "level_xp": 2180,
+      "total_xp": 119700,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 105,
+      "level_xp": 2200,
+      "total_xp": 121900,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 106,
+      "level_xp": 2220,
+      "total_xp": 124120,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 107,
+      "level_xp": 2240,
+      "total_xp": 126360,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 108,
+      "level_xp": 2260,
+      "total_xp": 128620,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 109,
+      "level_xp": 2280,
+      "total_xp": 130900,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 110,
+      "level_xp": 2300,
+      "total_xp": 133200,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 111,
+      "level_xp": 2320,
+      "total_xp": 135520,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 112,
+      "level_xp": 2340,
+      "total_xp": 137860,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 113,
+      "level_xp": 2360,
+      "total_xp": 140220,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 114,
+      "level_xp": 2380,
+      "total_xp": 142600,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 115,
+      "level_xp": 2400,
+      "total_xp": 145000,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 116,
+      "level_xp": 2420,
+      "total_xp": 147420,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 117,
+      "level_xp": 2440,
+      "total_xp": 149860,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 118,
+      "level_xp": 2460,
+      "total_xp": 152320,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 119,
+      "level_xp": 2480,
+      "total_xp": 154800,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 120,
+      "level_xp": 2500,
+      "total_xp": 157300,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 121,
+      "level_xp": 2520,
+      "total_xp": 159820,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 122,
+      "level_xp": 2540,
+      "total_xp": 162360,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 123,
+      "level_xp": 2560,
+      "total_xp": 164920,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 124,
+      "level_xp": 2580,
+      "total_xp": 167500,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 125,
+      "level_xp": 2600,
+      "total_xp": 170100,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 126,
+      "level_xp": 2620,
+      "total_xp": 172720,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 127,
+      "level_xp": 2640,
+      "total_xp": 175360,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 128,
+      "level_xp": 2660,
+      "total_xp": 178020,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 129,
+      "level_xp": 2680,
+      "total_xp": 180700,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 130,
+      "level_xp": 2700,
+      "total_xp": 183400,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 131,
+      "level_xp": 2720,
+      "total_xp": 186120,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 132,
+      "level_xp": 2740,
+      "total_xp": 188860,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 133,
+      "level_xp": 2760,
+      "total_xp": 191620,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 134,
+      "level_xp": 2780,
+      "total_xp": 194400,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 135,
+      "level_xp": 2800,
+      "total_xp": 197200,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 136,
+      "level_xp": 2820,
+      "total_xp": 200020,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 137,
+      "level_xp": 2840,
+      "total_xp": 202860,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 138,
+      "level_xp": 2860,
+      "total_xp": 205720,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 139,
+      "level_xp": 2880,
+      "total_xp": 208600,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 140,
+      "level_xp": 2900,
+      "total_xp": 211500,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 141,
+      "level_xp": 2920,
+      "total_xp": 214420,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 142,
+      "level_xp": 2940,
+      "total_xp": 217360,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 143,
+      "level_xp": 2960,
+      "total_xp": 220320,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 144,
+      "level_xp": 2980,
+      "total_xp": 223300,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 145,
+      "level_xp": 3000,
+      "total_xp": 226300,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 146,
+      "level_xp": 3020,
+      "total_xp": 229320,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 147,
+      "level_xp": 3040,
+      "total_xp": 232360,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 148,
+      "level_xp": 3060,
+      "total_xp": 235420,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 149,
+      "level_xp": 3080,
+      "total_xp": 238500,
+      "role_id": 0,
+      "role_title": "Master"
+    },
+    {
+      "level": 150,
+      "level_xp": 3100,
+      "total_xp": 241600,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 151,
+      "level_xp": 3120,
+      "total_xp": 244720,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 152,
+      "level_xp": 3140,
+      "total_xp": 247860,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 153,
+      "level_xp": 3160,
+      "total_xp": 251020,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 154,
+      "level_xp": 3180,
+      "total_xp": 254200,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 155,
+      "level_xp": 3200,
+      "total_xp": 257400,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 156,
+      "level_xp": 3220,
+      "total_xp": 260620,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 157,
+      "level_xp": 3240,
+      "total_xp": 263860,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 158,
+      "level_xp": 3260,
+      "total_xp": 267120,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 159,
+      "level_xp": 3280,
+      "total_xp": 270400,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 160,
+      "level_xp": 3300,
+      "total_xp": 273700,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 161,
+      "level_xp": 3320,
+      "total_xp": 277020,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 162,
+      "level_xp": 3340,
+      "total_xp": 280360,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 163,
+      "level_xp": 3360,
+      "total_xp": 283720,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 164,
+      "level_xp": 3380,
+      "total_xp": 287100,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 165,
+      "level_xp": 3400,
+      "total_xp": 290500,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 166,
+      "level_xp": 3420,
+      "total_xp": 293920,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 167,
+      "level_xp": 3440,
+      "total_xp": 297360,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 168,
+      "level_xp": 3460,
+      "total_xp": 300820,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 169,
+      "level_xp": 3480,
+      "total_xp": 304300,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 170,
+      "level_xp": 3500,
+      "total_xp": 307800,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 171,
+      "level_xp": 3520,
+      "total_xp": 311320,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 172,
+      "level_xp": 3540,
+      "total_xp": 314860,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 173,
+      "level_xp": 3560,
+      "total_xp": 318420,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 174,
+      "level_xp": 3580,
+      "total_xp": 322000,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 175,
+      "level_xp": 3600,
+      "total_xp": 325600,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 176,
+      "level_xp": 3620,
+      "total_xp": 329220,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 177,
+      "level_xp": 3640,
+      "total_xp": 332860,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 178,
+      "level_xp": 3660,
+      "total_xp": 336520,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 179,
+      "level_xp": 3680,
+      "total_xp": 340200,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 180,
+      "level_xp": 3700,
+      "total_xp": 343900,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 181,
+      "level_xp": 3720,
+      "total_xp": 347620,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 182,
+      "level_xp": 3740,
+      "total_xp": 351360,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 183,
+      "level_xp": 3760,
+      "total_xp": 355120,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 184,
+      "level_xp": 3780,
+      "total_xp": 358900,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 185,
+      "level_xp": 3800,
+      "total_xp": 362700,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 186,
+      "level_xp": 3820,
+      "total_xp": 366520,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 187,
+      "level_xp": 3840,
+      "total_xp": 370360,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 188,
+      "level_xp": 3860,
+      "total_xp": 374220,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 189,
+      "level_xp": 3880,
+      "total_xp": 378100,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 190,
+      "level_xp": 3900,
+      "total_xp": 382000,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 191,
+      "level_xp": 3920,
+      "total_xp": 385920,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 192,
+      "level_xp": 3940,
+      "total_xp": 389860,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 193,
+      "level_xp": 3960,
+      "total_xp": 393820,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 194,
+      "level_xp": 3980,
+      "total_xp": 397800,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 195,
+      "level_xp": 4000,
+      "total_xp": 401800,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 196,
+      "level_xp": 4020,
+      "total_xp": 405820,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 197,
+      "level_xp": 4040,
+      "total_xp": 409860,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 198,
+      "level_xp": 4060,
+      "total_xp": 413920,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 199,
+      "level_xp": 4080,
+      "total_xp": 418000,
+      "role_id": 0,
+      "role_title": "Grandmaster"
+    },
+    {
+      "level": 200,
+      "level_xp": 4100,
+      "total_xp": 422100,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 201,
+      "level_xp": 4120,
+      "total_xp": 426220,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 202,
+      "level_xp": 4140,
+      "total_xp": 430360,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 203,
+      "level_xp": 4160,
+      "total_xp": 434520,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 204,
+      "level_xp": 4180,
+      "total_xp": 438700,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 205,
+      "level_xp": 4200,
+      "total_xp": 442900,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 206,
+      "level_xp": 4220,
+      "total_xp": 447120,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 207,
+      "level_xp": 4240,
+      "total_xp": 451360,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 208,
+      "level_xp": 4260,
+      "total_xp": 455620,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 209,
+      "level_xp": 4280,
+      "total_xp": 459900,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 210,
+      "level_xp": 4300,
+      "total_xp": 464200,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 211,
+      "level_xp": 4320,
+      "total_xp": 468520,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 212,
+      "level_xp": 4340,
+      "total_xp": 472860,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 213,
+      "level_xp": 4360,
+      "total_xp": 477220,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 214,
+      "level_xp": 4380,
+      "total_xp": 481600,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 215,
+      "level_xp": 4400,
+      "total_xp": 486000,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 216,
+      "level_xp": 4420,
+      "total_xp": 490420,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 217,
+      "level_xp": 4440,
+      "total_xp": 494860,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 218,
+      "level_xp": 4460,
+      "total_xp": 499320,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 219,
+      "level_xp": 4480,
+      "total_xp": 503800,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 220,
+      "level_xp": 4500,
+      "total_xp": 508300,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 221,
+      "level_xp": 4520,
+      "total_xp": 512820,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 222,
+      "level_xp": 4540,
+      "total_xp": 517360,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 223,
+      "level_xp": 4560,
+      "total_xp": 521920,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 224,
+      "level_xp": 4580,
+      "total_xp": 526500,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 225,
+      "level_xp": 4600,
+      "total_xp": 531100,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 226,
+      "level_xp": 4620,
+      "total_xp": 535720,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 227,
+      "level_xp": 4640,
+      "total_xp": 540360,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 228,
+      "level_xp": 4660,
+      "total_xp": 545020,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 229,
+      "level_xp": 4680,
+      "total_xp": 549700,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 230,
+      "level_xp": 4700,
+      "total_xp": 554400,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 231,
+      "level_xp": 4720,
+      "total_xp": 559120,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 232,
+      "level_xp": 4740,
+      "total_xp": 563860,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 233,
+      "level_xp": 4760,
+      "total_xp": 568620,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 234,
+      "level_xp": 4780,
+      "total_xp": 573400,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 235,
+      "level_xp": 4800,
+      "total_xp": 578200,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 236,
+      "level_xp": 4820,
+      "total_xp": 583020,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 237,
+      "level_xp": 4840,
+      "total_xp": 587860,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 238,
+      "level_xp": 4860,
+      "total_xp": 592720,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 239,
+      "level_xp": 4880,
+      "total_xp": 597600,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 240,
+      "level_xp": 4900,
+      "total_xp": 602500,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 241,
+      "level_xp": 4920,
+      "total_xp": 607420,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 242,
+      "level_xp": 4940,
+      "total_xp": 612360,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 243,
+      "level_xp": 4960,
+      "total_xp": 617320,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 244,
+      "level_xp": 4980,
+      "total_xp": 622300,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 245,
+      "level_xp": 5000,
+      "total_xp": 627300,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 246,
+      "level_xp": 5020,
+      "total_xp": 632320,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 247,
+      "level_xp": 5040,
+      "total_xp": 637360,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 248,
+      "level_xp": 5060,
+      "total_xp": 642420,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 249,
+      "level_xp": 5080,
+      "total_xp": 647500,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 250,
+      "level_xp": 5100,
+      "total_xp": 652600,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 251,
+      "level_xp": 5120,
+      "total_xp": 657720,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 252,
+      "level_xp": 5140,
+      "total_xp": 662860,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 253,
+      "level_xp": 5160,
+      "total_xp": 668020,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 254,
+      "level_xp": 5180,
+      "total_xp": 673200,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 255,
+      "level_xp": 5200,
+      "total_xp": 678400,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 256,
+      "level_xp": 5220,
+      "total_xp": 683620,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 257,
+      "level_xp": 5240,
+      "total_xp": 688860,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 258,
+      "level_xp": 5260,
+      "total_xp": 694120,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 259,
+      "level_xp": 5280,
+      "total_xp": 699400,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 260,
+      "level_xp": 5300,
+      "total_xp": 704700,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 261,
+      "level_xp": 5320,
+      "total_xp": 710020,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 262,
+      "level_xp": 5340,
+      "total_xp": 715360,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 263,
+      "level_xp": 5360,
+      "total_xp": 720720,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 264,
+      "level_xp": 5380,
+      "total_xp": 726100,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 265,
+      "level_xp": 5400,
+      "total_xp": 731500,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 266,
+      "level_xp": 5420,
+      "total_xp": 736920,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 267,
+      "level_xp": 5440,
+      "total_xp": 742360,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 268,
+      "level_xp": 5460,
+      "total_xp": 747820,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 269,
+      "level_xp": 5480,
+      "total_xp": 753300,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 270,
+      "level_xp": 5500,
+      "total_xp": 758800,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 271,
+      "level_xp": 5520,
+      "total_xp": 764320,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 272,
+      "level_xp": 5540,
+      "total_xp": 769860,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 273,
+      "level_xp": 5560,
+      "total_xp": 775420,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 274,
+      "level_xp": 5580,
+      "total_xp": 781000,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 275,
+      "level_xp": 5600,
+      "total_xp": 786600,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 276,
+      "level_xp": 5620,
+      "total_xp": 792220,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 277,
+      "level_xp": 5640,
+      "total_xp": 797860,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 278,
+      "level_xp": 5660,
+      "total_xp": 803520,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 279,
+      "level_xp": 5680,
+      "total_xp": 809200,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 280,
+      "level_xp": 5700,
+      "total_xp": 814900,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 281,
+      "level_xp": 5720,
+      "total_xp": 820620,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 282,
+      "level_xp": 5740,
+      "total_xp": 826360,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 283,
+      "level_xp": 5760,
+      "total_xp": 832120,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 284,
+      "level_xp": 5780,
+      "total_xp": 837900,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 285,
+      "level_xp": 5800,
+      "total_xp": 843700,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 286,
+      "level_xp": 5820,
+      "total_xp": 849520,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 287,
+      "level_xp": 5840,
+      "total_xp": 855360,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 288,
+      "level_xp": 5860,
+      "total_xp": 861220,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 289,
+      "level_xp": 5880,
+      "total_xp": 867100,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 290,
+      "level_xp": 5900,
+      "total_xp": 873000,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 291,
+      "level_xp": 5920,
+      "total_xp": 878920,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 292,
+      "level_xp": 5940,
+      "total_xp": 884860,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 293,
+      "level_xp": 5960,
+      "total_xp": 890820,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 294,
+      "level_xp": 5980,
+      "total_xp": 896800,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 295,
+      "level_xp": 6000,
+      "total_xp": 902800,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 296,
+      "level_xp": 6020,
+      "total_xp": 908820,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 297,
+      "level_xp": 6040,
+      "total_xp": 914860,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 298,
+      "level_xp": 6060,
+      "total_xp": 920920,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 299,
+      "level_xp": 6080,
+      "total_xp": 927000,
+      "role_id": 0,
+      "role_title": "Exalted"
+    },
+    {
+      "level": 300,
+      "level_xp": 6100,
+      "total_xp": 933100,
+      "role_id": 0,
+      "role_title": "Exalted"
+    }
+  ]
+}
