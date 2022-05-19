@@ -4,6 +4,9 @@ This is mainly a way to replace ActivityRank in our current server (Nanahira Mon
 
 Probably will be appended into [kanadeBot](https://github.com/LEOIIDX/kanadeBot) at some point, but should get working standalone first to make sure it gets put in smoothly.
 
+### **Link to Bot:**
+Holding off on it for now since I'm still working on it pretty consistently and major downtimes are to be expected. If you want to run the bot code yourself for now, the intructions are shown below!
+
 ### **To use:**
 Note: This is for a Windows install
 1. Download this repo as a .zip file
