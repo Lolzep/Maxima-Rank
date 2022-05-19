@@ -122,6 +122,17 @@ async def myrank(ctx):
 	myrankEMBED, myrankFILE = infoEmbeds.myrankEMBED(ctx.user.guild, ctx.user.id, ctx.user.display_name, ctx.user.display_avatar, in_embed)
 	await ctx.respond(file=myrankFILE, embed=myrankEMBED)
 
+@bot.slash_command(name="rank", description="Statisitcs about a specified user")
+async def rank(ctx: discord.ApplicationContext, member: Option(discord.Member, "Member to get id from", required = True)):
+	emoji_object = my_rank_embed_values(member.guild, member.id, True)
+	in_embed = []
+	for item in emoji_object:
+		emoji = discord.utils.get(bot.emojis, name=item)
+		in_embed.append(emoji)
+
+	rankEMBED, rankFILE = infoEmbeds.rankEMBED(member.guild, member.id, member.display_name, member.display_avatar, in_embed)
+	await ctx.respond(file=rankFILE, embed=rankEMBED)
+
 @bot.slash_command(name='greet', description='Greet someone!', guild_ids=[273567091368656898])
 async def greet(ctx, name: Option(str, "Enter your friend's name", required = False, default = '')):
     await ctx.respond(f'Hello {name}!')

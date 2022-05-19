@@ -56,6 +56,34 @@ class infoEmbeds:
 
 		return myrankEMBED, myrankFILE
 
+	def rankEMBED(guild_id, main_id, main_user, avatar_id, emoji : list):
+		field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id = my_rank_embed_values(guild_id, main_id, False)
+		role_barriers = level_barriers(100, 20, 300)
+		rankFILE = discord.File(f"Images/Ranks/{role_title}.png", filename="image.png")
+
+		i = 1
+		for item in emoji:
+			subbed = re.sub(f"\\bemoji{i}\\b", str(item), field_display)
+			field_display = subbed
+			i += 1
+
+		percent_xp = 100 * progress_to_next / level_xp
+		percent_xp = "%.1f" % percent_xp
+
+		if role_title != "Exalted":
+			rankEMBED = discord.Embed(title=f"{main_user} is {role_title} Rank!", description=f"{main_user} is {role_barriers[role_title] - xp} XP away from being the next rank!", color=discord.Color.purple())
+		else:
+			rankEMBED = discord.Embed(title=f"{main_user} is {role_title} Rank!", description=f"You are max rank! Now go outside.", color=discord.Color.purple())
+		rankEMBED.set_author(name=main_user, icon_url="attachment://image.png")
+		rankEMBED.set_thumbnail(url=avatar_id)
+
+		rankEMBED.add_field(name="Level", value=f"{level}", inline=True)
+		rankEMBED.add_field(name="XP", value=f"{xp}", inline=True)
+		rankEMBED.add_field(name="XP Progress to Next Level", value=f"{progress_to_next} / {level_xp} ( {percent_xp}% )", inline=False)
+		rankEMBED.add_field(name="Server Activity", value=subbed, inline=True)
+
+		return rankEMBED, rankFILE
+
 
 
 

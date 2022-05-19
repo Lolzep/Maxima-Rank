@@ -104,12 +104,17 @@ def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount
 	user["xp"] += amount_of_xp * multiplier
 
 	# Update using the levels.json
+	data_level = json_read("levels.json")
+
 	current_level = user["level"]
 	current_xp = user["xp"]
-	data_level = json_read("levels.json")
 	next_xp = data_level["levels"][current_level]["total_xp"]
-	if next_xp <= current_xp:
+	# Use while loop to level up multiple times in case of large increase
+	while next_xp <= current_xp:
 		user["level"] += 1
+		current_level = user["level"]
+		current_xp = user["xp"]
+		next_xp = data_level["levels"][current_level]["total_xp"]
 	#* XP Block
 
 	# Using the dump_file boolean argument, should the current file be overwritten after completion?
