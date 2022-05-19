@@ -104,7 +104,7 @@ async def myrank(ctx):
 		emoji = discord.utils.get(bot.emojis, name=item)
 		in_embed.append(emoji)
 
-	myrankEMBED, myrankFILE = infoEmbeds.myrankEMBED(ctx.user.guild, ctx.user.id, ctx.user.name, ctx.user.display_avatar, in_embed)
+	myrankEMBED, myrankFILE = infoEmbeds.myrankEMBED(ctx.user.guild, ctx.user.id, ctx.user.display_name, ctx.user.display_avatar, in_embed)
 	await ctx.respond(file=myrankFILE, embed=myrankEMBED)
 
 
