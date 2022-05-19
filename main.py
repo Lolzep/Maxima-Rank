@@ -3,6 +3,7 @@ import os
 import asyncio
 
 from discord.commands import Option
+from discord.ext import commands
 from dotenv import load_dotenv
 from myfunctions import update_user, my_rank_embed_values
 from embeds import *
@@ -91,22 +92,26 @@ async def on_voice_state_update(member, before, after):
 async def on_member_update(before, after):
 	if before.premium_since is None and after.premium_since is not None:
 		update_user(before.guild, before.id, before.name, "is_booster", True, 0, 1000, 1, True)
-		print("Member update detected. They're now a booster! +1000xp!")
 	else:
-		update_user(before.guild, before.id, before.name, "is_booster", True, 0, 1000, 1, False)
-		print("Member update detected. Not a booster or currently a booster.")
+		update_user(before.guild, before.id, before.name, "is_booster", True, 0, 0, 0, False)
 
-@bot.command(description="Sends information about the bot")
+@bot.slash_command(description="Sends information about the bot")
 async def about(ctx):
 	aboutEMBED, aboutFILE = infoEmbeds.aboutEMBED()
 	await ctx.respond(file=aboutFILE, embed=aboutEMBED)
 
-@bot.command(description="Commands and their usage")
+@bot.slash_command(description="Commands and their usage")
 async def help(ctx):
 	helpEMBED, helpFILE = infoEmbeds.helpEMBED()
 	await ctx.respond(file=helpFILE, embed=helpEMBED)
 
-@bot.command(description="Statistics about yourself")
+@bot.slash_command(name="award_xp", description="Add XP to a specified user or users")
+@commands.has_permissions(manage_messages=True)
+async def award_xp(ctx: discord.ApplicationContext, member: Option(discord.Member, "Member to get id from", required = True), xp: Option(int, "Amount of XP to give to user", required=True)):
+	update_user(member.guild ,member.id, member.name, "special_xp", True, xp, xp, 1)
+	await ctx.respond(f"You gave {member.name} {xp} XP!")
+
+@bot.slash_command(description="Statistics about yourself")
 async def myrank(ctx):
 	emoji_object = my_rank_embed_values(ctx.user.guild, ctx.user.id, True)
 	in_embed = []
@@ -117,9 +122,9 @@ async def myrank(ctx):
 	myrankEMBED, myrankFILE = infoEmbeds.myrankEMBED(ctx.user.guild, ctx.user.id, ctx.user.display_name, ctx.user.display_avatar, in_embed)
 	await ctx.respond(file=myrankFILE, embed=myrankEMBED)
 
-# @bot.slash_command(name='greet', description='Greet someone!', guild_ids=[273567091368656898])
-# async def greet(ctx, name: Option(str, "Enter your friend's name", required = False, default = '')):
-#     await ctx.respond(f'Hello {name}!')
+@bot.slash_command(name='greet', description='Greet someone!', guild_ids=[273567091368656898])
+async def greet(ctx, name: Option(str, "Enter your friend's name", required = False, default = '')):
+    await ctx.respond(f'Hello {name}!')
 
 bot.run(TOKEN)
 

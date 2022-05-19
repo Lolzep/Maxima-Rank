@@ -2,7 +2,7 @@ import discord
 import os
 import re
 
-from myfunctions import templateEmbed, my_rank_embed_values
+from myfunctions import templateEmbed, my_rank_embed_values, level_barriers
 
 VERSION = os.popen('git rev-parse HEAD').read()
 COMMIT_MESSAGE = os.popen('git show --pretty=format:%s -s HEAD').read()
@@ -30,6 +30,7 @@ class infoEmbeds:
 	
 	def myrankEMBED(guild_id, main_id, main_user, avatar_id, emoji : list):
 		field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id = my_rank_embed_values(guild_id, main_id, False)
+		role_barriers = level_barriers(100, 20, 300)
 		myrankFILE = discord.File(f"Images/Ranks/{role_title}.png", filename="image.png")
 
 		i = 1
@@ -41,7 +42,10 @@ class infoEmbeds:
 		percent_xp = 100 * progress_to_next / level_xp
 		percent_xp = "%.1f" % percent_xp
 
-		myrankEMBED = discord.Embed(title=f"You are {role_title} Rank!", description="Keep it up gamer", color=discord.Color.purple())
+		if role_title != "Exalted":
+			myrankEMBED = discord.Embed(title=f"You are {role_title} Rank!", description=f"You are {role_barriers[role_title] - xp} XP away from being the next rank!", color=discord.Color.purple())
+		else:
+			myrankEMBED = discord.Embed(title=f"You are {role_title} Rank!", description=f"You are max rank! Now go outside.", color=discord.Color.purple())
 		myrankEMBED.set_author(name=main_user, icon_url="attachment://image.png")
 		myrankEMBED.set_thumbnail(url=avatar_id)
 

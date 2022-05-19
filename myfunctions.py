@@ -122,11 +122,15 @@ def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount
 
 # Create new levels with "level, xp and role_id" as the objects in a levels.json file
 # For use in knowing the current levels and where each user's level currently stands
+#? ARGUMENTS
+# starting_xp: What should the XP be to reach level 1?
+# level_factor: How much XP should each level increase by?
+# total_levels: How many levels should there be?
 # TODO: roleid should be changed to actual roleids in Discord (probably need new definition)
-def new_levels(level_factor: int, total_levels: int):
+def new_levels(starting_xp: int, level_factor: int, total_levels: int):
 	# Create new levels key and a level object template starting at 0 for all
 	i = 0
-	new_data = {"level": 0, "level_xp": 100, "total_xp": 100, "role_id": 0, "role_title": "Newbie"}
+	new_data = {"level": 0, "level_xp": starting_xp, "total_xp": starting_xp, "role_id": 0, "role_title": "Newbie"}
 	level_template = {"levels": []}
 
 	# If the levels.json already exists, remove it to redo all calculations. Create new levels.json with level_template
@@ -139,30 +143,7 @@ def new_levels(level_factor: int, total_levels: int):
 	write_json(new_data, "levels.json", "levels")
 
 	# While i <= total_levels, create a new level object for each level 0 - i and calculate each variable as needed
-	# TODO: Better implementation of this that allows these values to be edited easier
 	while i < total_levels:
-		# Create the variables
-		n = i + 1
-		role_title = ""
-		if 0 <= n <= 2:
-			role_title = "Newbie"
-		elif 3 <= n <= 4:
-			role_title = "Bronze"
-		elif 5 <= n <= 9:
-			role_title = "Silver"
-		elif 10 <= n <= 24:
-			role_title = "Gold"
-		elif 25 <= n <= 49:
-			role_title = "Platinum"
-		elif 50 <= n <= 99:
-			role_title = "Diamond"
-		elif 100 <= n <= 149:
-			role_title = "Master"
-		elif 150 <= n <= 199:
-			role_title = "Grandmaster"
-		elif n >= 200:
-			role_title = "Exalted"
-
 		p_level = new_data["level"]
 		n_level = new_data["level"] + 1
 
@@ -178,6 +159,64 @@ def new_levels(level_factor: int, total_levels: int):
 
 		write_json(new_data, "levels.json", "levels")
 		i += 1
+
+# Similar to new_levels
+# Using the same level_factor and total_levels args, makes a dict of level barriers for each rank
+# Useful for knowing XP needed to next rank
+#? ARGUMENTS
+# starting_xp: What should the XP be to reach level 1?
+# level_factor: How much XP should each level increase by?
+# total_levels: How many levels should there be?
+def level_barriers(starting_xp: int, level_factor: int, total_levels: int):
+	#* Create new levels key and a level object template starting at 0 for all
+	i = 0
+	new_data = {"level": 0, "level_xp": starting_xp, "total_xp": starting_xp, "role_id": 0, "role_title": "Newbie"}
+
+	role_barriers = {"Newbie": 0, "Bronze": 0, "Silver": 0, "Gold": 0, "Platinum": 0, "Diamond": 0, "Master": 0, "Grandmaster": 0, "Exalted": 0}
+
+	#* For all levels 1 - i, update the key:value pairs until max is reached then move to next pair
+	# TODO: Implement this in a better way that makes it easier to update
+	while i < total_levels:
+		next_id = new_data["role_id"]
+		n_level = new_data["level"] + 1
+		p_level_xp = new_data["level_xp"]
+		level_xp = p_level_xp + level_factor
+		total_xp = new_data["total_xp"] + level_xp
+
+		n = i + 1
+		role_title = ""
+		if 0 <= n <= 2:
+			role_title = "Newbie"
+			role_barriers[role_title] = total_xp
+		elif 3 <= n <= 4:
+			role_title = "Bronze"
+			role_barriers[role_title] = total_xp
+		elif 5 <= n <= 9:
+			role_title = "Silver"
+			role_barriers[role_title] = total_xp
+		elif 10 <= n <= 24:
+			role_title = "Gold"
+			role_barriers[role_title] = total_xp
+		elif 25 <= n <= 49:
+			role_title = "Platinum"
+			role_barriers[role_title] = total_xp
+		elif 50 <= n <= 99:
+			role_title = "Diamond"
+			role_barriers[role_title] = total_xp
+		elif 100 <= n <= 149:
+			role_title = "Master"
+			role_barriers[role_title] = total_xp
+		elif 150 <= n <= 199:
+			role_title = "Grandmaster"
+			role_barriers[role_title] = total_xp
+		elif n >= 200:
+			role_title = "Exalted"
+			role_barriers[role_title] = total_xp
+
+		new_data = {"level": n_level, "level_xp": level_xp, "total_xp": total_xp, "role_id": next_id, "role_title": role_title}
+		i += 1
+
+	return role_barriers
 
 # Creates a simple embed for the most general of embed implementations (help, about, etc.)
 #? ARGUMENTS
@@ -276,3 +315,5 @@ def my_rank_embed_values(guild_id, main_id, simple : bool):
 		return emoji_object
 	else:
 		return field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id
+
+level_barriers(100, 20, 300)
