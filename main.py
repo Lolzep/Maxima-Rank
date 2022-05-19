@@ -13,6 +13,7 @@ TOKEN = os.getenv("TOKEN")
 intents = discord.Intents.default()
 intents.message_content = True
 intents.reactions = True
+intents.members = True
 
 bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 828667775605669888])
 
@@ -85,6 +86,15 @@ async def on_voice_state_update(member, before, after):
 			update_user(member.guild ,member.id, member.name, "voice_minutes", True, voice_minutes, 5, voice_minutes)
 			print("out_of_channel")
 			break
+
+@bot.event
+async def on_member_update(before, after):
+	if before.premium_since is None and after.premium_since is not None:
+		update_user(before.guild, before.id, before.name, "is_booster", True, 0, 1000, 1, True)
+		print("Member update detected. They're now a booster! +1000xp!")
+	else:
+		update_user(before.guild, before.id, before.name, "is_booster", True, 0, 1000, 1, False)
+		print("Member update detected. Not a booster or currently a booster.")
 
 @bot.command(description="Sends information about the bot")
 async def about(ctx):

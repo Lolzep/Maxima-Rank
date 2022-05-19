@@ -52,7 +52,8 @@ def write_json(new_data, filename, name: str):
 # amount_to_add: Amount of value to add to the specified key in the user object
 # amount_of_xp: Amount of value to add to the xp in the user object, which can be...
 # multiplier: ...multiplied by this value (useful for adding correct xp for >1 key value)
-def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount_to_add: int, amount_of_xp: int, multiplier: int):
+# premium: A boolean, used in on_member_update to know if a user is boosting the server or not (optional)
+def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount_to_add: int, amount_of_xp: int, multiplier: int, premium=None):
 	template = {"user_id": main_id, "name": main_user, "xp": 0, "level": 0, "role_id": 0, "messages": 0, "reactions_added": 0, "reactions_recieved": 0, "stickers": 0, "images": 0, "embeds": 0, "voice_minutes":0, "invites":0, "special_xp":0, "is_booster":False}
 	main_json = f"Data/{guild_id} Users.json"
 
@@ -90,7 +91,12 @@ def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount
 		user_id_index = user_ids.index(main_id)
 		user = data["users"][user_id_index]
 
-	user[key] += amount_to_add
+	# Add amount_to_add to the specified key in the user object
+	# If premium is not None, do not add, change the boolean to premium argument
+	if premium is None:
+		user[key] += amount_to_add
+	else:
+		user[key] = premium
 
 	#* XP Block
 	# Based on amount_of_xp given
