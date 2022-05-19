@@ -1,4 +1,4 @@
-# **Monke Rank**
+# **Maxima Rank**
 
 This is mainly a way to replace ActivityRank in our current server (Nanahira Monke). Trying to have less reliance on random bots from outside sources and by making our own bot, we'll have full customization and features that ActivityRank won't have (such as extra XP for boosted members or adding role images to users).
 

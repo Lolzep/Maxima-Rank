@@ -11,7 +11,7 @@ class infoEmbeds:
 	def aboutEMBED():
 		aboutEMBED, aboutFILE = templateEmbed("about")
 
-		aboutEMBED.add_field(name="Monke Rank", value="An activity tracker for Discord for tracking messages, time in voice, etc. and using that for levels for rewarding the most active users in a Discord", inline=False)
+		aboutEMBED.add_field(name="Maxima Rank", value="An activity tracker for Discord for tracking messages, time in voice, etc. and using that for levels for rewarding the most active users in a Discord", inline=False)
 		aboutEMBED.add_field(name="Commit", value=str(VERSION), inline=False)
 		aboutEMBED.add_field(name="Recent Changes", value=COMMIT_MESSAGE, inline=False)
 		aboutEMBED.add_field(name="Contributors", value="Lolzep #5723", inline=False)
@@ -19,14 +19,22 @@ class infoEmbeds:
 		return aboutEMBED, aboutFILE
 	
 	def helpEMBED():
-		helpEMBED, helpFILE = templateEmbed("help", "Monke Rank Help")
+		helpEMBED, helpFILE = templateEmbed("help", "Maxima Rank Help")
 
-		helpEMBED.add_field(name="/help", value="You are here! Commands for Monke Rank", inline=False)
+		helpEMBED.add_field(name="/help", value="You are here! Commands for Maxima Rank", inline=False)
 		helpEMBED.add_field(name="/about", value="Info about the bot", inline=False)
-		helpEMBED.add_field(name="/my_progress", value="Shows your progress to next level and role", inline=False)
 		helpEMBED.add_field(name="/my_rank", value="Statistics about yourself", inline=False)
+		helpEMBED.add_field(name="/rank [username]", value="Statistics about a specified user", inline=False)
 
 		return helpEMBED, helpFILE
+
+	def adminhelpEMBED():
+		adminhelpEMBED, adminhelpFILE = templateEmbed("help", "Maxima Rank Admin Help")
+
+		adminhelpEMBED.add_field(name="/adminhelp", value="You are here! Admin commands for Maxima Rank", inline=False)
+		adminhelpEMBED.add_field(name="/award_xp [user] [amount]", value="Gives a specified [user] [amount] xp", inline=False)
+
+		return adminhelpEMBED, adminhelpFILE
 	
 	def myrankEMBED(guild_id, main_id, main_user, avatar_id, emoji : list):
 		field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id = my_rank_embed_values(guild_id, main_id, False)

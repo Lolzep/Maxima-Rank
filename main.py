@@ -105,6 +105,12 @@ async def help(ctx):
 	helpEMBED, helpFILE = infoEmbeds.helpEMBED()
 	await ctx.respond(file=helpFILE, embed=helpEMBED)
 
+@bot.slash_command(description="Admin commands and their usage")
+@commands.has_permissions(manage_messages=True)
+async def adminhelp(ctx):
+	adminhelpEMBED, adminhelpFILE = infoEmbeds.adminhelpEMBED()
+	await ctx.respond(file=adminhelpFILE, embed=adminhelpEMBED)
+
 @bot.slash_command(name="award_xp", description="Add XP to a specified user or users")
 @commands.has_permissions(manage_messages=True)
 async def award_xp(ctx: discord.ApplicationContext, member: Option(discord.Member, "Member to get id from", required = True), xp: Option(int, "Amount of XP to give to user", required=True)):
