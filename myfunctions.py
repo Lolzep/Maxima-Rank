@@ -53,7 +53,7 @@ def write_json(new_data, filename, name: str):
 # amount_of_xp: Amount of value to add to the xp in the user object, which can be...
 # multiplier: ...multiplied by this value (useful for adding correct xp for >1 key value)
 def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount_to_add: int, amount_of_xp: int, multiplier: int):
-	template = {"user_id": main_id, "name": main_user, "xp": 0, "level": 0, "role_id": 0, "messages": 0, "reactions_added": 0, "reactions_recieved": 0, "stickers": 0, "images": 0, "embeds": 0, "voice_minutes":0, "invites":0, "special_xp":0}
+	template = {"user_id": main_id, "name": main_user, "xp": 0, "level": 0, "role_id": 0, "messages": 0, "reactions_added": 0, "reactions_recieved": 0, "stickers": 0, "images": 0, "embeds": 0, "voice_minutes":0, "invites":0, "special_xp":0, "is_booster":False}
 	main_json = f"Data/{guild_id} Users.json"
 
 	#* Check if missing or empty, if so, create new file and/or run new_json
@@ -133,6 +133,7 @@ def new_levels(level_factor: int, total_levels: int):
 	write_json(new_data, "levels.json", "levels")
 
 	# While i <= total_levels, create a new level object for each level 0 - i and calculate each variable as needed
+	# TODO: Better implementation of this that allows these values to be edited easier
 	while i < total_levels:
 		# Create the variables
 		n = i + 1
@@ -172,6 +173,10 @@ def new_levels(level_factor: int, total_levels: int):
 		write_json(new_data, "levels.json", "levels")
 		i += 1
 
+# Creates a simple embed for the most general of embed implementations (help, about, etc.)
+#? ARGUMENTS
+# command (string): What command from the bot it should be used on
+# description (default=None, string): Set the description of the embed, optional 
 def templateEmbed(command : str, description=None):
 	tempEmbed = discord.Embed(color = discord.Color.purple())
 
@@ -185,21 +190,13 @@ def templateEmbed(command : str, description=None):
 
 	return tempEmbed, tempFile
 
-def my_rank(guild_id, main_id, main_user):
-	main_json = f"Data/{guild_id} Users.json"
-
-	user_ids = []
-	for items in data["users"]:
-		user_ids.append(items["user_id"])
-
-	user_id_index = user_ids.index(main_id)
-
-	with open(main_json) as f:
-		data = json.load(f)
-		user = data["users"][user_id_index]
-	
-	print(user)
-
+# Activity values to be used inside the "/myrank" command embed
+# Values also have a specific rank emoji assigned to them based on the max value in the server used
+# The command returns everything needed to be used in the "embeds.py" file (fields, calc. values, etc.)
+#? ARGUMENTS
+# guild_id: guild id retrieved from discord api command
+# main_id: user id retrieved from discord api command
+# simple (boolean): If True, returns only the emoji list (useful for using in main.py and other cases where not everything needs to be returned)
 def my_rank_embed_values(guild_id, main_id, simple : bool):
 	#* Load initial json, find user who sent command
 	main_json = f"Data/{guild_id} Users.json"
@@ -221,29 +218,36 @@ def my_rank_embed_values(guild_id, main_id, simple : bool):
 	data_level = data_level["levels"][level]
 
 	#* A metric ton of variables for appending as a field in embed
+	# Users.json values
 	xp = user["xp"]
 	level = user["level"]
 	next_xp = data_level["total_xp"]
 	level_xp = data_level["level_xp"]
 	role_title = data_level["role_title"]
 	role_id = data_level["role_id"]
-
 	progress_to_next = level_xp - (next_xp - xp)
-
+	
+	# Users.json values to be used in the embed field
 	types = ("messages", "reactions_added", "reactions_recieved", "stickers", "images", "embeds", "voice_minutes", "invites", "special_xp")
-
+	
+	# Dicts and lists to match json object keys to json object values and emoji ranks, as well as calculate max_values
 	amounts = {}
 	max_values = {}
 	ranks = {"MR_D": 0.00, "MR_C": 0.16, "MR_B": 0.33, "MR_A": 0.50, "MR_S": 0.66, "MR_SS": 0.82, "MR_MAX": 1.00}
 	embed_emj = "MR_D"
 	emoji_object = []
 
+	#* Match keys in "types" to keys in Users.json and calculate the max_value using itemgetter
+	# Append all to respective dicts (amounts, max_values)
 	for key in types:
 		amounts[key] = user[key]
 
 		max_value = max(data["users"], key=itemgetter(key))
 		max_values[key] = max_value[key]
 
+	#* Calculate what emoji to be used for the respective amount based on the max_value
+	# ie. User has 6 messages, max messages in the server is 60, 6/60 = 10% = D Rank Emoji
+	# Append each emoji for each activity in a list
 	for (k,amt), (k2, mx) in zip(amounts.items(), max_values.items()):
 		try:
 			ratio = amt / mx
@@ -257,8 +261,11 @@ def my_rank_embed_values(guild_id, main_id, simple : bool):
 				embed_emj = emj
 		emoji_object.append(embed_emj)
 
+	#* Embed field to be used in "/myrank"
 	field_display = f"> emoji1 **💬 Messages**: {amounts['messages']}\n> emoji2 **😃 Reactions Added**: {amounts['reactions_added']}\n> emoji3 **🥰 Reactions Recieved**: {amounts['reactions_recieved']}\n> emoji4 **🎭 Stickers**: {amounts['stickers']}\n> emoji5 **🖼️ Images**: {amounts['images']}\n> emoji6 **🔗 Embeds**: {amounts['embeds']}\n> emoji7 **🎙️ Voice (minutes)**: {amounts['voice_minutes']}\n> emoji8 **✉️ Invites**: {amounts['invites']}\n> emoji9 **🌟 Special XP**: {amounts['special_xp']}"
 	
+	#* return embed field, emoji list for embed field, and other values for current user
+	# if simple explained in arguments
 	if simple == True:
 		return emoji_object
 	else:

@@ -107,7 +107,6 @@ async def myrank(ctx):
 	myrankEMBED, myrankFILE = infoEmbeds.myrankEMBED(ctx.user.guild, ctx.user.id, ctx.user.display_name, ctx.user.display_avatar, in_embed)
 	await ctx.respond(file=myrankFILE, embed=myrankEMBED)
 
-
 # @bot.slash_command(name='greet', description='Greet someone!', guild_ids=[273567091368656898])
 # async def greet(ctx, name: Option(str, "Enter your friend's name", required = False, default = '')):
 #     await ctx.respond(f'Hello {name}!')
