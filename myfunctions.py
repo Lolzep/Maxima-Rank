@@ -41,6 +41,29 @@ def write_json(new_data, filename, name: str):
 		f.seek(0)
 		json.dump(file_data, f, indent=2)
 
+# Used to update the levels of users after an xp change
+#? ARGUMENTS
+# json_object_name: Name of the json user objects to change (ex. reading from users.json as data, user = data["users"], this arg is user)
+# levels_json_data: The variable name of the loaded json data of "levels.json", by default this is none
+# 	In loops, use this argument to avoid so many i/o operations
+def update_levels(json_object_name : str, levels_json_data=None):
+	#* Get levels.json data
+	data_level = levels_json_data
+	if levels_json_data is None:
+		data_level = json_read("levels.json")
+
+	#* Variables we need from levels.json
+	current_level = json_object_name["level"]
+	current_xp = json_object_name["xp"]
+	next_xp = data_level["levels"][current_level]["total_xp"]
+
+	#* Use while loop to level up multiple times in case of large increase
+	while next_xp <= current_xp:
+		json_object_name["level"] += 1
+		current_level = json_object_name["level"]
+		current_xp = json_object_name["xp"]
+		next_xp = data_level["levels"][current_level]["total_xp"]
+
 # Updates the user objects for the specified user in users.json file and writes new ones if not found
 #? ARGUMENTS
 # guild_id: guild id retrieved from discord api command
@@ -91,7 +114,7 @@ def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount
 		user_id_index = user_ids.index(main_id)
 		user = data["users"][user_id_index]
 
-	# Add amount_to_add to the specified key in the user object
+	#* Add amount_to_add to the specified key in the user object
 	# If premium is not None, do not add, change the boolean to premium argument
 	if premium is None:
 		user[key] += amount_to_add
@@ -102,22 +125,9 @@ def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount
 	# Based on amount_of_xp given
 	# Add xp to the specified user
 	user["xp"] += amount_of_xp * multiplier
+	update_levels(user)
 
-	# Update using the levels.json
-	data_level = json_read("levels.json")
-
-	current_level = user["level"]
-	current_xp = user["xp"]
-	next_xp = data_level["levels"][current_level]["total_xp"]
-	# Use while loop to level up multiple times in case of large increase
-	while next_xp <= current_xp:
-		user["level"] += 1
-		current_level = user["level"]
-		current_xp = user["xp"]
-		next_xp = data_level["levels"][current_level]["total_xp"]
-	#* XP Block
-
-	# Using the dump_file boolean argument, should the current file be overwritten after completion?
+	#* Using the dump_file boolean argument, should the current file be overwritten after completion?
 	# If not, return data, user; to continue operation
 	if dump_file == True:
 		with open(main_json, "w") as f:
@@ -335,4 +345,29 @@ def my_rank_embed_values(guild_id, main_id, simple : bool):
 	else:
 		return field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id
 
-new_levels(100, 20, 300)
+# Update the xp values of boosted members in the server
+#? ARGUMENTS
+# guild_id: guild id retrieved from discord api command
+# xp: Amount of xp retrieved from discord slash command argument
+def update_boosters(guild_id, xp):
+	#* Load initial jsons (User, levels)
+	count = 0
+	main_json = f"Data/{guild_id} Users.json"
+	with open(main_json) as f:
+		data = json.load(f)
+	data_level = json_read("levels.json")
+
+	for item in data["users"]:
+		if item["is_booster"] == True:
+			#* Add xp specified, increase levels, and increase count
+			item["special_xp"] += xp
+			item["xp"] += xp
+			count += 1
+			update_levels(item, data_level)
+
+	#* Update Users.json
+	with open(main_json, "w") as f:
+		json.dump(data, f, indent=2)
+	
+
+	return count

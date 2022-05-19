@@ -5,7 +5,7 @@ import asyncio
 from discord.commands import Option
 from discord.ext import commands
 from dotenv import load_dotenv
-from myfunctions import update_user, my_rank_embed_values
+from myfunctions import update_user, my_rank_embed_values, update_boosters
 from embeds import *
 
 load_dotenv()
@@ -21,18 +21,18 @@ bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 82866777560
 #? Command ideas!
 
 #? Small projects
-#* def about(): Show information about the bot (Defintion, Github commits and changes, Contributors) in an embed
-#* def restart(): Put restart_bot def in a command
-#* def help(): Shows all commands and generic help info in an embed
-#* def booster(): Retrieve all boosters in a discord server from json, give specified "special_xp" to each booster
+#* [DONE] def about(): Show information about the bot (Defintion, Github commits and changes, Contributors) in an embed
+#* [DONE] def restart(): Put restart_bot def in a command
+#* [DONE] def help(): Shows all commands and generic help info in an embed
+#* [DONE] def booster(): Retrieve all boosters in a discord server from json, give specified "special_xp" to each booster
 # "special_xp" also gets added to "xp"!
 #* def invite(ctx, name): Increase "invites" count by 1 for specified user and give specified xp
 
 #? Large projects 
 #* def set_xp(): Set all xp values in a slash command embed (admin panel)
 #* def top_rankers(): Leaderboard of activity, similar to ActivityRank's style
-#* def my_rank(ctx): Shows your ranking and detailed statistics about yourself in an embed
-#* def my_progress(ctx): Shows progress to next level and role in an embed
+#* [DONE] def my_rank(ctx): Shows your ranking and detailed statistics about yourself in an embed
+#* [Maybe not needed?] def my_progress(ctx): Shows progress to next level and role in an embed
 
 @bot.event
 async def on_ready():
@@ -116,6 +116,12 @@ async def adminhelp(ctx):
 async def award_xp(ctx: discord.ApplicationContext, member: Option(discord.Member, "Member to get id from", required = True), xp: Option(int, "Amount of XP to give to user", required=True)):
 	update_user(member.guild ,member.id, member.name, "special_xp", True, xp, xp, 1)
 	await ctx.respond(f"You gave {member.name} {xp} XP!")
+
+@bot.slash_command(name="booster_xp", description="Add XP to all boosted users")
+@commands.has_permissions(manage_messages=True)
+async def booster_xp(ctx: discord.ApplicationContext, xp: Option(int, "Amount of XP to give to boosted members", required=True)):
+	count = update_boosters(ctx.user.guild, xp)
+	await ctx.respond(f"You gave everyone who is currently boosting the server {xp} XP!\n Count of boosted members: {count}")
 
 @bot.slash_command(description="Statistics about yourself")
 async def myrank(ctx):
