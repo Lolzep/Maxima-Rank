@@ -1,5 +1,6 @@
 import discord
 import os
+import re
 
 from myfunctions import templateEmbed, my_rank_embed_values
 
@@ -27,18 +28,27 @@ class infoEmbeds:
 
 		return helpEMBED, helpFILE
 	
-	def myrankEMBED(guild_id, main_id, avatar_id, emoji : list):
-		field_display, emoji_object, progress_to_next, role_title, role_id = my_rank_embed_values(guild_id, main_id, False)
-		myrankFILE = discord.File(f"Images/about.png", filename="image.png")
+	def myrankEMBED(guild_id, main_id, main_user, avatar_id, emoji : list):
+		field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id = my_rank_embed_values(guild_id, main_id, False)
+		myrankFILE = discord.File(f"Images/Ranks/{role_title}.png", filename="image.png")
 
-		myrankEMBED = discord.Embed(title="You are Master Rank!", description="You are 49300 XP away from Grandmaster", color=discord.Color.purple())
-		myrankEMBED.set_author(name="Lolzep", icon_url="attachment://image.png")
+		i = 1
+		for item in emoji:
+			subbed = re.sub(f"\\bemoji{i}\\b", str(item), field_display)
+			field_display = subbed
+			i += 1
+
+		percent_xp = 100 * progress_to_next / level_xp
+		percent_xp = "%.1f" % percent_xp
+
+		myrankEMBED = discord.Embed(title=f"You are {role_title} Rank!", description="Keep it up gamer", color=discord.Color.purple())
+		myrankEMBED.set_author(name=main_user, icon_url="attachment://image.png")
 		myrankEMBED.set_thumbnail(url=avatar_id)
 
-		myrankEMBED.add_field(name="Level", value="4\n", inline=True)
-		myrankEMBED.add_field(name="XP", value="1000\n", inline=True)
-		myrankEMBED.add_field(name="Next Level XP", value="1340", inline=False)
-		myrankEMBED.add_field(name="Server Activity", value=field_display, inline=True)
+		myrankEMBED.add_field(name="Level", value=f"{level}", inline=True)
+		myrankEMBED.add_field(name="XP", value=f"{xp}", inline=True)
+		myrankEMBED.add_field(name="XP Progress to Next Level", value=f"{progress_to_next} / {level_xp} ( {percent_xp}% )", inline=False)
+		myrankEMBED.add_field(name="Server Activity", value=subbed, inline=True)
 
 		return myrankEMBED, myrankFILE
 

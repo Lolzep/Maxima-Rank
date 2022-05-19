@@ -257,9 +257,9 @@ def my_rank_embed_values(guild_id, main_id, simple : bool):
 				embed_emj = emj
 		emoji_object.append(embed_emj)
 
-	field_display = f"> **💬 Messages**: {amounts['messages']} emoji1\n> **😃 Reactions Added**: {amounts['reactions_added']} emoji2 \n> **🥰 Reactions Recieved**: {amounts['reactions_recieved']} emoji3\n> **🎭 Stickers**: {amounts['stickers']} emoji4\n> **🖼️ Images**: {amounts['images']} emoji5\n> **🔗 Embeds**: {amounts['embeds']} emoji6\n> **🎙️ Voice (minutes)**: {amounts['voice_minutes']} emoji7\n> **✉️ Invites**: {amounts['invites']} emoji8\n> **🌟 Special XP**: {amounts['special_xp']} emoji9"
+	field_display = f"> emoji1 **💬 Messages**: {amounts['messages']}\n> emoji2 **😃 Reactions Added**: {amounts['reactions_added']}\n> emoji3 **🥰 Reactions Recieved**: {amounts['reactions_recieved']}\n> emoji4 **🎭 Stickers**: {amounts['stickers']}\n> emoji5 **🖼️ Images**: {amounts['images']}\n> emoji6 **🔗 Embeds**: {amounts['embeds']}\n> emoji7 **🎙️ Voice (minutes)**: {amounts['voice_minutes']}\n> emoji8 **✉️ Invites**: {amounts['invites']}\n> emoji9 **🌟 Special XP**: {amounts['special_xp']}"
 	
 	if simple == True:
 		return emoji_object
 	else:
-		return field_display, emoji_object, progress_to_next, role_title, role_id
+		return field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id
