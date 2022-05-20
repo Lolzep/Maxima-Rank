@@ -133,10 +133,13 @@ async def booster_xp(ctx: discord.ApplicationContext, xp: Option(int, "Amount of
 @bot.slash_command(description="Statistics about yourself")
 async def myrank(ctx):
 	emoji_object = my_rank_embed_values(ctx.user.guild, ctx.user.id, True)
-	in_embed = []
-	for item in emoji_object:
-		emoji = discord.utils.get(bot.emojis, name=item)
-		in_embed.append(emoji)
+	emoji = lambda item : discord.utils.get(bot.emojis, name=item)
+	in_embed = map(emoji, emoji_object)
+
+	# in_embed = []
+	# for item in emoji_object:
+	# 	emoji = discord.utils.get(bot.emojis, name=item)
+	# 	in_embed.append(emoji)
 
 	myrankEMBED, myrankFILE = infoEmbeds.myrankEMBED(ctx.user.guild, ctx.user.id, ctx.user.display_name, ctx.user.display_avatar, in_embed)
 	await ctx.respond(file=myrankFILE, embed=myrankEMBED)
@@ -144,10 +147,13 @@ async def myrank(ctx):
 @bot.slash_command(name="rank", description="Statisitcs about a specified user")
 async def rank(ctx: discord.ApplicationContext, member: Option(discord.Member, "Member to get id from", required = True)):
 	emoji_object = my_rank_embed_values(member.guild, member.id, True)
-	in_embed = []
-	for item in emoji_object:
-		emoji = discord.utils.get(bot.emojis, name=item)
-		in_embed.append(emoji)
+	emoji = lambda item : discord.utils.get(bot.emojis, name=item)
+	in_embed = map(emoji, emoji_object)
+	
+	# in_embed = []
+	# for item in emoji_object:
+	# 	emoji = discord.utils.get(bot.emojis, name=item)
+	# 	in_embed.append(emoji)
 
 	rankEMBED, rankFILE = infoEmbeds.rankEMBED(member.guild, member.id, member.display_name, member.display_avatar, in_embed)
 	await ctx.respond(file=rankFILE, embed=rankEMBED)

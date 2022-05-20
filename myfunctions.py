@@ -70,7 +70,7 @@ def update_levels(json_object_name : str, levels_json_data=None):
 	#* Update roles by detecting a rank change
 	# TODO: Figure out how to connect this to the on_message event and create an embed
 	role_changed = False
-	if current_role is not new_role:
+	if current_role != new_role:
 		print(f"User went from {current_role} to {new_role}!")
 		role_changed = True
 	
