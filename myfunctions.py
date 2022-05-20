@@ -5,27 +5,26 @@ import discord
 
 from operator import itemgetter
 
+#? ARGUMENTS (for json defs)
+# filename : Path to file name to perform func. on
+# name : New file name to create
+# new_data : Data variable of updated loaded json content to append to [filename] json
+
 # Restart Monke Rank
 def restart_bot():
 	print("Restarting")
 	os.execv(sys.executable, ['python3'] + sys.argv)
 
 # Create a new json file
-def new_json_file(filename, name: str):
+def new_json_file(filename):
 	with open(filename, "w"):
 		pass
 
-# Create a new json array 
-def new_json_objects(filename, name: str):
-	new_template = {name:[]}
+# Create a new json objects with 2 arrays
+def new_json_objects(filename, name1, name2):
+	new_template = {name1:[], name2:[]}
 	with open(filename, "w") as f:
 		json.dump(new_template, f, indent=2)
-
-# Dump the data into json
-#? Unused, would need to change users.json to match guild json
-def json_dump(guild_id, data):
-	with open("users.json", "w") as f:
-		json.dump(data, f, indent=2)	
 
 # Read the data from a json file
 def json_read(filename):
@@ -41,7 +40,7 @@ def write_json(new_data, filename, name: str):
 		f.seek(0)
 		json.dump(file_data, f, indent=2)
 
-# Used to update the levels of users after an xp change
+# Used to update the levels, ranks, and roles  of users after an xp change
 #? ARGUMENTS
 # json_object_name: Name of the json user objects to change (ex. reading from users.json as data, user = data["users"], this arg is user)
 # levels_json_data: The variable name of the loaded json data of "levels.json", by default this is none
@@ -57,12 +56,25 @@ def update_levels(json_object_name : str, levels_json_data=None):
 	current_xp = json_object_name["xp"]
 	next_xp = data_level["levels"][current_level]["total_xp"]
 
+	current_role = data_level["levels"][current_level]["role_title"]
+	new_role = data_level["levels"][current_level]["role_title"]
+
 	#* Use while loop to level up multiple times in case of large increase
 	while next_xp <= current_xp:
 		json_object_name["level"] += 1
 		current_level = json_object_name["level"]
 		current_xp = json_object_name["xp"]
 		next_xp = data_level["levels"][current_level]["total_xp"]
+		new_role = data_level["levels"][current_level]["role_title"]
+	
+	#* Update roles by detecting a rank change
+	# TODO: Figure out how to connect this to the on_message event and create an embed
+	role_changed = False
+	if current_role is not new_role:
+		print(f"User went from {current_role} to {new_role}!")
+		role_changed = True
+	
+	return role_changed, current_role, new_role
 
 # Updates the user objects for the specified user in users.json file and writes new ones if not found
 #? ARGUMENTS
@@ -70,8 +82,9 @@ def update_levels(json_object_name : str, levels_json_data=None):
 # main_id: user id retrieved from discord api command
 # name: user name retrieved from discord api command
 # key: The key to modify in the user json object
-# dump_file: True : Dump the current changes into X Users.json
-# dump_file: False : Return data of json file and the current user object being modified as variables
+# dump_file:
+# 	True: Dump the current changes into X Users.json
+# 	False: Return data of json file and the current user object being modified as variables
 # amount_to_add: Amount of value to add to the specified key in the user object
 # amount_of_xp: Amount of value to add to the xp in the user object, which can be...
 # multiplier: ...multiplied by this value (useful for adding correct xp for >1 key value)
@@ -83,11 +96,11 @@ def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount
 	#* Check if missing or empty, if so, create new file and/or run new_json
 	try:
 		if os.stat(main_json).st_size == 0:
-			new_json_objects(main_json, "users")
+			new_json_objects(main_json, "users", "role_ids")
 	except FileNotFoundError:
-		new_json_file(main_json, "users")
+		new_json_file(main_json)
 		if os.stat(main_json).st_size == 0:
-			new_json_objects(main_json, "users")
+			new_json_objects(main_json, "users", "role_ids")
 
 	#* Load initial users.json
 	with open(main_json) as f:
@@ -222,7 +235,6 @@ def new_levels(starting_xp: int, level_factor: int, total_levels: int):
 
 	# While i <= total_levels, create a new level object for each level 0 - i and calculate each variable as needed
 	while i < total_levels:
-		p_level = new_data["level"]
 		n_level = new_data["level"] + 1
 
 		p_level_xp = new_data["level_xp"]

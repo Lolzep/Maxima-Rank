@@ -21,18 +21,21 @@ bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 82866777560
 #? Command ideas!
 
 #? Small projects
-#* [DONE] def about(): Show information about the bot (Defintion, Github commits and changes, Contributors) in an embed
+#* [DONE] async def about(): Show information about the bot (Defintion, Github commits and changes, Contributors) in an embed
 #* [DONE] def restart(): Put restart_bot def in a command
-#* [DONE] def help(): Shows all commands and generic help info in an embed
-#* [DONE] def booster(): Retrieve all boosters in a discord server from json, give specified "special_xp" to each booster
+#* [DONE] async def help(): Shows all commands and generic help info in an embed
+#* [DONE] async def booster(): Retrieve all boosters in a discord server from json, give specified "special_xp" to each booster
 # "special_xp" also gets added to "xp"!
-#* def invite(ctx, name): Increase "invites" count by 1 for specified user and give specified xp
+#* async def new_invite(ctx, name): Increase "invites" count by 1 for specified user and give specified xp
+#* async def set_role_ids(): Set the role_ids in the Users.json role_ids section so that the correct roles are given when roles need to be updated
 
 #? Large projects 
-#* def set_xp(): Set all xp values in a slash command embed (admin panel)
-#* def top_rankers(): Leaderboard of activity, similar to ActivityRank's style
 #* [DONE] def my_rank(ctx): Shows your ranking and detailed statistics about yourself in an embed
 #* [Maybe not needed?] def my_progress(ctx): Shows progress to next level and role in an embed
+#* [DONE] In level_update function: Detect when a user surpasses a new rank
+#* async def set_xp(): Set all xp values in a slash command embed (admin panel)
+#* async def top_rankers(): Leaderboard of activity, similar to ActivityRank's style
+#* def update_roles(): Using role_ids from users.json and on_message event, update the roles in the server on rank change
 
 @bot.event
 async def on_ready():
@@ -88,12 +91,16 @@ async def on_voice_state_update(member, before, after):
 			print("out_of_channel")
 			break
 
+# TODO: Make it so it doesn't check for premium on EVERY member update, only when premium for a member changes
+# TODO: Make sure this well... works? No way to test boosted members (without paying ofc)
 @bot.event
 async def on_member_update(before, after):
 	if before.premium_since is None and after.premium_since is not None:
 		update_user(before.guild, before.id, before.name, "is_booster", True, 0, 1000, 1, True)
-	else:
+		print("booster!")
+	elif before.premium_since is not None and after.premium_since is None:
 		update_user(before.guild, before.id, before.name, "is_booster", True, 0, 0, 0, False)
+		print("no longer a booster...")
 
 @bot.slash_command(description="Sends information about the bot")
 async def about(ctx):

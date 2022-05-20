@@ -40,6 +40,7 @@ class infoEmbeds:
 
 		adminhelpEMBED.add_field(name="/adminhelp", value="You are here! Admin commands for Maxima Rank", inline=False)
 		adminhelpEMBED.add_field(name="/award_xp [user] [amount]", value="Gives a specified [user] [amount] xp", inline=False)
+		adminhelpEMBED.add_field(name="/booster_xp [amount]", value="Gives [amount] xp to all boosted users", inline=False)
 
 		return adminhelpEMBED, adminhelpFILE
 	
