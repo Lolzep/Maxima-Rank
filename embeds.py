@@ -120,6 +120,9 @@ class infoEmbeds:
 	def leaderboardEMBED(guild_id):
 		pass
 
+	def rankupEMBED():
+		pass
+
 
 
 

@@ -173,33 +173,27 @@ def level_barriers(starting_xp: int, level_factor: int, total_levels: int, make_
 
 		n = i + 1
 		role_title = ""
+
 		if 0 <= n <= 2:
 			role_title = "Newbie"
-			role_barriers[role_title] = total_xp
 		elif 3 <= n <= 4:
 			role_title = "Bronze"
-			role_barriers[role_title] = total_xp
 		elif 5 <= n <= 9:
 			role_title = "Silver"
-			role_barriers[role_title] = total_xp
 		elif 10 <= n <= 24:
 			role_title = "Gold"
-			role_barriers[role_title] = total_xp
 		elif 25 <= n <= 49:
 			role_title = "Platinum"
-			role_barriers[role_title] = total_xp
 		elif 50 <= n <= 99:
 			role_title = "Diamond"
-			role_barriers[role_title] = total_xp
 		elif 100 <= n <= 149:
 			role_title = "Master"
-			role_barriers[role_title] = total_xp
 		elif 150 <= n <= 199:
 			role_title = "Grandmaster"
-			role_barriers[role_title] = total_xp
 		elif n >= 200:
 			role_title = "Exalted"
-			role_barriers[role_title] = total_xp
+		
+		role_barriers[role_title] = total_xp
 
 		new_data = {"level": n_level, "level_xp": level_xp, "total_xp": total_xp, "role_id": next_id, "role_title": role_title}
 
