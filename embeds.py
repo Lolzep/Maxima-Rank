@@ -12,9 +12,9 @@ class infoEmbeds:
 	by the bot and allows them to be easily called and sent
 	in the main.py file while keeping them separate from the
 	main.py file'''
-	def aboutEMBED():
+	async def aboutEMBED():
 		'''Used for the /about command'''
-		aboutEMBED, aboutFILE = templateEmbed("about")
+		aboutEMBED, aboutFILE = await templateEmbed("about")
 
 		aboutEMBED.add_field(
 			name="Maxima Rank", 
@@ -39,9 +39,9 @@ class infoEmbeds:
 
 		return aboutEMBED, aboutFILE
 	
-	def helpEMBED():
+	async def helpEMBED():
 		'''Used for the /help command'''
-		helpEMBED, helpFILE = templateEmbed("help", "Maxima Rank Help")
+		helpEMBED, helpFILE = await templateEmbed("help", "Maxima Rank Help")
 
 		helpEMBED.add_field(
 			name="/help", 
@@ -66,9 +66,9 @@ class infoEmbeds:
 
 		return helpEMBED, helpFILE
 
-	def adminhelpEMBED():
+	async def adminhelpEMBED():
 		'''Used for the /adminhelp command'''
-		adminhelpEMBED, adminhelpFILE = templateEmbed("help", "Maxima Rank Admin Help")
+		adminhelpEMBED, adminhelpFILE = await templateEmbed("help", "Maxima Rank Admin Help")
 
 		adminhelpEMBED.add_field(
 			name="/adminhelp", 
@@ -88,12 +88,12 @@ class infoEmbeds:
 
 		return adminhelpEMBED, adminhelpFILE
 	
-	def myrankEMBED(guild_id, main_id, main_user, avatar_id, emoji : list):
+	async def myrankEMBED(guild_id, main_id, main_user, avatar_id, emoji : list):
 		'''Used for the /myrank command'''
 		#* Some extras here, need to get values of the user using a separate function (my_rank_embed_values)
 		#* This function also returns the emoji ranks to be shown next to the values in emoji_object
-		field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id = my_rank_embed_values(guild_id, main_id, False)
-		role_barriers = level_barriers(100, 20, 300, False)
+		field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id = await my_rank_embed_values(guild_id, main_id, False)
+		role_barriers = await level_barriers(100, 20, 300, False)
 		myrankFILE = discord.File(
 			f"Images/Ranks/{role_title}.png", 
 			filename="image.png"
@@ -156,13 +156,13 @@ class infoEmbeds:
 
 		return myrankEMBED, myrankFILE
 
-	def rankEMBED(guild_id, main_id, main_user, avatar_id, emoji : list):
+	async def rankEMBED(guild_id, main_id, main_user, avatar_id, emoji : list):
 		'''Used for the /rank command
 		Very similar to myrankEMBED'''
 		#* Some extras here, need to get values of the user using a separate function (my_rank_embed_values)
 		#* This function also returns the emoji ranks to be shown next to the values in emoji_object
-		field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id = my_rank_embed_values(guild_id, main_id, False)
-		role_barriers = level_barriers(100, 20, 300, False)
+		field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id = await my_rank_embed_values(guild_id, main_id, False)
+		role_barriers = await level_barriers(100, 20, 300, False)
 		rankFILE = discord.File(
 			f"Images/Ranks/{role_title}.png", 
 			filename="image.png"
@@ -225,10 +225,10 @@ class infoEmbeds:
 
 		return rankEMBED, rankFILE
 	
-	def leaderboardEMBED(guild_id):
+	async def leaderboardEMBED(guild_id):
 		pass
 
-	def rankupEMBED():
+	async def rankupEMBED():
 		pass
 
 
