@@ -33,6 +33,11 @@ def json_read(filename):
 		data = json.load(f)
 	return data
 
+# Dump data into the json
+def json_dump (filename, data):
+	with open(filename, "w") as f:
+		json.dump(data, f, indent=2)
+
 # Used to append new users into the users.json file
 def write_json(new_data, filename, name: str):
 	with open(filename, "r+") as f:
@@ -104,8 +109,7 @@ def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount
 			new_json_objects(main_json, "users", "role_ids")
 
 	#* Load initial users.json
-	with open(main_json) as f:
-		data = json.load(f)
+	data = json_read(main_json)
 
 	#* Get a list of all user ids
 	user_ids = []
@@ -121,9 +125,8 @@ def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount
 		user_ids.append(new_user["user_id"])
 		user_id_index = user_ids.index(main_id)
 		# Load the appended json, then find the user id with the index
-		with open(main_json) as f:
-			data = json.load(f)
-			user = data["users"][user_id_index]
+		data = json_read(main_json)
+		user = data["users"][user_id_index]
 	else:
 		user_id_index = user_ids.index(main_id)
 		user = data["users"][user_id_index]
@@ -145,8 +148,7 @@ def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount
 	# Return role changes and updates if True as well for embed to be sent if changed
 	# If not, return json data, and user object to continue operation
 	if dump_file == True:
-		with open(main_json, "w") as f:
-			json.dump(data, f, indent=2)
+		json_dump(main_json, data)
 		return role_changed, new_role
 	else:
 		return data, user, role_changed, new_role
@@ -225,9 +227,7 @@ def new_levels(starting_xp: int, level_factor: int, total_levels: int):
 	if os.path.exists("levels.json"):
 		os.remove("levels.json")
 
-	with open ("levels.json", "w") as f:
-		json.dump(level_template, f, indent=2)
-
+	json_dump ("levels.json", level_template)
 	write_json(new_data, "levels.json", "levels")
 
 	# While i <= total_levels, create a new level object for each level 0 - i and calculate each variable as needed
@@ -283,8 +283,7 @@ def templateEmbed(command : str, description=None):
 def my_rank_embed_values(guild_id, main_id, simple : bool):
 	#* Load initial json, find user who sent command
 	main_json = f"Data/{guild_id} Users.json"
-	with open(main_json) as f:
-		data = json.load(f)
+	data = json_read(main_json)
 
 	user_ids = []
 	for items in data["users"]:
@@ -362,8 +361,7 @@ def update_boosters(guild_id, xp):
 	#* Load initial jsons (User, levels)
 	count = 0
 	main_json = f"Data/{guild_id} Users.json"
-	with open(main_json) as f:
-		data = json.load(f)
+	data = json_read(main_json)
 	data_level = json_read("levels.json")
 
 	for item in data["users"]:
@@ -375,8 +373,7 @@ def update_boosters(guild_id, xp):
 			update_levels(item, data_level)
 
 	#* Update Users.json
-	with open(main_json, "w") as f:
-		json.dump(data, f, indent=2)
+	json_dump(main_json, data)
 
 	return count
 
