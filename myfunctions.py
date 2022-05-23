@@ -2,6 +2,7 @@ import json
 import os
 import sys
 import discord
+import random
 
 from operator import itemgetter
 
@@ -146,9 +147,9 @@ def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount
 	if dump_file == True:
 		with open(main_json, "w") as f:
 			json.dump(data, f, indent=2)
-		return role_changed, current_role, new_role
+		return role_changed, new_role
 	else:
-		return data, user;
+		return data, user, role_changed, new_role
 
 # Similar to new_levels
 # Using the same level_factor and total_levels args, makes a dict of level barriers for each rank
@@ -376,7 +377,6 @@ def update_boosters(guild_id, xp):
 	#* Update Users.json
 	with open(main_json, "w") as f:
 		json.dump(data, f, indent=2)
-	
 
 	return count
 
@@ -385,13 +385,42 @@ def update_boosters(guild_id, xp):
 # guild_id: guild id retrieved from discord api command
 # main_id: user id retrieved from discord api command
 # main_user: user name retrieved from discord api command
+# avatar_id: avatar image file retrieved from discord api command
 # From update_levels()
 # 	role_changed: If the role of the user changed when adding XP to the user, boolean
 # 	current_role: Role before rank change
 # 	new_role: Role after rank change
-def rank_check(guild_id, main_id, main_user, avatar_id, role_changed, current_role, new_role):
+def rank_check(guild_id, main_id, main_user, avatar_id, role_changed, new_role):
 	if role_changed is True:
-		rcEmbed = discord.Embed(color = discord.Color.purple(), description=main_user)
-		rcEmbed.set_author(name=f"{main_user} just advanced to {new_role} from {current_role}!")
+		q_quotes_raw = []
+		q_quotes = []
+		with open("Data\\rank_check_quotes.txt", "r") as f:
+			for line in f:
+				q_quotes_raw.append(line)
+		for quote in q_quotes_raw:
+			quote = quote[:-1]
+			q_quotes.append(quote)
+
+		ran_quote = q_quotes[random.randint(0, len(q_quotes)-1)]
+
+		rcEMBED = discord.Embed(
+			title=f"{main_user} just advanced to {new_role}!",
+			description=ran_quote,
+			color = discord.Color.purple()
+			)
+
+		rcEMBED.set_author(
+			name=main_user,
+			icon_url=avatar_id
+			)
+
+		rcFILE = discord.File(
+			f"Images/Ranks/{new_role}.png", 
+			filename="image.png")
+		rcEMBED.set_thumbnail(url="attachment://image.png")
+		
+		print(avatar_id)
+
+		return rcEMBED, rcFILE
 	else:
 		return

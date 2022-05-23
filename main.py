@@ -5,7 +5,7 @@ import asyncio
 from discord.commands import Option
 from discord.ext import commands
 from dotenv import load_dotenv
-from myfunctions import update_user, my_rank_embed_values, update_boosters
+from myfunctions import update_user, my_rank_embed_values, update_boosters, rank_check
 from embeds import *
 
 load_dotenv()
@@ -47,20 +47,36 @@ async def on_message(message):
 	if message.author.bot == True:
 		return
 
+	# Message counts
+	update_user(
+		message.guild, message.author.id, message.author.name, # retrieve values from discord api
+		"messages", # key value to change
+		True, 1, 5, 1 # attributes of XP
+		)
+
 	# Image counts
 	if message.attachments:
-		update_user(message.guild, message.author.id, message.author.name, "images", True, 1, 10, 1)
+		update_user(
+			message.guild, message.author.id, message.author.name, 
+			"images", 
+			True, 1, 10, 1
+			)
 	
 	# Embed counts
 	if message.embeds:
-		update_user(message.guild, message.author.id, message.author.name, "embeds", True, 1, 10, 1)
+		update_user(
+			message.guild, message.author.id, message.author.name, 
+			"embeds", 
+			True, 1, 10, 1
+			)
 
 	# Sticker counts
 	if message.stickers:
-		update_user(message.guild, message.author.id, message.author.name, "stickers", True, 1, 10, 1)
-
-	# Message counts
-	update_user(message.guild, message.author.id, message.author.name, "messages", True, 1, 5, 1)
+		update_user(
+			message.guild, message.author.id, message.author.name, 
+			"stickers", 
+			True, 1, 10, 1
+			)
 
 	if message.content.startswith("$test"):
 		File = discord.File("Images/about.png")
@@ -69,8 +85,16 @@ async def on_message(message):
 @bot.event
 async def on_reaction_add(reaction, user):
 	# For reactions added and reactions recieved, add values and xp to respective user
-	update_user(user.guild ,user.id, user.name, "reactions_added", True, 1, 5, 1)
-	update_user(reaction.message.guild, reaction.message.author.id, reaction.message.author.name, "reactions_recieved", True, 1, 5, 1)
+	update_user(
+		user.guild, user.id, user.name, 
+		"reactions_added",
+		True, 1, 5, 1
+		)
+	update_user(
+		reaction.message.guild, reaction.message.author.id, reaction.message.author.name, 
+		"reactions_recieved",
+		True, 1, 5, 1
+		)
 
 
 @bot.event
@@ -87,7 +111,11 @@ async def on_voice_state_update(member, before, after):
 		# When the user leaves voice chat...
 		# Update users.json with update voice_minutes and xp
 		if before.channel is None and after.channel is None:
-			update_user(member.guild ,member.id, member.name, "voice_minutes", True, voice_minutes, 5, voice_minutes)
+			update_user(
+				member.guild , member.id, member.name, 
+				"voice_minutes", 
+				True, voice_minutes, 5, voice_minutes
+				)
 			print("out_of_channel")
 			break
 
@@ -96,10 +124,18 @@ async def on_voice_state_update(member, before, after):
 @bot.event
 async def on_member_update(before, after):
 	if before.premium_since is None and after.premium_since is not None:
-		update_user(before.guild, before.id, before.name, "is_booster", True, 0, 1000, 1, True)
+		update_user(
+			before.guild, before.id, before.name, 
+			"is_booster", 
+			True, 0, 1000, 1, True
+			)
 		print("booster!")
 	elif before.premium_since is not None and after.premium_since is None:
-		update_user(before.guild, before.id, before.name, "is_booster", True, 0, 0, 0, False)
+		update_user(
+			before.guild, before.id, before.name, 
+			"is_booster", 
+			True, 0, 0, 0, False
+			)
 		print("no longer a booster...")
 
 @bot.slash_command(description="Sends information about the bot")
@@ -121,7 +157,11 @@ async def adminhelp(ctx):
 @bot.slash_command(name="award_xp", description="Add XP to a specified user or users")
 @commands.has_permissions(manage_messages=True)
 async def award_xp(ctx: discord.ApplicationContext, member: Option(discord.Member, "Member to get id from", required = True), xp: Option(int, "Amount of XP to give to user", required=True)):
-	update_user(member.guild ,member.id, member.name, "special_xp", True, xp, xp, 1)
+	update_user(
+		member.guild ,member.id, member.name, 
+		"special_xp", 
+		True, xp, xp, 1
+		)
 	await ctx.respond(f"You gave {member.name} {xp} XP!")
 
 @bot.slash_command(name="booster_xp", description="Add XP to all boosted users")
