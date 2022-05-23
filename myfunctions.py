@@ -80,7 +80,7 @@ def update_levels(json_object_name : str, levels_json_data=None):
 #? ARGUMENTS
 # guild_id: guild id retrieved from discord api command
 # main_id: user id retrieved from discord api command
-# name: user name retrieved from discord api command
+# main_user: user name retrieved from discord api command
 # key: The key to modify in the user json object
 # dump_file:
 # 	True: Dump the current changes into X Users.json
@@ -138,13 +138,15 @@ def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount
 	# Based on amount_of_xp given
 	# Add xp to the specified user
 	user["xp"] += amount_of_xp * multiplier
-	update_levels(user)
+	role_changed, current_role, new_role = update_levels(user)
 
 	#* Using the dump_file boolean argument, should the current file be overwritten after completion?
-	# If not, return data, user; to continue operation
+	# Return role changes and updates if True as well for embed to be sent if changed
+	# If not, return json data, and user object to continue operation
 	if dump_file == True:
 		with open(main_json, "w") as f:
 			json.dump(data, f, indent=2)
+		return role_changed, current_role, new_role
 	else:
 		return data, user;
 
@@ -377,3 +379,19 @@ def update_boosters(guild_id, xp):
 	
 
 	return count
+
+# Return a rank update embed to send if the check for a role change is true
+#? ARGUMENTS
+# guild_id: guild id retrieved from discord api command
+# main_id: user id retrieved from discord api command
+# main_user: user name retrieved from discord api command
+# From update_levels()
+# 	role_changed: If the role of the user changed when adding XP to the user, boolean
+# 	current_role: Role before rank change
+# 	new_role: Role after rank change
+def rank_check(guild_id, main_id, main_user, avatar_id, role_changed, current_role, new_role):
+	if role_changed is True:
+		rcEmbed = discord.Embed(color = discord.Color.purple(), description=main_user)
+		rcEmbed.set_author(name=f"{main_user} just advanced to {new_role} from {current_role}!")
+	else:
+		return

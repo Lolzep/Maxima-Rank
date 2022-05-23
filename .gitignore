@@ -9,3 +9,4 @@ users_backup.json
 *.html
 /Images/fig1.png
 The Bunker Users.json
+setup.sql
