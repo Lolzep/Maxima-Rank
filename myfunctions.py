@@ -4,6 +4,7 @@ import sys
 import discord
 import random
 import aiofiles
+import asyncio
 
 from operator import itemgetter
 
@@ -47,16 +48,14 @@ async def write_json(new_data, filename, name: str):
 		await f.seek(0)
 		await f.write(json.dumps(file_data, indent=2))
 
-# Used to update the levels, ranks, and roles  of users after an xp change
+# Used to update the levels, ranks, and roles of users after an xp change
 #? ARGUMENTS
 # json_object_name: Name of the json user objects to change (ex. reading from users.json as data, user = data["users"], this arg is user)
 # levels_json_data: The variable name of the loaded json data of "levels.json", by default this is none
 # 	In loops, use this argument to avoid so many i/o operations
-async def update_levels(json_object_name : str, levels_json_data=None):
+async def update_levels(json_object_name : str):
 	#* Get levels.json data
-	data_level = levels_json_data
-	if levels_json_data is None:
-		data_level = await json_read("levels.json")
+	data_level = await json_read("levels.json")
 
 	#* Variables we need from levels.json
 	current_level = json_object_name["level"]
@@ -81,7 +80,7 @@ async def update_levels(json_object_name : str, levels_json_data=None):
 		print(f"User went from {current_role} to {new_role}!")
 		role_changed = True
 	
-	return role_changed, current_role, new_role
+	return role_changed, new_role
 
 # Updates the user objects for the specified user in users.json file and writes new ones if not found
 #? ARGUMENTS
@@ -97,21 +96,34 @@ async def update_levels(json_object_name : str, levels_json_data=None):
 # multiplier: ...multiplied by this value (useful for adding correct xp for >1 key value)
 # premium: A boolean, used in on_member_update to know if a user is boosting the server or not (optional)
 async def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount_to_add: int, amount_of_xp: int, multiplier: int, premium=None):
-	template = {"user_id": main_id, "name": main_user, "xp": 0, "level": 0, "role_id": 0, "messages": 0, "reactions_added": 0, "reactions_recieved": 0, "stickers": 0, "images": 0, "embeds": 0, "voice_minutes":0, "invites":0, "special_xp":0, "is_booster":False}
+	template = {
+		"user_id": main_id, 
+		"name": main_user, 
+		"xp": 0, 
+		"level": 0, 
+		"role_id": 0, 
+		"messages": 0, 
+		"reactions_added": 0, 
+		"reactions_recieved": 0, 
+		"stickers": 0, 
+		"images": 0, 
+		"embeds": 0, 
+		"voice_minutes": 0, 
+		"invites": 0, 
+		"special_xp": 0, 
+		"is_booster": False, 
+		"new_rank": False
+		}
 	main_json = f"Data/{guild_id} Users.json"
 
 	#* Check if missing or empty, if so, create new file and/or run new_json
 	try:
 		if os.stat(main_json).st_size == 0:
 			await new_json_objects(main_json, "users", "role_ids")
-			# await json_dump(main_json, backbone)
-			# await new_json_file(main_json)
 	except FileNotFoundError:
 		await new_json_file(main_json)
 		if os.stat(main_json).st_size == 0:
 			await new_json_objects(main_json, "users", "role_ids")
-			# await json_dump(main_json, backbone)
-			# await new_json_file(main_json)
 
 	#* Load initial users.json
 	data = await json_read(main_json)
@@ -146,17 +158,17 @@ async def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, 
 	#* XP Block
 	# Based on amount_of_xp given
 	# Add xp to the specified user
+	#! Ranks are updated in main.py with rank_check
 	user["xp"] += amount_of_xp * multiplier
-	role_changed, current_role, new_role = await update_levels(user)
 
 	#* Using the dump_file boolean argument, should the current file be overwritten after completion?
 	# Return role changes and updates if True as well for embed to be sent if changed
 	# If not, return json data, and user object to continue operation
 	if dump_file == True:
 		await json_dump(main_json, data)
-		return role_changed, new_role
+		return
 	else:
-		return data, user, role_changed, new_role
+		return data, user
 
 # Similar to new_levels
 # Using the same level_factor and total_levels args, makes a dict of level barriers for each rank
@@ -168,9 +180,25 @@ async def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, 
 async def level_barriers(starting_xp: int, level_factor: int, total_levels: int, make_json: bool):
 	#* Create new levels key and a level object template starting at 0 for all
 	i = 0
-	new_data = {"level": 0, "level_xp": starting_xp, "total_xp": starting_xp, "role_id": 0, "role_title": "Newbie"}
+	new_data = {
+		"level": 0, 
+		"level_xp": starting_xp, 
+		"total_xp": starting_xp, 
+		"role_id": 0, 
+		"role_title": "Newbie"
+		}
 
-	role_barriers = {"Newbie": 0, "Bronze": 0, "Silver": 0, "Gold": 0, "Platinum": 0, "Diamond": 0, "Master": 0, "Grandmaster": 0, "Exalted": 0}
+	role_barriers = {
+		"Newbie": 0, 
+		"Bronze": 0, 
+		"Silver": 0, 
+		"Gold": 0, 
+		"Platinum": 0, 
+		"Diamond": 0, 
+		"Master": 0, 
+		"Grandmaster": 0, 
+		"Exalted": 0
+		}
 
 	#* For all levels 1 - i, update the key:value pairs until max is reached then move to next pair
 	# TODO: Implement this in a better way that makes it easier to update
@@ -205,7 +233,13 @@ async def level_barriers(starting_xp: int, level_factor: int, total_levels: int,
 		
 		role_barriers[role_title] = total_xp
 
-		new_data = {"level": n_level, "level_xp": level_xp, "total_xp": total_xp, "role_id": next_id, "role_title": role_title}
+		new_data = {
+			"level": n_level, 
+			"level_xp": level_xp, 
+			"total_xp": total_xp, 
+			"role_id": next_id, 
+			"role_title": role_title
+			}
 
 		if make_json == True:
 			await write_json(new_data, "levels.json", "levels")
@@ -223,8 +257,16 @@ async def level_barriers(starting_xp: int, level_factor: int, total_levels: int,
 async def new_levels(starting_xp: int, level_factor: int, total_levels: int):
 	# Create new levels key and a level object template starting at 0 for all
 	i = 0
-	new_data = {"level": 0, "level_xp": starting_xp, "total_xp": starting_xp, "role_id": 0, "role_title": "Newbie"}
-	level_template = {"levels": []}
+	new_data = {
+		"level": 0, 
+		"level_xp": starting_xp, 
+		"total_xp": starting_xp, 
+		"role_id": 0, 
+		"role_title": "Newbie"
+		}
+	level_template = {
+		"levels": []
+		}
 	role_barriers = level_barriers(100, 20, 300, True)
 	role_title = ""
 
@@ -255,7 +297,13 @@ async def new_levels(starting_xp: int, level_factor: int, total_levels: int):
 				continue
 
 		# Create a new new_data object to then append and modify in the next loop
-		new_data = {"level": n_level, "level_xp": level_xp, "total_xp": total_xp, "role_id": next_id, "role_title": role_title}
+		new_data = {
+			"level": n_level, 
+			"level_xp": level_xp, 
+			"total_xp": total_xp, 
+			"role_id": next_id, 
+			"role_title": role_title
+			}
 
 		await write_json(new_data, "levels.json", "levels")
 		i += 1
@@ -315,7 +363,16 @@ async def my_rank_embed_values(guild_id, main_id, simple : bool):
 	progress_to_next = level_xp - (next_xp - xp)
 	
 	# Users.json values to be used in the embed field
-	types = ("messages", "reactions_added", "reactions_recieved", "stickers", "images", "embeds", "voice_minutes", "invites", "special_xp")
+	types = (
+		"messages", 
+		"reactions_added", 
+		"reactions_recieved", 
+		"stickers", "images", 
+		"embeds", 
+		"voice_minutes", 
+		"invites", 
+		"special_xp"
+		)
 	
 	# Dicts and lists to match json object keys to json object values and emoji ranks, as well as calculate max_values
 	amounts = {}
@@ -362,12 +419,11 @@ async def my_rank_embed_values(guild_id, main_id, simple : bool):
 #? ARGUMENTS
 # guild_id: guild id retrieved from discord api command
 # xp: Amount of xp retrieved from discord slash command argument
-async def update_boosters(guild_id, xp):
+async def update_boosters(guild_id, main_id, xp):
 	#* Load initial jsons (User, levels)
 	count = 0
 	main_json = f"Data/{guild_id} Users.json"
 	data = await json_read(main_json)
-	data_level = await json_read("levels.json")
 
 	for item in data["users"]:
 		if item["is_booster"] == True:
@@ -375,54 +431,36 @@ async def update_boosters(guild_id, xp):
 			item["special_xp"] += xp
 			item["xp"] += xp
 			count += 1
-			await update_levels(item, data_level)
+			role_changed, new_role = await update_levels(item)
+			#* Update Users.json
+			await asyncio.sleep(0.2)
+			await json_dump(main_json, data)
 
-	#* Update Users.json
-	await json_dump(main_json, data)
-
+	#* Return count of boosted users to display in embed
 	return count
 
-# Return a rank update embed to send if the check for a role change is true
+# Connected to update_levels
+# 
 #? ARGUMENTS
 # guild_id: guild id retrieved from discord api command
 # main_id: user id retrieved from discord api command
-# main_user: user name retrieved from discord api command
-# avatar_id: avatar image file retrieved from discord api command
-# From update_levels()
-# 	role_changed: If the role of the user changed when adding XP to the user, boolean
-# 	current_role: Role before rank change
-# 	new_role: Role after rank change
-async def rank_check(guild_id, main_id, main_user, avatar_id, role_changed, new_role):
-	if role_changed is True:
-		q_quotes_raw = []
-		q_quotes = []
-		with open("Data\\rank_check_quotes.txt", "r") as f:
-			for line in f:
-				q_quotes_raw.append(line)
-		for quote in q_quotes_raw:
-			quote = quote[:-1]
-			q_quotes.append(quote)
+# file_read:
+#	True: Fina user object manually
+#	False: Provide user object in argument
+async def rank_check(guild_id, main_id):
+	main_json = f"Data/{guild_id} Users.json"
+	#* Load initial users.json
+	data = await json_read(main_json)
 
-		ran_quote = q_quotes[random.randint(0, len(q_quotes)-1)]
+	#* Get a list of all user ids
+	user_ids = []
+	for items in data["users"]:
+		user_ids.append(items["user_id"])
 
-		rcEMBED = discord.Embed(
-			title=f"{main_user} just advanced to {new_role}!",
-			description=ran_quote,
-			color = discord.Color.purple()
-			)
+	user_id_index = user_ids.index(main_id)
+	user = data["users"][user_id_index]
 
-		rcEMBED.set_author(
-			name=main_user,
-			icon_url=avatar_id
-			)
+	role_changed, new_role = await update_levels(user)
+	await json_dump(main_json, data)
 
-		rcFILE = discord.File(
-			f"Images/Ranks/{new_role}.png", 
-			filename="image.png")
-		rcEMBED.set_thumbnail(url="attachment://image.png")
-		
-		print(avatar_id)
-
-		return rcEMBED, rcFILE
-	else:
-		return
+	return role_changed, new_role

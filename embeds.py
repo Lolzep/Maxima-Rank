@@ -1,6 +1,7 @@
 import discord
 import os
 import re
+import random
 
 from myfunctions import templateEmbed, my_rank_embed_values, level_barriers
 
@@ -224,6 +225,38 @@ class infoEmbeds:
 			)
 
 		return rankEMBED, rankFILE
+
+	async def rcEMBED(main_user, new_role):
+		q_quotes_raw = []
+		q_quotes = []
+		with open("Data\\rank_check_quotes.txt", "r") as f:
+			for line in f:
+				q_quotes_raw.append(line)
+		for quote in q_quotes_raw:
+			quote = quote[:-1]
+			q_quotes.append(quote)
+
+		ran_quote = q_quotes[random.randint(0, len(q_quotes)-1)]
+
+		rcEMBED = discord.Embed(
+			title=f"{main_user} just advanced to {new_role}!",
+			description=ran_quote,
+			color = discord.Color.purple()
+			)
+
+
+		rcFILE = discord.File(
+			f"Images/Ranks/{new_role}.png", 
+			filename="image.png")
+		rcEMBED.set_thumbnail(url="attachment://image.png")
+
+		rcEMBED.set_author(
+			name=main_user,
+			icon_url="attachment://image.png" # test value
+			)
+
+		return rcFILE, rcEMBED
+
 	
 	async def leaderboardEMBED(guild_id):
 		pass

@@ -5,7 +5,7 @@ import asyncio
 from discord.commands import Option
 from discord.ext import commands
 from dotenv import load_dotenv
-from myfunctions import update_user, my_rank_embed_values, update_boosters
+from myfunctions import update_user, my_rank_embed_values, update_boosters, rank_check
 from embeds import *
 
 load_dotenv()
@@ -17,6 +17,7 @@ intents.reactions = True
 intents.members = True
 
 bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 828667775605669888])
+DEFAULT_CHANNEL = 809550600920105009
 
 #? Command ideas!
 
@@ -36,6 +37,11 @@ bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 82866777560
 #* async def set_xp(): Set all xp values in a slash command embed (admin panel)
 #* async def top_rankers(): Leaderboard of activity, similar to ActivityRank's style
 #* def update_roles(): Using role_ids from users.json and on_message event, update the roles in the server on rank change
+
+# Used to send discord embeds in channels
+async def sendEmbed(api_call, embed_object, file_object):
+	embed_object, file_object = await infoEmbeds.embed_object()
+	await api_call(file=file_object, embed=embed_object)
 
 @bot.event
 async def on_ready():
@@ -78,27 +84,43 @@ async def on_message(message):
 			True, 1, 10, 1
 			)
 
+	# Check if user levels up to a new rank, send special embed if True
+	role_changed, new_role = await rank_check(message.guild, message.author.id)
+	if role_changed is True:
+		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(message.author.name, new_role)
+		await message.channel.send(file=rcFILE, embed=rcEMBED)
+
 	if message.content.startswith("$test"):
 		File = discord.File("Images/about.png")
 		await message.channel.send(File)
 
 @bot.event
 async def on_reaction_add(reaction, user):
-	# For reactions added and reactions recieved, add values and xp to respective user
+	# For reactions ADDED, add values and xp to respective user
 	await update_user(
 		user.guild, user.id, user.name, 
 		"reactions_added",
 		True, 1, 5, 1
 		)
+
+	# For reactions RECIEVED, add values and xp to respective user
 	await update_user(
 		reaction.message.guild, reaction.message.author.id, reaction.message.author.name, 
 		"reactions_recieved",
 		True, 1, 5, 1
 		)
 
+	# Check if user levels up to a new rank, send special embed if True
+	role_changed, new_role = await rank_check(reaction.message.guild, reaction.message.author.id)
+	if role_changed is True:
+		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(reaction.message.author.name, new_role)
+		await reaction.message.channel.send(file=rcFILE, embed=rcEMBED)
+		return
+		
 
 @bot.event
 async def on_voice_state_update(member, before, after):
+	channel = bot.get_channel(DEFAULT_CHANNEL)
 	# ActivityRank: Voiceminutes are 5 XP
 	voice_minutes = 0
 	# While the user is in a voice chat (including switching to different voice chats)...
@@ -109,13 +131,18 @@ async def on_voice_state_update(member, before, after):
 		voice_minutes += 1
 		print(f"Voice Minutes: {voice_minutes}")
 		# When the user leaves voice chat...
-		# Update users.json with update voice_minutes and xp
+		# Update users.json with updated voice_minutes, xp, and levels
 		if before.channel is None and after.channel is None:
 			await update_user(
 				member.guild , member.id, member.name, 
 				"voice_minutes", 
 				True, voice_minutes, 5, voice_minutes
 				)
+			role_changed, new_role = await rank_check(member.guild , member.id)
+			if role_changed is True:
+				rcFILE, rcEMBED = await infoEmbeds.rcEMBED(member.name, new_role)
+				await channel.send(file=rcFILE, embed=rcEMBED)
+				return
 			print("out_of_channel")
 			break
 
@@ -123,6 +150,7 @@ async def on_voice_state_update(member, before, after):
 # TODO: Make sure this well... works? No way to test boosted members (without paying ofc)
 @bot.event
 async def on_member_update(before, after):
+	channel = bot.get_channel(DEFAULT_CHANNEL)
 	if before.premium_since is None and after.premium_since is not None:
 		await update_user(
 			before.guild, before.id, before.name, 
@@ -137,6 +165,12 @@ async def on_member_update(before, after):
 			True, 0, 0, 0, False
 			)
 		print("no longer a booster...")
+	
+	role_changed, new_role = await rank_check(before.guild, before.id)
+	if role_changed is True:
+		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(before.name, new_role)
+		await channel.send(file=rcFILE, embed=rcEMBED)
+		return
 
 @bot.slash_command(description="Sends information about the bot")
 async def about(ctx):
@@ -157,12 +191,18 @@ async def adminhelp(ctx):
 @bot.slash_command(name="award_xp", description="Add XP to a specified user or users")
 @commands.has_permissions(manage_messages=True)
 async def award_xp(ctx: discord.ApplicationContext, member: Option(discord.Member, "Member to get id from", required = True), xp: Option(int, "Amount of XP to give to user", required=True)):
+	channel = bot.get_channel(DEFAULT_CHANNEL)
 	await update_user(
 		member.guild ,member.id, member.name, 
 		"special_xp", 
 		True, xp, xp, 1
 		)
 	await ctx.respond(f"You gave {member.name} {xp} XP!")
+	role_changed, new_role = await rank_check(member.guild , member.id)
+	if role_changed is True:
+		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(member.name, new_role)
+		await channel.send(file=rcFILE, embed=rcEMBED)
+		return
 
 @bot.slash_command(name="booster_xp", description="Add XP to all boosted users")
 @commands.has_permissions(manage_messages=True)
