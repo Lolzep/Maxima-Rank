@@ -165,6 +165,13 @@ async def on_member_update(before, after):
 			)
 		print("no longer a booster...")
 
+	#* Used to add a new user if they don't exist 
+	await update_user(
+		before.guild, before.id, before.name, 
+		"special_xp", 
+		True, 0, 0, 0
+	)
+
 	#* Send rank_update embed if rank changed
 	role_changed, new_role = await rank_check(before.guild, before.id)
 	if role_changed is True:
