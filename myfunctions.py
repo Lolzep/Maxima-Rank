@@ -111,8 +111,7 @@ async def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, 
 		"voice_minutes": 0, 
 		"invites": 0, 
 		"special_xp": 0, 
-		"is_booster": False, 
-		"new_rank": False
+		"is_booster": False
 		}
 	main_json = f"Data/{guild_id} Users.json"
 
@@ -425,6 +424,9 @@ async def update_boosters(guild_id, main_id, xp):
 	main_json = f"Data/{guild_id} Users.json"
 	data = await json_read(main_json)
 
+	rc_dict = {}
+	nr_list = []
+
 	for item in data["users"]:
 		if item["is_booster"] == True:
 			#* Add xp specified, increase levels, and increase count
@@ -432,15 +434,17 @@ async def update_boosters(guild_id, main_id, xp):
 			item["xp"] += xp
 			count += 1
 			role_changed, new_role = await update_levels(item)
-			#* Update Users.json
+			#* Update Users.json and append values to list
+			rc_dict[item["user_id"]] = role_changed
+			nr_list.append(new_role)
 			await asyncio.sleep(0.2)
 			await json_dump(main_json, data)
-
-	#* Return count of boosted users to display in embed
-	return count
+	
+	#* Return count and lists
+	return count, rc_dict, nr_list
 
 # Connected to update_levels
-# 
+# Adds ability to connect the updated levels/ranks to discord api
 #? ARGUMENTS
 # guild_id: guild id retrieved from discord api command
 # main_id: user id retrieved from discord api command
@@ -460,6 +464,7 @@ async def rank_check(guild_id, main_id):
 	user_id_index = user_ids.index(main_id)
 	user = data["users"][user_id_index]
 
+	#* Return the changed role and new role from update_levels and dump
 	role_changed, new_role = await update_levels(user)
 	await json_dump(main_json, data)
 

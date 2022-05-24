@@ -226,7 +226,7 @@ class infoEmbeds:
 
 		return rankEMBED, rankFILE
 
-	async def rcEMBED(main_user, new_role):
+	async def rcEMBED(main_user, author_id, new_role):
 		q_quotes_raw = []
 		q_quotes = []
 		with open("Data\\rank_check_quotes.txt", "r") as f:
@@ -252,7 +252,7 @@ class infoEmbeds:
 
 		rcEMBED.set_author(
 			name=main_user,
-			icon_url="attachment://image.png" # test value
+			icon_url=author_id
 			)
 
 		return rcFILE, rcEMBED
