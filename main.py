@@ -195,7 +195,7 @@ async def adminhelp(ctx):
 	adminhelpEMBED, adminhelpFILE = await infoEmbeds.adminhelpEMBED()
 	await ctx.respond(file=adminhelpFILE, embed=adminhelpEMBED)
 
-@bot.slash_command(name="award_xp", description="Add XP to a specified user or users")
+@bot.slash_command(name="award_xp", description="Add XP to a specified user or users for being such a good person")
 @commands.has_permissions(manage_messages=True)
 async def award_xp(ctx: discord.ApplicationContext, member: Option(discord.Member, "Member to get id from", required = True), xp: Option(int, "Amount of XP to give to user", required=True)):
 	await update_user(
@@ -204,6 +204,23 @@ async def award_xp(ctx: discord.ApplicationContext, member: Option(discord.Membe
 		True, xp, xp, 1
 		)
 	await ctx.respond(f"You gave {member.name} {xp} XP!")
+
+	#* Send rank_update embed if rank changed
+	role_changed, new_role = await rank_check(member.guild , member.id)
+	if role_changed is True:
+		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(member.name, member.display_avatar, new_role)
+		await member.guild.system_channel.send(file=rcFILE, embed=rcEMBED)
+		return
+
+@bot.slash_command(name="invite_xp", description="Increase invite count for a user and give a specified amount of XP for doing so")
+@commands.has_permissions(manage_messages=True)
+async def invite_xp(ctx: discord.ApplicationContext, member: Option(discord.Member, "Member to get id from", required = True), invite_count: Option(int, "Amount of invites the user gave", required=True), xp: Option(int, "Amount of XP to give for each invite", required=True)):
+	await update_user(
+		member.guild ,member.id, member.name, 
+		"invites", 
+		True, invite_count, xp, invite_count
+		)
+	await ctx.respond(f"You verifyed that {member.name} gave {invite_count} invite(s) and doing so increased their XP by {xp * invite_count}!")
 
 	#* Send rank_update embed if rank changed
 	role_changed, new_role = await rank_check(member.guild , member.id)
