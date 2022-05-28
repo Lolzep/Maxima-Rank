@@ -27,7 +27,6 @@ Run bot:</br>
 
 #### **TODO:**
 - **[In progress]** Change roles in a server depending on level of user 
-- **[In progress]** Create embeds that show users level, xp, message count, etc. 
 - **[In progress]** Create a leaderboard of all top users in the server that shows xp, level, messages, etc. 
 - Transfer over/export current ActivityRank levels to this bot (will need to be done manually but not too hard)
 - Special things for boosted members, such as extra xp
@@ -42,3 +41,4 @@ Run bot:</br>
 - Track voice call time in minutes
 - Track new things that ActivityRanker does not: Reaction counts, images/embeds sent counts
 - Send an embed using a command to show the current user's level and activity
+- Create embeds that show users level, xp, message count, etc. 
