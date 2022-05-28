@@ -197,7 +197,12 @@ async def adminhelp(ctx):
 
 @bot.slash_command(name="award_xp", description="Add XP to a specified user or users for being such a good person")
 @commands.has_permissions(manage_messages=True)
-async def award_xp(ctx: discord.ApplicationContext, member: Option(discord.Member, "Member to get id from", required = True), xp: Option(int, "Amount of XP to give to user", required=True)):
+async def award_xp(
+	ctx: discord.ApplicationContext, 
+	member: Option(discord.Member, "Member to get id from", required = True), 
+	xp: Option(int, "Amount of XP to give to user", required=True)
+	):
+
 	await update_user(
 		member.guild ,member.id, member.name, 
 		"special_xp", 
@@ -214,7 +219,13 @@ async def award_xp(ctx: discord.ApplicationContext, member: Option(discord.Membe
 
 @bot.slash_command(name="invite_xp", description="Increase invite count for a user and give a specified amount of XP for doing so")
 @commands.has_permissions(manage_messages=True)
-async def invite_xp(ctx: discord.ApplicationContext, member: Option(discord.Member, "Member to get id from", required = True), invite_count: Option(int, "Amount of invites the user gave", required=True), xp: Option(int, "Amount of XP to give for each invite", required=True)):
+async def invite_xp(
+	ctx: discord.ApplicationContext, 
+	member: Option(discord.Member, "Member to get id from", required = True), 
+	invite_count: Option(int, "Amount of invites the user gave", required=True), 
+	xp: Option(int, "Amount of XP to give for each invite", required=True)
+	):
+	
 	await update_user(
 		member.guild ,member.id, member.name, 
 		"invites", 
@@ -231,7 +242,12 @@ async def invite_xp(ctx: discord.ApplicationContext, member: Option(discord.Memb
 
 @bot.slash_command(name="booster_xp", description="Add XP to all boosted users")
 @commands.has_permissions(manage_messages=True)
-async def booster_xp(ctx: discord.ApplicationContext, xp: Option(int, "Amount of XP to give to boosted members", required=True)):
+async def booster_xp(
+	ctx: discord.ApplicationContext, 
+	xp: Option(int, "Amount of XP to give to boosted members", required=True)
+	):
+
+	#* Use the update_booster function to get a list of boosters and if their role changed or not due to XP increase
 	count, rc_dict, nr_list = await update_boosters(ctx.user.guild, ctx.user.id, xp)
 
 	#* For each user that is a booster AND their ranks updated as a result, send a rank_update embed
@@ -258,7 +274,11 @@ async def myrank(ctx):
 	await ctx.respond(file=myrankFILE, embed=myrankEMBED)
 
 @bot.slash_command(name="rank", description="Statisitcs about a specified user")
-async def rank(ctx: discord.ApplicationContext, member: Option(discord.Member, "Member to get id from", required = True)):
+async def rank(
+	ctx: discord.ApplicationContext, 
+	member: Option(discord.Member, "Member to get id from", required = True)
+	):
+	
 	emoji_object = await my_rank_embed_values(member.guild, member.id, True)
 	emoji = lambda item : discord.utils.get(bot.emojis, name=item)
 	in_embed = map(emoji, emoji_object)
