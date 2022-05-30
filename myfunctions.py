@@ -469,3 +469,11 @@ async def rank_check(guild_id, main_id):
 	await json_dump(main_json, data)
 
 	return role_changed, new_role
+
+async def sort_leaderboard(guild_id):
+	# get dictionary of {user_ids: xp}
+	# sort dictionary by amount of xp
+	#	use: {k: v for k, v in sorted(x.items(), key=lambda item: item[1])}
+	# return the sorted users with various tracked data associated with them
+	#	make a list of tuples [{user_id, xp, messages, ...}, ...]
+	# use this returned list to make an embed that has leaderboard for current guild
