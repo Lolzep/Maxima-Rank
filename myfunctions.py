@@ -470,24 +470,39 @@ async def rank_check(guild_id, main_id):
 
 	return role_changed, new_role
 
+# Sort the server leaderboard based on XP of each user
+#? ARGUMENTS
+# guild_id: guild id retrieved from discord api command
 async def sort_leaderboard(guild_id):
 	main_json = f"Data/{guild_id} Users.json"
 	data = await json_read(main_json)
-	users = {}
 	
+	i_users = []
 	for user in data["users"]:
-		users[user["user_id"]] = user["xp"]
+		i_tuple = (
+			user["user_id"], 
+			user["name"], 
+			user["xp"], 
+			user["level"], 
+			user["messages"], 
+			user["reactions_added"] + user["reactions_recieved"] + user["stickers"] + user["images"] + user["embeds"],
+			user["voice_minutes"],
+			user["invites"],
+			user["special_xp"],
+			user["is_booster"])
+		i_users.append(i_tuple)
 	
-	s_users = {k: v for k, v in sorted(users.items(), key=lambda item: item[1], reverse=True)}
+	#* Bubble sort
+	length = len(i_users)
+	# How many users have already been sorted
+	for user in range(0, length):
+		# For every user not sorted yet, compare with next user in list
+		for n_user in range(0, length-user-1):
+			# If next user in list has less XP, then flip the two user positions
+			if i_users[n_user][2] < i_users[n_user + 1][2]:
+				temp = i_users[n_user]
+				i_users[n_user] = i_users[n_user + 1]
+				i_users[n_user + 1] = temp
 	
-	print(s_users)
-
-	# get dictionary of {user_ids: xp}
-	# sort dictionary by amount of xp
-	#	use: {k: v for k, v in sorted(x.items(), key=lambda item: item[1])}
-	# return the sorted users with various tracked data associated with them
-	#	make a list of tuples [(user_id, xp, messages, ...), ...]
-	# use this returned list to make an embed that has leaderboard for current guild
-	pass
-
-asyncio.run(sort_leaderboard("The Bunker"))
+	# Return sorted list of tuples to be used in leaderboard embed
+	return i_users
