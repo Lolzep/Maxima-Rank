@@ -471,9 +471,23 @@ async def rank_check(guild_id, main_id):
 	return role_changed, new_role
 
 async def sort_leaderboard(guild_id):
+	main_json = f"Data/{guild_id} Users.json"
+	data = await json_read(main_json)
+	users = {}
+	
+	for user in data["users"]:
+		users[user["user_id"]] = user["xp"]
+	
+	s_users = {k: v for k, v in sorted(users.items(), key=lambda item: item[1], reverse=True)}
+	
+	print(s_users)
+
 	# get dictionary of {user_ids: xp}
 	# sort dictionary by amount of xp
 	#	use: {k: v for k, v in sorted(x.items(), key=lambda item: item[1])}
 	# return the sorted users with various tracked data associated with them
-	#	make a list of tuples [{user_id, xp, messages, ...}, ...]
+	#	make a list of tuples [(user_id, xp, messages, ...), ...]
 	# use this returned list to make an embed that has leaderboard for current guild
+	pass
+
+asyncio.run(sort_leaderboard("The Bunker"))
