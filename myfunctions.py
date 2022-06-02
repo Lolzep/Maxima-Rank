@@ -452,8 +452,8 @@ async def update_boosters(guild_id, main_id, xp):
 #	True: Fina user object manually
 #	False: Provide user object in argument
 async def rank_check(guild_id, main_id):
-	main_json = f"Data/{guild_id} Users.json"
 	#* Load initial users.json
+	main_json = f"Data/{guild_id} Users.json"
 	data = await json_read(main_json)
 
 	#* Get a list of all user ids
@@ -474,9 +474,11 @@ async def rank_check(guild_id, main_id):
 #? ARGUMENTS
 # guild_id: guild id retrieved from discord api command
 async def sort_leaderboard(guild_id):
+	#* Load initial users.json
 	main_json = f"Data/{guild_id} Users.json"
 	data = await json_read(main_json)
 	
+	#* Create a list of tuples where each tuple is a user and the list contains all users
 	i_users = []
 	for user in data["users"]:
 		i_tuple = (
@@ -492,7 +494,7 @@ async def sort_leaderboard(guild_id):
 			user["is_booster"])
 		i_users.append(i_tuple)
 	
-	#* Bubble sort
+	#* Bubble sort the users by XP
 	length = len(i_users)
 	# How many users have already been sorted
 	for user in range(0, length):
@@ -504,5 +506,5 @@ async def sort_leaderboard(guild_id):
 				i_users[n_user] = i_users[n_user + 1]
 				i_users[n_user + 1] = temp
 	
-	# Return sorted list of tuples to be used in leaderboard embed
+	#* Return sorted list of tuples to be used in leaderboard embed
 	return i_users, length

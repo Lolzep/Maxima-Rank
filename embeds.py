@@ -16,8 +16,10 @@ class infoEmbeds:
 	main.py file'''
 	async def aboutEMBED():
 		'''Used for the /about command'''
+		#* Since simple embed, use templateEmbed
 		aboutEMBED, aboutFILE = await templateEmbed("about")
 
+		#* Embed fields
 		aboutEMBED.add_field(
 			name="Maxima Rank", 
 			value="An activity tracker for Discord for tracking messages, time in voice, etc. and using that for levels for rewarding the most active users in a Discord", 
@@ -43,8 +45,10 @@ class infoEmbeds:
 	
 	async def helpEMBED():
 		'''Used for the /help command'''
+		#* Since simple embed, use templateEmbed
 		helpEMBED, helpFILE = await templateEmbed("help", "Maxima Rank Help")
 
+		#* Embed fields
 		helpEMBED.add_field(
 			name="/help", 
 			value="You are here! Commands for Maxima Rank", 
@@ -65,13 +69,20 @@ class infoEmbeds:
 			value="Statistics about a specified user", 
 			inline=False
 			)
+		helpEMBED.add_field(
+			name="/leaderboard", 
+			value="Activity leaderboard for the server", 
+			inline=False
+			)
 
 		return helpEMBED, helpFILE
 
 	async def adminhelpEMBED():
 		'''Used for the /adminhelp command'''
+		#* Since simple embed, use templateEmbed
 		adminhelpEMBED, adminhelpFILE = await templateEmbed("help", "Maxima Rank Admin Help")
 
+		#* Embed fields
 		adminhelpEMBED.add_field(
 			name="/adminhelp", 
 			value="You are here! Admin commands for Maxima Rank", 
@@ -85,6 +96,16 @@ class infoEmbeds:
 		adminhelpEMBED.add_field(
 			name="/booster_xp [amount]", 
 			value="Gives [amount] xp to all boosted users", 
+			inline=False
+			)
+		adminhelpEMBED.add_field(
+			name="/invite_xp [member] [invite_count] [xp]", 
+			value="Increase invites of [member] by [invite_count] and give [xp] for each invite", 
+			inline=False
+			)
+		adminhelpEMBED.add_field(
+			name="/import_channel", 
+			value="In the channel this command is used, import activity to Maxima Rank", 
 			inline=False
 			)
 
@@ -112,7 +133,8 @@ class infoEmbeds:
 		percent_xp = 100 * progress_to_next / level_xp
 		percent_xp = "%.1f" % percent_xp
 
-		#* If role is max role (Exalted), show easter egg text
+		#* Embed and embed fields
+		# If role is max role (Exalted), show easter egg text
 		if role_title != "Exalted":
 			myrankEMBED = discord.Embed(
 				title=f"You are {role_title} Rank!", 
@@ -125,8 +147,6 @@ class infoEmbeds:
 				description=f"You are max rank! Now go outside.", 
 				color=discord.Color.purple()
 				)
-		
-		#* Embed fields
 		myrankEMBED.set_author(
 			name=main_user, 
 			icon_url="attachment://image.png"
@@ -134,7 +154,8 @@ class infoEmbeds:
 		myrankEMBED.set_thumbnail(
 			url=avatar_id
 			)
-
+		
+		#* Embed fields
 		myrankEMBED.add_field(
 			name="Level", 
 			value=f"{level}", 
@@ -181,7 +202,8 @@ class infoEmbeds:
 		percent_xp = 100 * progress_to_next / level_xp
 		percent_xp = "%.1f" % percent_xp
 
-		#* If role is max role (Exalted), show easter egg text
+		#* Embed and embed fields
+		# If role is max role (Exalted), show easter egg text
 		if role_title != "Exalted":
 			rankEMBED = discord.Embed(
 				title=f"{main_user} is {role_title} Rank!", 
@@ -194,8 +216,6 @@ class infoEmbeds:
 				description=f"You are max rank! Now go outside.", 
 				color=discord.Color.purple()
 				)
-		
-		#* Embed fields
 		rankEMBED.set_author(
 			name=main_user, 
 			icon_url="attachment://image.png"
@@ -203,7 +223,8 @@ class infoEmbeds:
 		rankEMBED.set_thumbnail(
 			url=avatar_id
 			)
-
+		
+		#* Embed fields
 		rankEMBED.add_field(
 			name="Level", 
 			value=f"{level}", 
@@ -230,6 +251,8 @@ class infoEmbeds:
 	async def rcEMBED(main_user, author_id, new_role):
 		'''Appears when a user levels up to a new rank
 		This is detected using rank_check and update_levels in myfunctions'''
+
+		#* This section picks a random quote from a txt file to display in desc. of embed
 		q_quotes_raw = []
 		q_quotes = []
 		with open("Data\\rank_check_quotes.txt", "r") as f:
@@ -241,12 +264,12 @@ class infoEmbeds:
 
 		ran_quote = q_quotes[random.randint(0, len(q_quotes)-1)]
 
+		#* Embed and embed fields
 		rcEMBED = discord.Embed(
 			title=f"{main_user} just advanced to {new_role}!",
 			description=ran_quote,
 			color = discord.Color.purple()
 			)
-
 
 		rcFILE = discord.File(
 			f"Images/Ranks/{new_role}.png", 
@@ -302,10 +325,6 @@ class infoEmbeds:
 				i += 1			
 
 		return lbEMBED
-
-
-	async def rankupEMBED():
-		pass
 
 
 

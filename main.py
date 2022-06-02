@@ -1,6 +1,7 @@
 import discord
 import os
 import asyncio
+import json
 
 from discord.commands import Option
 from discord.ext import commands, pages
@@ -15,6 +16,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.reactions = True
 intents.members = True
+intents.messages = True
 
 bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 828667775605669888])
 
@@ -297,40 +299,60 @@ async def rank(
 	rankEMBED, rankFILE = await infoEmbeds.rankEMBED(member.guild, member.id, member.display_name, member.display_avatar, in_embed)
 	await ctx.respond(file=rankFILE, embed=rankEMBED)
 
+@bot.slash_command(name="leaderboard", description="Activity leaderboard for the server")
+async def leaderboard(
+	ctx: discord.ApplicationContext
+):
+	#* starting_rank and ending_rank indicate how many users are on each page of the leaderboard embed
+	starting_rank = 1
+	ending_rank = 10
+	ranks_per_page = ending_rank # Keeps a constant ending_rank
+
+	#* Get the number of pages that need to be made based on user count and users/page
+	num_pages = await infoEmbeds.lbEMBED(
+		ctx.guild, 
+		ctx.guild.icon.url, 
+		starting_rank, 
+		ending_rank, 
+		True
+		)
+
+	#* Create a new leaderboard embed page based on above values, append to a list of embeds
+	i = 1
+	embeds = []
+	while i <= num_pages:
+		lbEMBED = await infoEmbeds.lbEMBED(
+			ctx.guild, 
+			ctx.guild.icon.url, 
+			starting_rank, 
+			ending_rank, 
+			False
+			)
+		embeds.append(lbEMBED)
+		i += 1
+		starting_rank += ranks_per_page
+		ending_rank += ranks_per_page
+
+	#* Using a "paginator" from discord commands, use the list of embeds to create pages of leaderboards from 1 - num_users
+	paginator = pages.Paginator(pages=embeds)
+	await paginator.respond(ctx.interaction)
+
 #! THE TEST ZONE (not final commands)
+
+@bot.slash_command(name="import_channel", description="In the channel this command is used, import activity to Maxima Rank")
+@commands.has_permissions(manage_messages=True)
+async def import_channel(
+	ctx: discord.ApplicationContext
+):
+	messages = await ctx.channel.history(limit=5).flatten()
+	# with open("test.json", "w+"):
+	# 	json.dumps(messages, indent=2)
+	for message in messages:
+		print(message.attachments)
+	await ctx.respond("Message history recieved")
 
 @bot.slash_command(name='greet', description='Greet someone!', guild_ids=[273567091368656898])
 async def greet(ctx, name: Option(str, "Enter your friend's name", required = False, default = '')):
     await ctx.respond(f'Hello {name}!')
 
-@bot.slash_command(name="leaderboard", description="Activity leaderboard for the server")
-async def leaderboard(
-	ctx: discord.ApplicationContext
-):
-
-	starting_rank = 1
-	ending_rank = 2
-	ranks_per_page = ending_rank
-
-	num_pages = await infoEmbeds.lbEMBED(ctx.guild, ctx.guild.icon.url, starting_rank, ending_rank, True)
-	print(num_pages)
-
-	i = 1
-	embeds = []
-	while i <= num_pages:
-		lbEMBED = await infoEmbeds.lbEMBED(ctx.guild, ctx.guild.icon.url, starting_rank, ending_rank, False)
-		embeds.append(lbEMBED)
-		i += 1
-		starting_rank += ranks_per_page
-		ending_rank += ranks_per_page
-		print(f"{starting_rank} to {ending_rank} embed made")
-	
-	print(embeds)
-
-	paginator = pages.Paginator(pages=embeds)
-	await paginator.respond(ctx.interaction)
-
-	# await ctx.respond(file=lbFILE, embed=lbEMBED, view=View())
-
 bot.run(TOKEN)
-
