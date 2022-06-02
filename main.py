@@ -46,10 +46,12 @@ async def sendEmbed(api_call, embed_object, file_object):
 	embed_object, file_object = await infoEmbeds.embed_object()
 	await api_call(file=file_object, embed=embed_object)
 
-class View(discord.ui.View): # Create a class called View that subclasses discord.ui.View
-    @discord.ui.button(label="Next page", style=discord.ButtonStyle.primary, emoji="➡️") # Create a button with the label "😎 Click me!" with color Blurple
-    async def button_callback(self, button, interaction):
-        await interaction.response.send_message("You clicked the button!") # Send a message when the button is clicked
+# Check if user levels up to a new rank, send special embed if True
+async def check_rank(discord_object_to_send, guild_id, user_id, user_name, user_avatar):
+	role_changed, new_role = await rank_check(guild_id, user_id)
+	if role_changed is True:
+		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(user_name, user_avatar, new_role)
+		await discord_object_to_send(file=rcFILE, embed=rcEMBED)
 
 @bot.event
 async def on_ready():
@@ -92,11 +94,14 @@ async def on_message(message):
 			True, 1, 10, 1
 			)
 
-	# Check if user levels up to a new rank, send special embed if True
-	role_changed, new_role = await rank_check(message.guild, message.author.id)
-	if role_changed is True:
-		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(message.author.name, message.author.display_avatar, new_role)
-		await message.channel.send(file=rcFILE, embed=rcEMBED)
+	# Send embed if user levels up
+	await check_rank(
+		message.channel.send, 
+		message.guild, 
+		message.author.id, 
+		message.author.name, 
+		message.author.display_avatar
+		)
 
 	if message.content.startswith("$test"):
 		File = discord.File("Images/about.png")
@@ -118,12 +123,14 @@ async def on_reaction_add(reaction, user):
 		True, 1, 5, 1
 		)
 
-	#* Send rank_update embed if rank changed
-	role_changed, new_role = await rank_check(reaction.message.guild, reaction.message.author.id)
-	if role_changed is True:
-		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(reaction.message.author.name, reaction.message.author.display_avatar, new_role)
-		await reaction.message.channel.send(file=rcFILE, embed=rcEMBED)
-		return
+	# Send embed if user levels up
+	await check_rank(
+		reaction.message.channel.send, 
+		reaction.message.guild, 
+		reaction.message.author.id, 
+		reaction.message.author.name, 
+		reaction.message.author.display_avatar
+		)
 		
 
 @bot.event
@@ -145,13 +152,16 @@ async def on_voice_state_update(member, before, after):
 				"voice_minutes", 
 				True, voice_minutes, 5, voice_minutes
 				)
-			role_changed, new_role = await rank_check(member.guild , member.id)
 			
-			#* Send rank_update embed if rank changed
-			if role_changed is True:
-				rcFILE, rcEMBED = await infoEmbeds.rcEMBED(member.name, member.display_avatar, new_role)
-				await member.guild.system_channel.send(file=rcFILE, embed=rcEMBED)
-				return
+			# Send embed if user levels up
+			await check_rank(
+				member.guild.system_channel.send, 
+				member.guild, 
+				member.id, 
+				member.name, 
+				member.display_avatar
+				)
+
 			print("out_of_channel")
 			break
 
@@ -174,19 +184,21 @@ async def on_member_update(before, after):
 			)
 		print("no longer a booster...")
 
-	#* Used to add a new user if they don't exist 
+	# Used to add a new user if they don't exist 
 	await update_user(
 		before.guild, before.id, before.name, 
 		"special_xp", 
 		True, 0, 0, 0
 	)
 
-	#* Send rank_update embed if rank changed
-	role_changed, new_role = await rank_check(before.guild, before.id)
-	if role_changed is True:
-		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(before.name, before.display_avatar, new_role)
-		await before.guild.system_channel.send(file=rcFILE, embed=rcEMBED)
-		return
+	# Send embed if user levels up
+	await check_rank(
+		before.guild.system_channel.send, 
+		before.guild, 
+		before.id, 
+		before.name, 
+		before.display_avatar
+		)
 
 @bot.slash_command(description="Sends information about the bot")
 async def about(ctx):
@@ -219,12 +231,14 @@ async def award_xp(
 		)
 	await ctx.respond(f"You gave {member.name} {xp} XP!")
 
-	#* Send rank_update embed if rank changed
-	role_changed, new_role = await rank_check(member.guild , member.id)
-	if role_changed is True:
-		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(member.name, member.display_avatar, new_role)
-		await member.guild.system_channel.send(file=rcFILE, embed=rcEMBED)
-		return
+	# Send embed if user levels up
+	await check_rank(
+		member.guild.system_channel.send, 
+		member.guild, 
+		member.id, 
+		member.name, 
+		member.display_avatar
+		)
 
 @bot.slash_command(name="invite_xp", description="Increase invite count for a user and give a specified amount of XP for doing so")
 @commands.has_permissions(manage_messages=True)
@@ -242,12 +256,14 @@ async def invite_xp(
 		)
 	await ctx.respond(f"You verifyed that {member.name} gave {invite_count} invite(s) and doing so increased their XP by {xp * invite_count}!")
 
-	#* Send rank_update embed if rank changed
-	role_changed, new_role = await rank_check(member.guild , member.id)
-	if role_changed is True:
-		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(member.name, member.display_avatar, new_role)
-		await member.guild.system_channel.send(file=rcFILE, embed=rcEMBED)
-		return
+	# Send embed if user levels up
+	await check_rank(
+		member.guild.system_channel.send, 
+		member.guild, 
+		member.id, 
+		member.name, 
+		member.display_avatar
+		)
 
 @bot.slash_command(name="booster_xp", description="Add XP to all boosted users")
 @commands.has_permissions(manage_messages=True)
@@ -350,54 +366,126 @@ async def import_channel(
 	# print(messages)
 	i = 0
 	await ctx.respond("Now starting message parsing...")
+	msg_dict = {}
+	att_dict = {}
+	emb_dict = {}
+	stk_dict = {}
 	async for message in ctx.history(limit=100000):
 		#* Same code from on_message, just does it for every message that exists in the channel
+		# TODO: Make the values update all at once instead of on each message
 		# Ignore bots
 		if message.author.bot == True:
 			i += 1
 			continue
 
 		# Message counts
-		await update_user(
-			message.guild, message.author.id, message.author.name, # retrieve values from discord api
-			"messages", # key value to change
-			True, 1, 5, 1 # attributes of XP
+		data, user = await update_user(
+			message.guild, message.author.id, message.author.name,
+			"messages",
+			False, 1, 5, 1
 			)
+		
+		if user["user_id"] not in msg_dict.keys():
+			msg_dict[user["user_id"]] = 1
+		else:
+			msg_dict[user["user_id"]] += 1
+
 		print(f"Increased message count, gave 5 XP to {message.author}")
 
 		# Image counts
 		if message.attachments != []:
-			await update_user(
+			data, user = await update_user(
 				message.guild, message.author.id, message.author.name, 
 				"images", 
-				True, 1, 10, 1
+				False, 1, 10, 1
 				)
+
+			if user["user_id"] not in att_dict.keys():
+				att_dict[user["user_id"]] = 1
+			else:
+				att_dict[user["user_id"]] += 1
+			
 			print(f"Increased image count, gave 10 XP to {message.author}")
 		
 		# Embed counts
 		if message.embeds != []:
-			await update_user(
+			data, user = await update_user(
 				message.guild, message.author.id, message.author.name, 
 				"embeds", 
-				True, 1, 10, 1
+				False, 1, 10, 1
 				)
+
+			if user["user_id"] not in emb_dict.keys():
+				emb_dict[user["user_id"]] = 1
+			else:
+				emb_dict[user["user_id"]] += 1
+
 			print(f"Increased embeds count, gave 10 XP to {message.author}")
 
 		# Sticker counts
 		if message.stickers != []:
-			await update_user(
+			data, user = await update_user(
 				message.guild, message.author.id, message.author.name, 
 				"stickers", 
-				True, 1, 10, 1
+				False, 1, 10, 1
 				)
-			print(f"Increased stickers count, gave 10 XP to {message.author}")
 
+			if user["user_id"] not in stk_dict.keys():
+				stk_dict[user["user_id"]] = 1
+			else:
+				stk_dict[user["user_id"]] += 1
+
+			print(f"Increased stickers count, gave 10 XP to {message.author}")
+			i += 1
+	
+	# Message counts
+	# TODO: Ok this works, now do it for every attribute
+	for users, messages in msg_dict.items():
+		member = ctx.guild.get_member(users)
+		await update_user(
+			member.guild, member.id, member.name,
+			"messages",
+			True, messages, 5, messages
+			)
 		# Check if user levels up to a new rank, send special embed if True
 		role_changed, new_role = await rank_check(message.guild, message.author.id)
 		if role_changed is True:
 			rcFILE, rcEMBED = await infoEmbeds.rcEMBED(message.author.name, message.author.display_avatar, new_role)
 			await message.channel.send(file=rcFILE, embed=rcEMBED)
-		i += 1
+
+	# Image counts
+	if message.attachments:
+		await update_user(
+			message.guild, message.author.id, message.author.name, 
+			"images", 
+			True, 1, 10, 1
+			)
+	
+	# Embed counts
+	if message.embeds:
+		await update_user(
+			message.guild, message.author.id, message.author.name, 
+			"embeds", 
+			True, 1, 10, 1
+			)
+
+	# Sticker counts
+	if message.stickers:
+		await update_user(
+			message.guild, message.author.id, message.author.name, 
+			"stickers", 
+			True, 1, 10, 1
+			)
+
+	# Check if user levels up to a new rank, send special embed if True
+	role_changed, new_role = await rank_check(message.guild, message.author.id)
+	if role_changed is True:
+		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(message.author.name, message.author.display_avatar, new_role)
+		await message.channel.send(file=rcFILE, embed=rcEMBED)
+	print(msg_dict)
+	print(att_dict)
+	print(emb_dict)
+	print(stk_dict)
 	e_time = time.time()
 	t_time = e_time - s_time
 	t_time = "{:.2f}".format(t_time)
