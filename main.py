@@ -3,7 +3,7 @@ import os
 import asyncio
 
 from discord.commands import Option
-from discord.ext import commands
+from discord.ext import commands, pages
 from dotenv import load_dotenv
 from myfunctions import update_user, my_rank_embed_values, update_boosters, rank_check
 from embeds import *
@@ -38,9 +38,15 @@ bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 82866777560
 #* def update_roles(): Using role_ids from users.json and on_message event, update the roles in the server on rank change
 
 # Used to send discord embeds in channels
+# TODO: Not implemented yet
 async def sendEmbed(api_call, embed_object, file_object):
 	embed_object, file_object = await infoEmbeds.embed_object()
 	await api_call(file=file_object, embed=embed_object)
+
+class View(discord.ui.View): # Create a class called View that subclasses discord.ui.View
+    @discord.ui.button(label="Next page", style=discord.ButtonStyle.primary, emoji="➡️") # Create a button with the label "😎 Click me!" with color Blurple
+    async def button_callback(self, button, interaction):
+        await interaction.response.send_message("You clicked the button!") # Send a message when the button is clicked
 
 @bot.event
 async def on_ready():
@@ -201,7 +207,7 @@ async def award_xp(
 	ctx: discord.ApplicationContext, 
 	member: Option(discord.Member, "Member to get id from", required = True), 
 	xp: Option(int, "Amount of XP to give to user", required=True)
-	):
+):
 
 	await update_user(
 		member.guild ,member.id, member.name, 
@@ -224,7 +230,7 @@ async def invite_xp(
 	member: Option(discord.Member, "Member to get id from", required = True), 
 	invite_count: Option(int, "Amount of invites the user gave", required=True), 
 	xp: Option(int, "Amount of XP to give for each invite", required=True)
-	):
+):
 	
 	await update_user(
 		member.guild ,member.id, member.name, 
@@ -245,7 +251,7 @@ async def invite_xp(
 async def booster_xp(
 	ctx: discord.ApplicationContext, 
 	xp: Option(int, "Amount of XP to give to boosted members", required=True)
-	):
+):
 
 	#* Use the update_booster function to get a list of boosters and if their role changed or not due to XP increase
 	count, rc_dict, nr_list = await update_boosters(ctx.user.guild, ctx.user.id, xp)
@@ -277,7 +283,7 @@ async def myrank(ctx):
 async def rank(
 	ctx: discord.ApplicationContext, 
 	member: Option(discord.Member, "Member to get id from", required = True)
-	):
+):
 	
 	emoji_object = await my_rank_embed_values(member.guild, member.id, True)
 	emoji = lambda item : discord.utils.get(bot.emojis, name=item)
@@ -296,6 +302,19 @@ async def rank(
 @bot.slash_command(name='greet', description='Greet someone!', guild_ids=[273567091368656898])
 async def greet(ctx, name: Option(str, "Enter your friend's name", required = False, default = '')):
     await ctx.respond(f'Hello {name}!')
+
+@bot.slash_command(name="leaderboard", description="Activity leaderboard for the server")
+async def leaderboard(
+	ctx: discord.ApplicationContext
+):
+	lbFILE, lbEMBED = await infoEmbeds.lbEMBED(ctx.guild, ctx.guild.icon.url)
+
+	embeds = [lbEMBED, lbEMBED]
+
+	paginator = pages.Paginator(pages=embeds)
+	await paginator.respond(ctx.interaction)
+
+	# await ctx.respond(file=lbFILE, embed=lbEMBED, view=View())
 
 bot.run(TOKEN)
 

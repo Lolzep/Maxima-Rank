@@ -3,7 +3,7 @@ import os
 import re
 import random
 
-from myfunctions import templateEmbed, my_rank_embed_values, level_barriers
+from myfunctions import templateEmbed, my_rank_embed_values, level_barriers, sort_leaderboard
 
 VERSION = os.popen('git rev-parse HEAD').read()
 COMMIT_MESSAGE = os.popen('git show --pretty=format:%s -s HEAD').read()
@@ -227,6 +227,8 @@ class infoEmbeds:
 		return rankEMBED, rankFILE
 
 	async def rcEMBED(main_user, author_id, new_role):
+		'''Appears when a user levels up to a new rank
+		This is detected using rank_check and update_levels in myfunctions'''
 		q_quotes_raw = []
 		q_quotes = []
 		with open("Data\\rank_check_quotes.txt", "r") as f:
@@ -258,8 +260,39 @@ class infoEmbeds:
 		return rcFILE, rcEMBED
 
 	
-	async def leaderboardEMBED(guild_id):
-		pass
+	async def lbEMBED(guild_id, guild_img):
+		'''Used for the /leaderboard command'''
+		users = await sort_leaderboard(guild_id)
+		
+		lbFILE = discord.File(
+			f"Images/leaderboard.png", 
+			filename="image.png"
+			)
+		lbEMBED = discord.Embed(
+			title=f"Leaderboard of activity for {guild_id}",
+			description="Gamers",
+			color = discord.Color.purple()
+			)
+		lbEMBED.set_author(
+			name=guild_id, 
+			icon_url=guild_img
+			)
+		lbEMBED.set_thumbnail(
+			url="attachment://image.png"
+			)
+
+		#* Embed fields
+		i = 1
+		for user in users:
+			lbEMBED.add_field(
+				name=f"#{i}: {user[1]}", 
+				value=f"{user[2]} XP", 
+				inline=False
+				)
+			i += 1
+
+		return lbFILE, lbEMBED
+
 
 	async def rankupEMBED():
 		pass
