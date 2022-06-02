@@ -505,4 +505,4 @@ async def sort_leaderboard(guild_id):
 				i_users[n_user + 1] = temp
 	
 	# Return sorted list of tuples to be used in leaderboard embed
-	return i_users
+	return i_users, length

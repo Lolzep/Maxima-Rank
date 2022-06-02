@@ -2,6 +2,7 @@ import discord
 import os
 import re
 import random
+import math
 
 from myfunctions import templateEmbed, my_rank_embed_values, level_barriers, sort_leaderboard
 
@@ -260,14 +261,14 @@ class infoEmbeds:
 		return rcFILE, rcEMBED
 
 	
-	async def lbEMBED(guild_id, guild_img):
+	async def lbEMBED(guild_id, guild_img, starting_rank, ending_rank, just_pages:bool):
 		'''Used for the /leaderboard command'''
-		users = await sort_leaderboard(guild_id)
+		users, length = await sort_leaderboard(guild_id)
+
+		num_pages = int(math.ceil(length/10))
+		if just_pages is True:
+			return num_pages
 		
-		lbFILE = discord.File(
-			f"Images/leaderboard.png", 
-			filename="image.png"
-			)
 		lbEMBED = discord.Embed(
 			title=f"Leaderboard of activity for {guild_id}",
 			description="Gamers",
@@ -282,16 +283,25 @@ class infoEmbeds:
 			)
 
 		#* Embed fields
-		i = 1
-		for user in users:
-			lbEMBED.add_field(
-				name=f"#{i}: {user[1]}", 
-				value=f"{user[2]} XP", 
-				inline=False
-				)
-			i += 1
+		i = starting_rank
+		try:
+			for user in users[starting_rank - 1:ending_rank]:
+				lbEMBED.add_field(
+					name=f"#{i}: {user[1]}", 
+					value=f"{user[2]} XP", 
+					inline=False
+					)
+				i += 1
+		except ValueError:
+			for user in users[starting_rank::]:
+				lbEMBED.add_field(
+					name=f"#{i}: {user[1]}", 
+					value=f"{user[2]} XP", 
+					inline=False
+					)
+				i += 1			
 
-		return lbFILE, lbEMBED
+		return lbEMBED
 
 
 	async def rankupEMBED():

@@ -307,9 +307,20 @@ async def greet(ctx, name: Option(str, "Enter your friend's name", required = Fa
 async def leaderboard(
 	ctx: discord.ApplicationContext
 ):
-	lbFILE, lbEMBED = await infoEmbeds.lbEMBED(ctx.guild, ctx.guild.icon.url)
 
-	embeds = [lbEMBED, lbEMBED]
+	num_pages = await infoEmbeds.lbEMBED(ctx.guild, ctx.guild.icon.url, 0, 10, True)
+
+	starting_rank = 1
+	ending_rank = 10
+
+	i = 1
+	embeds = []
+	while i <= num_pages:
+		lbEMBED = await infoEmbeds.lbEMBED(ctx.guild, ctx.guild.icon.url, starting_rank, ending_rank, False)
+		embeds.append(lbEMBED)
+		i += 1
+		starting_rank += 10
+		ending_rank += 10
 
 	paginator = pages.Paginator(pages=embeds)
 	await paginator.respond(ctx.interaction)
