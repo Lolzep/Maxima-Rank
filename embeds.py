@@ -325,8 +325,3 @@ class infoEmbeds:
 				i += 1			
 
 		return lbEMBED
-
-
-
-
-

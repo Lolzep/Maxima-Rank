@@ -2,6 +2,7 @@ import discord
 import os
 import asyncio
 import json
+import time
 
 from discord.commands import Option
 from discord.ext import commands, pages
@@ -344,12 +345,64 @@ async def leaderboard(
 async def import_channel(
 	ctx: discord.ApplicationContext
 ):
-	messages = await ctx.channel.history(limit=5).flatten()
-	# with open("test.json", "w+"):
-	# 	json.dumps(messages, indent=2)
-	for message in messages:
-		print(message.attachments)
-	await ctx.respond("Message history recieved")
+	s_time = time.time()
+	# messages = await ctx.history(limit=5000).flatten()
+	# print(messages)
+	i = 0
+	await ctx.respond("Now starting message parsing...")
+	async for message in ctx.history(limit=100000):
+		#* Same code from on_message, just does it for every message that exists in the channel
+		# Ignore bots
+		if message.author.bot == True:
+			i += 1
+			continue
+
+		# Message counts
+		await update_user(
+			message.guild, message.author.id, message.author.name, # retrieve values from discord api
+			"messages", # key value to change
+			True, 1, 5, 1 # attributes of XP
+			)
+		print(f"Increased message count, gave 5 XP to {message.author}")
+
+		# Image counts
+		if message.attachments != []:
+			await update_user(
+				message.guild, message.author.id, message.author.name, 
+				"images", 
+				True, 1, 10, 1
+				)
+			print(f"Increased image count, gave 10 XP to {message.author}")
+		
+		# Embed counts
+		if message.embeds != []:
+			await update_user(
+				message.guild, message.author.id, message.author.name, 
+				"embeds", 
+				True, 1, 10, 1
+				)
+			print(f"Increased embeds count, gave 10 XP to {message.author}")
+
+		# Sticker counts
+		if message.stickers != []:
+			await update_user(
+				message.guild, message.author.id, message.author.name, 
+				"stickers", 
+				True, 1, 10, 1
+				)
+			print(f"Increased stickers count, gave 10 XP to {message.author}")
+
+		# Check if user levels up to a new rank, send special embed if True
+		role_changed, new_role = await rank_check(message.guild, message.author.id)
+		if role_changed is True:
+			rcFILE, rcEMBED = await infoEmbeds.rcEMBED(message.author.name, message.author.display_avatar, new_role)
+			await message.channel.send(file=rcFILE, embed=rcEMBED)
+		i += 1
+	e_time = time.time()
+	t_time = e_time - s_time
+	t_time = "{:.2f}".format(t_time)
+	await ctx.respond(f"Message history parsed for {i} messages in #{message.channel}.\nTime taken: {t_time} seconds")
+	
 
 @bot.slash_command(name='greet', description='Greet someone!', guild_ids=[273567091368656898])
 async def greet(ctx, name: Option(str, "Enter your friend's name", required = False, default = '')):
