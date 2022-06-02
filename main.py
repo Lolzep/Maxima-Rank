@@ -308,10 +308,12 @@ async def leaderboard(
 	ctx: discord.ApplicationContext
 ):
 
-	num_pages = await infoEmbeds.lbEMBED(ctx.guild, ctx.guild.icon.url, 0, 10, True)
-
 	starting_rank = 1
-	ending_rank = 10
+	ending_rank = 2
+	ranks_per_page = ending_rank
+
+	num_pages = await infoEmbeds.lbEMBED(ctx.guild, ctx.guild.icon.url, starting_rank, ending_rank, True)
+	print(num_pages)
 
 	i = 1
 	embeds = []
@@ -319,8 +321,11 @@ async def leaderboard(
 		lbEMBED = await infoEmbeds.lbEMBED(ctx.guild, ctx.guild.icon.url, starting_rank, ending_rank, False)
 		embeds.append(lbEMBED)
 		i += 1
-		starting_rank += 10
-		ending_rank += 10
+		starting_rank += ranks_per_page
+		ending_rank += ranks_per_page
+		print(f"{starting_rank} to {ending_rank} embed made")
+	
+	print(embeds)
 
 	paginator = pages.Paginator(pages=embeds)
 	await paginator.respond(ctx.interaction)

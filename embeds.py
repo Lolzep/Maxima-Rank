@@ -265,7 +265,7 @@ class infoEmbeds:
 		'''Used for the /leaderboard command'''
 		users, length = await sort_leaderboard(guild_id)
 
-		num_pages = int(math.ceil(length/10))
+		num_pages = int(math.ceil(length/ending_rank))
 		if just_pages is True:
 			return num_pages
 		
