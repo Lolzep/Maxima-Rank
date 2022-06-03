@@ -461,12 +461,15 @@ async def rank_check(guild_id, main_id):
 	for items in data["users"]:
 		user_ids.append(items["user_id"])
 
-	user_id_index = user_ids.index(main_id)
-	user = data["users"][user_id_index]
-
-	#* Return the changed role and new role from update_levels and dump
-	role_changed, new_role = await update_levels(user)
-	await json_dump(main_json, data)
+	try:
+		user_id_index = user_ids.index(main_id)
+		user = data["users"][user_id_index]
+		#* Return the changed role and new role from update_levels and dump
+		role_changed, new_role = await update_levels(user)
+		await json_dump(main_json, data)
+	except ValueError:
+		role_changed = False
+		new_role = "Newbie"
 
 	return role_changed, new_role
 

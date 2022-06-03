@@ -362,16 +362,16 @@ async def import_channel(
 	ctx: discord.ApplicationContext
 ):
 	s_time = time.time()
-	# messages = await ctx.history(limit=5000).flatten()
-	# print(messages)
 	i = 0
-	await ctx.respond("Now starting message parsing...")
+	await ctx.respond(f"Now getting the channel activity for all users in #{ctx.channel}.\nThis may take awhile...")
 	msg_dict = {}
 	att_dict = {}
 	emb_dict = {}
 	stk_dict = {}
+
+	#* Make dicts of each activity with {user_id: messages} etc.
+	bot_msg = await ctx.channel.send(f"Currently 0 messages in...")
 	async for message in ctx.history(limit=100000):
-		#* Same code from on_message, just does it for every message that exists in the channel
 		# TODO: Make the values update all at once instead of on each message
 		# Ignore bots
 		if message.author.bot == True:
@@ -436,10 +436,15 @@ async def import_channel(
 				stk_dict[user["user_id"]] += 1
 
 			print(f"Increased stickers count, gave 10 XP to {message.author}")
-			i += 1
+		
+		# i = History count
+		i += 1
+		if i % 250 == 0:
+			await bot_msg.edit(content=f"Currently {i} messages in...")
+	await bot_msg.edit(content=f"Finished reading all data! Now adding activity and XP to each user.")
 	
-	# Message counts
-	# TODO: Ok this works, now do it for every attribute
+	#* Append these dicts into the json file all at once for each user (decrease I/O operations)
+	# Messages
 	for users, messages in msg_dict.items():
 		member = ctx.guild.get_member(users)
 		await update_user(
@@ -448,40 +453,65 @@ async def import_channel(
 			True, messages, 5, messages
 			)
 		# Check if user levels up to a new rank, send special embed if True
-		role_changed, new_role = await rank_check(message.guild, message.author.id)
-		if role_changed is True:
-			rcFILE, rcEMBED = await infoEmbeds.rcEMBED(message.author.name, message.author.display_avatar, new_role)
-			await message.channel.send(file=rcFILE, embed=rcEMBED)
+		await check_rank(
+			member.guild.system_channel.send, 
+			member.guild, 
+			member.id, 
+			member.name, 
+			member.display_avatar
+			)
 
-	# Image counts
-	if message.attachments:
+	# Images
+	for users, images in att_dict.items():
+		member = ctx.guild.get_member(users)
 		await update_user(
-			message.guild, message.author.id, message.author.name, 
-			"images", 
-			True, 1, 10, 1
+			member.guild, member.id, member.name,
+			"images",
+			True, images, 5, images
+			)
+		# Check if user levels up to a new rank, send special embed if True
+		await check_rank(
+			member.guild.system_channel.send, 
+			member.guild, 
+			member.id, 
+			member.name, 
+			member.display_avatar
 			)
 	
-	# Embed counts
-	if message.embeds:
+	# Embeds
+	for users, embeds in emb_dict.items():
+		member = ctx.guild.get_member(users)
 		await update_user(
-			message.guild, message.author.id, message.author.name, 
-			"embeds", 
-			True, 1, 10, 1
+			member.guild, member.id, member.name,
+			"embeds",
+			True, embeds, 5, embeds
+			)
+		# Check if user levels up to a new rank, send special embed if True
+		await check_rank(
+			member.guild.system_channel.send, 
+			member.guild, 
+			member.id, 
+			member.name, 
+			member.display_avatar
+			)
+	
+	# Stickers
+	for users, stickers in stk_dict.items():
+		member = ctx.guild.get_member(users)
+		await update_user(
+			member.guild, member.id, member.name,
+			"stickers",
+			True, stickers, 5, stickers
+			)
+		# Check if user levels up to a new rank, send special embed if True
+		await check_rank(
+			member.guild.system_channel.send, 
+			member.guild, 
+			member.id, 
+			member.name, 
+			member.display_avatar
 			)
 
-	# Sticker counts
-	if message.stickers:
-		await update_user(
-			message.guild, message.author.id, message.author.name, 
-			"stickers", 
-			True, 1, 10, 1
-			)
-
-	# Check if user levels up to a new rank, send special embed if True
-	role_changed, new_role = await rank_check(message.guild, message.author.id)
-	if role_changed is True:
-		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(message.author.name, message.author.display_avatar, new_role)
-		await message.channel.send(file=rcFILE, embed=rcEMBED)
 	print(msg_dict)
 	print(att_dict)
 	print(emb_dict)
