@@ -6,6 +6,7 @@ import random
 import aiofiles
 import asyncio
 
+from collections import OrderedDict
 from operator import itemgetter
 
 #? ARGUMENTS (for json defs)
@@ -169,11 +170,6 @@ async def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, 
 	else:
 		return data, user
 
-# async def level_ranges(*start_level):
-# 	for levels in start_level:
-
-
-
 # Similar to new_levels
 # Using the same level_factor and total_levels args, makes a dict of level barriers for each rank
 # Useful for knowing XP needed to next rank
@@ -181,74 +177,48 @@ async def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, 
 # starting_xp: What should the XP be to reach level 1?
 # level_factor: How much XP should each level increase by?
 # total_levels: How many levels should there be?
-async def level_barriers(starting_xp: int, level_factor: int, total_levels: int, make_json: bool):
-	#* Create new levels key and a level object template starting at 0 for all
+# rl (kwargs): What should the levels be called and what should the minimum for each level be? Ex. Newbie=0, Bronze=3, etc.
+async def level_barriers(starting_xp: int, level_factor: int, total_levels: int, make_json: bool, **rl):
+	#* Create new levels key and a level object template starting at 0
+	rl = OrderedDict(rl)
+	rl = list(rl.items())
 	i = 0
+	role_barriers = {}
 	new_data = {
 		"level": 0, 
 		"level_xp": starting_xp, 
 		"total_xp": starting_xp, 
 		"role_id": 0, 
-		"role_title": "Newbie"
+		"role_title": rl[0]
 		}
 
-	role_barriers = {
-		"Newbie": 0, 
-		"Bronze": 0, 
-		"Silver": 0, 
-		"Gold": 0, 
-		"Platinum": 0, 
-		"Diamond": 0, 
-		"Master": 0, 
-		"Grandmaster": 0, 
-		"Exalted": 0,
-		"Galaxy": 0,
-		"Konami": 0
-		}
+	#* Create a role_barriers dict, used to know the max XP for each role (rank check embeds)
+	for level in rl:
+		role_barriers[level[0]] = 0
 
-	#* For all levels 1 - i, update the key:value pairs until max is reached then move to next pair
-	# TODO: Implement this in a better way that makes it easier to update
+	#* Create a new_data object for each level from level 1 - [total_levels] (already have level 0 as new_data)
 	while i < total_levels:
+		# n: Current level
+		n = i + 1
+		# Get variables (role_id, next level, previous level xp, current level xp, total xp to get to current level)
 		next_id = new_data["role_id"]
 		n_level = new_data["level"] + 1
 		p_level_xp = new_data["level_xp"]
 		level_xp = p_level_xp + level_factor
 		total_xp = new_data["total_xp"] + level_xp
 
-		n = i + 1
-		role_title = ""
-
-		if 0 <= n <= 2:
-			role_title = "Newbie"
-		elif 3 <= n <= 4:
-			role_title = "Bronze"
-		elif 5 <= n <= 9:
-			role_title = "Silver"
-		elif 10 <= n <= 24:
-			role_title = "Gold"
-		elif 25 <= n <= 49:
-			role_title = "Platinum"
-		elif 50 <= n <= 99:
-			role_title = "Diamond"
-		elif 100 <= n <= 149:
-			role_title = "Master"
-		elif 150 <= n <= 174:
-			role_title = "Grandmaster"
-		elif 175 <= n <= 199:
-			role_title = "Exalted"
-		elif 200 <= n <= 572:
-			role_title = "Galaxy"
-		elif n >= 573:
-			role_title = "Konami"
+		# Get current level based on diff in levels given in rl kwargs
+		cur_level = [(role_name, lvl_min) for role_name, lvl_min in rl[::-1] if n >= lvl_min]
+		cur_level = cur_level[0][0]
 		
-		role_barriers[role_title] = total_xp
+		role_barriers[cur_level] = total_xp
 
 		new_data = {
 			"level": n_level, 
 			"level_xp": level_xp, 
 			"total_xp": total_xp, 
 			"role_id": next_id, 
-			"role_title": role_title
+			"role_title": cur_level
 			}
 
 		if make_json == True:
@@ -609,4 +579,19 @@ async def leaderboard_embed_values(guild_id, main_id, simple : bool):
 		return field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id
 
 
-# asyncio.run(new_levels(100, 20, 1000))
+asyncio.run(level_barriers(
+	100, 
+	20, 
+	600, 
+	True, 
+	Newbie=0, 
+	Bronze=3, 
+	Silver=5, 
+	Gold=10, 
+	Platinum=25, 
+	Diamond=50, 
+	Master=100, 
+	Grandmaster=150, 
+	Exalted=175,
+	Galaxy=200,
+	Konami=573))
