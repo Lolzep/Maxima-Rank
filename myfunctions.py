@@ -54,9 +54,9 @@ async def write_json(new_data, filename, name: str):
 # json_object_name: Name of the json user objects to change (ex. reading from users.json as data, user = data["users"], this arg is user)
 # levels_json_data: The variable name of the loaded json data of "levels.json", by default this is none
 # 	In loops, use this argument to avoid so many i/o operations
-async def update_levels(json_object_name : str):
+async def update_levels(guild_id, json_object_name : str):
 	#* Get levels.json data
-	data_level = await json_read("levels.json")
+	data_level = await json_read(f"Data/{guild_id} Levels.json")
 
 	#* Variables we need from levels.json
 	current_level = json_object_name["level"]
@@ -174,11 +174,12 @@ async def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, 
 # Using the same level_factor and total_levels args, makes a dict of level barriers for each rank
 # Useful for knowing XP needed to next rank
 #? ARGUMENTS
+# guild_id: Guild that these levels are for
 # starting_xp: What should the XP be to reach level 1?
 # level_factor: How much XP should each level increase by?
 # total_levels: How many levels should there be?
 # rl (kwargs): What should the levels be called and what should the minimum for each level be? Ex. Newbie=0, Bronze=3, etc.
-async def level_barriers(starting_xp: int, level_factor: int, total_levels: int, make_json: bool, rl: dict):
+async def level_barriers(main_json, guild_id, starting_xp: int, level_factor: int, total_levels: int, make_json: bool, rl: dict):
 	#* Create new levels key and a level object template starting at 0
 	rl = OrderedDict(rl)
 	rl = list(rl.items())
@@ -222,7 +223,7 @@ async def level_barriers(starting_xp: int, level_factor: int, total_levels: int,
 			}
 
 		if make_json == True:
-			await write_json(new_data, "levels.json", "levels")
+			await write_json(new_data, main_json, "levels")
 		i += 1
 
 	return role_barriers, rl
@@ -230,11 +231,13 @@ async def level_barriers(starting_xp: int, level_factor: int, total_levels: int,
 # Create new levels with "level, xp and role_id" as the objects in a levels.json file
 # For use in knowing the current levels and where each user's level currently stands
 #? ARGUMENTS
+# guild_id: Guild that these levels are for
 # starting_xp: What should the XP be to reach level 1?
 # level_factor: How much XP should each level increase by?
 # total_levels: How many levels should there be?
 # TODO: roleid should be changed to actual roleids in Discord (probably need new definition)
-async def new_levels(starting_xp: int, level_factor: int, total_levels: int, disc_cmd=None, **rl):
+async def new_levels(guild_id, starting_xp: int, level_factor: int, total_levels: int, disc_cmd=None, **rl):
+	main_json = f"Data/{guild_id} Levels.json"
 	# Create new levels key and a level object template starting at 0 for all
 	i = 0
 	new_data = {
@@ -247,15 +250,17 @@ async def new_levels(starting_xp: int, level_factor: int, total_levels: int, dis
 	level_template = {
 		"levels": []
 		}
-	role_barriers, rl = await level_barriers(starting_xp, level_factor, total_levels, True, rl)
+	# If the levels.json already exists, remove it to redo all calculations. Create new levels.json with level_template
+	if os.path.exists(main_json):
+		os.remove(main_json)
+	await new_json_file(main_json)
+	await json_dump(main_json, level_template)
+	await write_json(new_data, main_json, "levels")
+
+	role_barriers, rl = await level_barriers(main_json, guild_id, starting_xp, level_factor, total_levels, True, rl)
 	role_title = ""
 
-	# If the levels.json already exists, remove it to redo all calculations. Create new levels.json with level_template
-	if os.path.exists("levels.json"):
-		os.remove("levels.json")
 
-	await json_dump ("levels.json", level_template)
-	await write_json(new_data, "levels.json", "levels")
 
 	# While i <= total_levels, create a new level object for each level 0 - i and calculate each variable as needed
 	while i < total_levels:
@@ -285,7 +290,7 @@ async def new_levels(starting_xp: int, level_factor: int, total_levels: int, dis
 			"role_title": role_title
 			}
 
-		await write_json(new_data, "levels.json", "levels")
+		await write_json(new_data, main_json, "levels")
 		i += 1
 	
 	if disc_cmd is not None:
@@ -319,6 +324,7 @@ async def templateEmbed(command : str, description=None):
 async def my_rank_embed_values(guild_id, main_id, simple : bool):
 	#* Load initial json, find user who sent command
 	main_json = f"Data/{guild_id} Users.json"
+	levels_json = f"Data/{guild_id} Levels.json"
 	data = await json_read(main_json)
 
 	user_ids = []
@@ -332,7 +338,7 @@ async def my_rank_embed_values(guild_id, main_id, simple : bool):
 	level = user["level"]
 	xp = user["xp"]
 
-	data_level = await json_read("levels.json")
+	data_level = await json_read(levels_json)
 	data_level = data_level["levels"][level]
 
 	#* A metric ton of variables for appending as a field in embed
@@ -417,7 +423,7 @@ async def update_boosters(guild_id, main_id, xp):
 			item["special_xp"] += xp
 			item["xp"] += xp
 			count += 1
-			role_changed, new_role = await update_levels(item)
+			role_changed, new_role = await update_levels(guild_id, item)
 			#* Update Users.json and append values to list
 			rc_dict[item["user_id"]] = role_changed
 			nr_list.append(new_role)
@@ -449,7 +455,7 @@ async def rank_check(guild_id, main_id):
 		user_id_index = user_ids.index(main_id)
 		user = data["users"][user_id_index]
 		#* Return the changed role and new role from update_levels and dump
-		role_changed, new_role = await update_levels(user)
+		role_changed, new_role = await update_levels(guild_id, user)
 		await json_dump(main_json, data)
 	except ValueError:
 		role_changed = False
@@ -499,6 +505,7 @@ async def sort_leaderboard(guild_id):
 async def leaderboard_embed_values(guild_id, main_id, simple : bool):
 	#* Load initial json, find user who sent command
 	main_json = f"Data/{guild_id} Users.json"
+	level_json = f"Data/{guild_id} Levels.json"
 	data = await json_read(main_json)
 
 	user_ids = []
@@ -512,7 +519,7 @@ async def leaderboard_embed_values(guild_id, main_id, simple : bool):
 	level = user["level"]
 	xp = user["xp"]
 
-	data_level = await json_read("levels.json")
+	data_level = await json_read(level_json)
 	data_level = data_level["levels"][level]
 
 	#* A metric ton of variables for appending as a field in embed
