@@ -169,6 +169,11 @@ async def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, 
 	else:
 		return data, user
 
+# async def level_ranges(*start_level):
+# 	for levels in start_level:
+
+
+
 # Similar to new_levels
 # Using the same level_factor and total_levels args, makes a dict of level barriers for each rank
 # Useful for knowing XP needed to next rank
@@ -259,7 +264,7 @@ async def level_barriers(starting_xp: int, level_factor: int, total_levels: int,
 # level_factor: How much XP should each level increase by?
 # total_levels: How many levels should there be?
 # TODO: roleid should be changed to actual roleids in Discord (probably need new definition)
-async def new_levels(starting_xp: int, level_factor: int, total_levels: int):
+async def new_levels(starting_xp: int, level_factor: int, total_levels: int, disc_cmd=None):
 	# Create new levels key and a level object template starting at 0 for all
 	i = 0
 	new_data = {
@@ -312,6 +317,9 @@ async def new_levels(starting_xp: int, level_factor: int, total_levels: int):
 
 		await write_json(new_data, "levels.json", "levels")
 		i += 1
+	
+	if disc_cmd is not None:
+		return role_barriers
 
 
 # Creates a simple embed for the most general of embed implementations (help, about, etc.)
@@ -517,5 +525,88 @@ async def sort_leaderboard(guild_id):
 	
 	#* Return sorted list of tuples to be used in leaderboard embed
 	return i_users, length
+
+async def leaderboard_embed_values(guild_id, main_id, simple : bool):
+	#* Load initial json, find user who sent command
+	main_json = f"Data/{guild_id} Users.json"
+	data = await json_read(main_json)
+
+	user_ids = []
+	for items in data["users"]:
+		user_ids.append(items["user_id"])
+
+	user_id_index = user_ids.index(main_id)
+	user = data["users"][user_id_index]
+
+	#* Find current level in levels.json
+	level = user["level"]
+	xp = user["xp"]
+
+	data_level = await json_read("levels.json")
+	data_level = data_level["levels"][level]
+
+	#* A metric ton of variables for appending as a field in embed
+	# Users.json values
+	xp = user["xp"]
+	level = user["level"]
+	next_xp = data_level["total_xp"]
+	level_xp = data_level["level_xp"]
+	role_title = data_level["role_title"]
+	role_id = data_level["role_id"]
+	progress_to_next = level_xp - (next_xp - xp)
+	
+	# Users.json values to be used in the embed field
+	types = (
+		"messages", 
+		"reactions_added", 
+		"reactions_recieved", 
+		"stickers", "images", 
+		"embeds", 
+		"voice_minutes", 
+		"invites", 
+		"special_xp"
+		)
+	
+	# Dicts and lists to match json object keys to json object values and emoji ranks, as well as calculate max_values
+	amounts = {}
+	max_values = {}
+	ranks = {"MR_D": 0.00, "MR_C": 0.16, "MR_B": 0.33, "MR_A": 0.50, "MR_S": 0.66, "MR_SS": 0.82, "MR_MAX": 1.00}
+	embed_emj = "MR_D"
+	emoji_object = []
+
+	#* Match keys in "types" to keys in Users.json and calculate the max_value using itemgetter
+	# Append all to respective dicts (amounts, max_values)
+	for key in types:
+		amounts[key] = user[key]
+
+		max_value = max(data["users"], key=itemgetter(key))
+		max_values[key] = max_value[key]
+
+	#* Calculate what emoji to be used for the respective amount based on the max_value
+	# ie. User has 6 messages, max messages in the server is 60, 6/60 = 10% = D Rank Emoji
+	# Append each emoji for each activity in a list
+	for (k,amt), (k2, mx) in zip(amounts.items(), max_values.items()):
+		try:
+			ratio = amt / mx
+		except ZeroDivisionError:
+			ratio = 0.00
+
+		for (emj, k3) in ranks.items():
+			if ratio < k3:
+				continue
+			else:
+				embed_emj = emj
+		emoji_object.append(embed_emj)
+
+	#* Embed field to be used in "/myrank"
+	field_display = f"> emoji1 **💬 Messages**: {amounts['messages']}\n> emoji2 **😃 Reactions Added**: {amounts['reactions_added']}\n> emoji3 **🥰 Reactions Recieved**: {amounts['reactions_recieved']}\n> emoji4 **🎭 Stickers**: {amounts['stickers']}\n> emoji5 **🖼️ Images**: {amounts['images']}\n> emoji6 **🔗 Embeds**: {amounts['embeds']}\n> emoji7 **🎙️ Voice (minutes)**: {amounts['voice_minutes']}\n> emoji8 **✉️ Invites**: {amounts['invites']}\n> emoji9 **🌟 Special XP**: {amounts['special_xp']}"
+	
+	#* return embed field, emoji list for embed field, and other values for current user
+	# if simple explained in arguments
+	if simple == True:
+		return emoji_object
+	else:
+		return field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id
+
 
 # asyncio.run(new_levels(100, 20, 1000))

@@ -7,7 +7,7 @@ import time
 from discord.commands import Option
 from discord.ext import commands, pages
 from dotenv import load_dotenv
-from myfunctions import update_user, my_rank_embed_values, update_boosters, rank_check
+from myfunctions import update_user, my_rank_embed_values, update_boosters, rank_check, new_levels
 from embeds import *
 
 load_dotenv()
@@ -24,21 +24,16 @@ bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 82866777560
 #? Command ideas!
 
 #? Small projects
-#* [DONE] async def about(): Show information about the bot (Defintion, Github commits and changes, Contributors) in an embed
-#* [DONE] def restart(): Put restart_bot def in a command
-#* [DONE] async def help(): Shows all commands and generic help info in an embed
-#* [DONE] async def booster(): Retrieve all boosters in a discord server from json, give specified "special_xp" to each booster
-# "special_xp" also gets added to "xp"!
-#* async def new_invite(ctx, name): Increase "invites" count by 1 for specified user and give specified xp
-#* async def set_role_ids(): Set the role_ids in the Users.json role_ids section so that the correct roles are given when roles need to be updated
+#* set_role_ids(): Set the role_ids in the Users.json role_ids section so that the correct roles are given when roles need to be updated
+#* set_levels(): Make a new levels.json
+#* update_boosters -> update_role: Change boosters command to update a role that is given instead
 
 #? Large projects 
-#* [DONE] def my_rank(ctx): Shows your ranking and detailed statistics about yourself in an embed
-#* [Maybe not needed?] def my_progress(ctx): Shows progress to next level and role in an embed
-#* [DONE] In level_update function: Detect when a user surpasses a new rank
-#* async def set_xp(): Set all xp values in a slash command embed (admin panel)
-#* async def top_rankers(): Leaderboard of activity, similar to ActivityRank's style
-#* def update_roles(): Using role_ids from users.json and on_message event, update the roles in the server on rank change
+#* set_xp: Set all xp values in a slash command embed (admin panel)
+#* top_rankers: Leaderboard of activity, similar to ActivityRank's style
+#* xp_multiplier: Give extra XP multiplied by a given multiplier in an argument during a certain time period
+#* end_multiplier: End the multiplier early if someone messes up
+#* (funcs) update_roles(): Using role_ids from users.json and on_message event, update the roles in the server on rank change
 
 # Used to send discord embeds in channels
 # TODO: Not implemented yet
@@ -184,21 +179,23 @@ async def on_member_update(before, after):
 			)
 		print("no longer a booster...")
 
-	# Used to add a new user if they don't exist 
-	await update_user(
-		before.guild, before.id, before.name, 
-		"special_xp", 
-		True, 0, 0, 0
-	)
-
-	# Send embed if user levels up
-	await check_rank(
-		before.guild.system_channel.send, 
-		before.guild, 
-		before.id, 
-		before.name, 
-		before.display_avatar
+	try:
+		# Send embed if user levels up
+		await check_rank(
+			before.guild.system_channel.send, 
+			before.guild, 
+			before.id, 
+			before.name, 
+			before.display_avatar
+			)
+	except json.JSONDecodeError:
+		# Used to add a new user if they don't exist 
+		await update_user(
+			before.guild, before.id, before.name, 
+			"special_xp", 
+			True, 0, 0, 0
 		)
+
 
 @bot.slash_command(description="Sends information about the bot")
 async def about(ctx):
@@ -265,6 +262,7 @@ async def invite_xp(
 		member.display_avatar
 		)
 
+# TODO: Rewrite for roles, not boosters
 @bot.slash_command(name="booster_xp", description="Add XP to all boosted users")
 @commands.has_permissions(manage_messages=True)
 async def booster_xp(
@@ -521,6 +519,28 @@ async def import_channel(
 	t_time = "{:.2f}".format(t_time)
 	await ctx.respond(f"Message history parsed for {i} messages in #{message.channel}.\nTime taken: {t_time} seconds")
 	
+@bot.slash_command(name="test", description="Test command for testing things")
+async def test(
+	ctx,
+	role: Option(discord.Role, "Select a role", required=True)
+):
+	await ctx.respond(f"You selected {role.mention}!")
+
+@bot.slash_command(name="make_levels", description="Make new levels and level barriers")
+async def make_levels(
+	ctx,
+	starting_xp: Option(int, "How much XP for level 1?", required=True),
+	level_factor: Option(int, "How much XP should each level increase by?", required=True),
+	total_levels: Option(int, "How many levels should be made? (Higher takes longer to make)", required=True)
+):
+	s_time = time.time()
+	await ctx.respond(f"Now making new levels...")
+	role_barriers = await new_levels(starting_xp, level_factor, total_levels, True)
+	e_time = time.time()
+	t_time = e_time - s_time
+	t_time = "{:.2f}".format(t_time)
+	await ctx.respond(f"New levels created! This took {t_time} seconds.\nBarriers for XP are:\n{role_barriers}")
+
 
 @bot.slash_command(name='greet', description='Greet someone!', guild_ids=[273567091368656898])
 async def greet(ctx, name: Option(str, "Enter your friend's name", required = False, default = '')):
