@@ -196,7 +196,9 @@ async def level_barriers(starting_xp: int, level_factor: int, total_levels: int,
 		"Diamond": 0, 
 		"Master": 0, 
 		"Grandmaster": 0, 
-		"Exalted": 0
+		"Exalted": 0,
+		"Galaxy": 0,
+		"Konami": 0
 		}
 
 	#* For all levels 1 - i, update the key:value pairs until max is reached then move to next pair
@@ -225,10 +227,14 @@ async def level_barriers(starting_xp: int, level_factor: int, total_levels: int,
 			role_title = "Diamond"
 		elif 100 <= n <= 149:
 			role_title = "Master"
-		elif 150 <= n <= 199:
+		elif 150 <= n <= 174:
 			role_title = "Grandmaster"
-		elif n >= 200:
+		elif 175 <= n <= 199:
 			role_title = "Exalted"
+		elif 200 <= n <= 572:
+			role_title = "Galaxy"
+		elif n >= 573:
+			role_title = "Konami"
 		
 		role_barriers[role_title] = total_xp
 
@@ -266,7 +272,7 @@ async def new_levels(starting_xp: int, level_factor: int, total_levels: int):
 	level_template = {
 		"levels": []
 		}
-	role_barriers = level_barriers(100, 20, 300, True)
+	role_barriers = await level_barriers(starting_xp, level_factor, total_levels, True)
 	role_title = ""
 
 	# If the levels.json already exists, remove it to redo all calculations. Create new levels.json with level_template
@@ -511,3 +517,5 @@ async def sort_leaderboard(guild_id):
 	
 	#* Return sorted list of tuples to be used in leaderboard embed
 	return i_users, length
+
+# asyncio.run(new_levels(100, 20, 1000))

@@ -134,16 +134,16 @@ class infoEmbeds:
 		percent_xp = "%.1f" % percent_xp
 
 		#* Embed and embed fields
-		# If role is max role (Exalted), show easter egg text
-		if role_title != "Exalted":
+		# If role is max role (Konami), show easter egg text
+		if role_title != "Konami":
 			myrankEMBED = discord.Embed(
-				title=f"You are {role_title} Rank!", 
+				title=f"You are {role_title} rank!", 
 				description=f"You are {role_barriers[role_title] - xp} XP away from being the next rank!", 
 				color=discord.Color.purple()
 				)
 		else:
 			myrankEMBED = discord.Embed(
-				title=f"You are {role_title} Rank!", 
+				title=f"You are {role_title} rank!", 
 				description=f"You are max rank! Now go outside.", 
 				color=discord.Color.purple()
 				)
@@ -203,16 +203,16 @@ class infoEmbeds:
 		percent_xp = "%.1f" % percent_xp
 
 		#* Embed and embed fields
-		# If role is max role (Exalted), show easter egg text
-		if role_title != "Exalted":
+		# If role is max role (Konami), show easter egg text
+		if role_title != "Konami":
 			rankEMBED = discord.Embed(
-				title=f"{main_user} is {role_title} Rank!", 
+				title=f"{main_user} is {role_title} rank!", 
 				description=f"{main_user} is {role_barriers[role_title] - xp} XP away from being the next rank!", 
 				color=discord.Color.purple()
 				)
 		else:
 			rankEMBED = discord.Embed(
-				title=f"{main_user} is {role_title} Rank!", 
+				title=f"{main_user} is {role_title} rank!", 
 				description=f"You are max rank! Now go outside.", 
 				color=discord.Color.purple()
 				)
