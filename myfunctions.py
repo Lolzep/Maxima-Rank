@@ -178,7 +178,7 @@ async def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, 
 # level_factor: How much XP should each level increase by?
 # total_levels: How many levels should there be?
 # rl (kwargs): What should the levels be called and what should the minimum for each level be? Ex. Newbie=0, Bronze=3, etc.
-async def level_barriers(starting_xp: int, level_factor: int, total_levels: int, make_json: bool, **rl):
+async def level_barriers(starting_xp: int, level_factor: int, total_levels: int, make_json: bool, rl: dict):
 	#* Create new levels key and a level object template starting at 0
 	rl = OrderedDict(rl)
 	rl = list(rl.items())
@@ -225,7 +225,7 @@ async def level_barriers(starting_xp: int, level_factor: int, total_levels: int,
 			await write_json(new_data, "levels.json", "levels")
 		i += 1
 
-	return role_barriers
+	return role_barriers, rl
 
 # Create new levels with "level, xp and role_id" as the objects in a levels.json file
 # For use in knowing the current levels and where each user's level currently stands
@@ -234,7 +234,7 @@ async def level_barriers(starting_xp: int, level_factor: int, total_levels: int,
 # level_factor: How much XP should each level increase by?
 # total_levels: How many levels should there be?
 # TODO: roleid should be changed to actual roleids in Discord (probably need new definition)
-async def new_levels(starting_xp: int, level_factor: int, total_levels: int, disc_cmd=None):
+async def new_levels(starting_xp: int, level_factor: int, total_levels: int, disc_cmd=None, **rl):
 	# Create new levels key and a level object template starting at 0 for all
 	i = 0
 	new_data = {
@@ -247,7 +247,7 @@ async def new_levels(starting_xp: int, level_factor: int, total_levels: int, dis
 	level_template = {
 		"levels": []
 		}
-	role_barriers = await level_barriers(starting_xp, level_factor, total_levels, True)
+	role_barriers, rl = await level_barriers(starting_xp, level_factor, total_levels, True, rl)
 	role_title = ""
 
 	# If the levels.json already exists, remove it to redo all calculations. Create new levels.json with level_template
@@ -289,7 +289,7 @@ async def new_levels(starting_xp: int, level_factor: int, total_levels: int, dis
 		i += 1
 	
 	if disc_cmd is not None:
-		return role_barriers
+		return role_barriers, rl
 
 
 # Creates a simple embed for the most general of embed implementations (help, about, etc.)
@@ -579,19 +579,19 @@ async def leaderboard_embed_values(guild_id, main_id, simple : bool):
 		return field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id
 
 
-asyncio.run(level_barriers(
-	100, 
-	20, 
-	600, 
-	True, 
-	Newbie=0, 
-	Bronze=3, 
-	Silver=5, 
-	Gold=10, 
-	Platinum=25, 
-	Diamond=50, 
-	Master=100, 
-	Grandmaster=150, 
-	Exalted=175,
-	Galaxy=200,
-	Konami=573))
+# asyncio.run(level_barriers(
+# 	100, 
+# 	20, 
+# 	600, 
+# 	True, 
+# 	Newbie=0, 
+# 	Bronze=3, 
+# 	Silver=5, 
+# 	Gold=10, 
+# 	Platinum=25, 
+# 	Diamond=50, 
+# 	Master=100, 
+# 	Grandmaster=150, 
+# 	Exalted=175,
+# 	Galaxy=200,
+# 	Konami=573))

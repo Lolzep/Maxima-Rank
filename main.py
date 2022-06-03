@@ -535,11 +535,28 @@ async def make_levels(
 ):
 	s_time = time.time()
 	await ctx.respond(f"Now making new levels...")
-	role_barriers = await new_levels(starting_xp, level_factor, total_levels, True)
+	role_barriers, rl = await new_levels(
+	starting_xp, 
+	level_factor, 
+	total_levels, 
+	True, 
+	Newbie=0, 
+	Bronze=3, 
+	Silver=5, 
+	Gold=10, 
+	Platinum=25, 
+	Diamond=50, 
+	Master=100, 
+	Grandmaster=150, 
+	Exalted=175,
+	Galaxy=200,
+	Konami=573
+	)
+
 	e_time = time.time()
 	t_time = e_time - s_time
 	t_time = "{:.2f}".format(t_time)
-	await ctx.respond(f"New levels created! This took {t_time} seconds.\nBarriers for XP are:\n{role_barriers}")
+	await ctx.respond(f"New levels created! This took {t_time} seconds.\nEach level name and starting level is: {rl}\nBarriers for XP are:\n{role_barriers}")
 
 
 @bot.slash_command(name='greet', description='Greet someone!', guild_ids=[273567091368656898])
