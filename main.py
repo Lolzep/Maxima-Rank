@@ -548,21 +548,27 @@ async def role_level(
 
 	try:
 		data = await json_read(rid_json)
-		data = data["role_ids"]
-		await write_json(template, rid_json, "role_ids")
-		data = await json_read(rid_json)
-		data = data["role_ids"]
-		unique = {each["role_name"] : each for each in data}
-		unique = list(unique.values())
-		print(unique)
-		template = {"role_ids": unique}
-		await json_dump(rid_json, template)
 	except FileNotFoundError:
+		# If file hasn't been made, just makes a new one with a role object
 		await new_file(rid_json)
 		await json_dump(rid_json, rid_template)
 		data = await json_read(rid_json)
 		data = data["role_ids"]
 		await write_json(template, rid_json, "role_ids")
+
+	# Read, then write, which might give repeat objects
+	data = data["role_ids"]
+	await write_json(template, rid_json, "role_ids")
+	# Read again, this time with the repeat objects
+	data = await json_read(rid_json)
+	data = data["role_ids"]
+	# Filter out these unique objects with dict comprehension
+	unique = {each["role_name"] : each for each in data}
+	unique = list(unique.values())
+	print(unique)
+	# Write only the unique roles and role IDs to the JSON
+	template = {"role_ids": unique}
+	await json_dump(rid_json, template)
 
 	await ctx.respond(f"Set the role ID for {l_name}!")
 		
