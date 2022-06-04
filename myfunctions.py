@@ -194,16 +194,26 @@ async def level_barriers(guild_id, starting_xp: int, level_factor: int, total_le
 	#* Create new levels key and a level object template starting at 0
 	main_json = f"Data/{guild_id} Levels.json"
 	rb_json = f"Data/{guild_id} Role Barriers.json"
-	rl = OrderedDict(rl)
-	rl = list(rl.items())
+	rid_json = f"Data/{guild_id} Role IDs.json"
+	role_id = 0
+
+	# If it exists, add role_ids to the level objects (else it's 0)
+	try:
+		rid_data = await json_read(rid_json)
+		for role in rid_data["role_ids"]:
+			if role["role_name"] == rl[0][0]:
+				role_id = role["role_id"]
+	except:
+		role_id = 0
+
 	i = 0
 	role_barriers = {}
 	new_data = {
 		"level": 0, 
 		"level_xp": starting_xp, 
 		"total_xp": starting_xp, 
-		"role_id": 0, 
-		"role_title": rl[0]
+		"role_id": role_id, 
+		"role_title": rl[0][0]
 		}
 
 	#* Create a role_barriers dict, used to know the max XP for each role (rank check embeds)
@@ -214,8 +224,7 @@ async def level_barriers(guild_id, starting_xp: int, level_factor: int, total_le
 	while i < total_levels:
 		# n: Current level
 		n = i + 1
-		# Get variables (role_id, next level, previous level xp, current level xp, total xp to get to current level)
-		next_id = new_data["role_id"]
+		# Variables for XP calc (next level, previous level xp, current level xp, total xp to get to current level)
 		n_level = new_data["level"] + 1
 		p_level_xp = new_data["level_xp"]
 		level_xp = p_level_xp + level_factor
@@ -225,15 +234,25 @@ async def level_barriers(guild_id, starting_xp: int, level_factor: int, total_le
 		cur_level = [(role_name, lvl_min) for role_name, lvl_min in rl[::-1] if n >= lvl_min]
 		cur_level = cur_level[0][0]
 		
+		# Get role_id for current level
+		try:
+			for role in rid_data["role_ids"]:
+				if role["role_name"] == cur_level:
+					role_id = role["role_id"]
+		except:
+			role_id = 0	
+
+		# Update the role_barrier as the current total_xp for the level
 		role_barriers[cur_level] = total_xp
 
 		new_data = {
 			"level": n_level, 
 			"level_xp": level_xp, 
 			"total_xp": total_xp, 
-			"role_id": next_id, 
+			"role_id": role_id, 
 			"role_title": cur_level
 			}
+
 
 		if make_json == True:
 			await write_json(new_data, main_json, "levels")
@@ -253,14 +272,28 @@ async def level_barriers(guild_id, starting_xp: int, level_factor: int, total_le
 # TODO: roleid should be changed to actual roleids in Discord (probably need new definition)
 async def new_levels(guild_id, starting_xp: int, level_factor: int, total_levels: int, disc_cmd=None, **rl):
 	main_json = f"Data/{guild_id} Levels.json"
+	rid_json = f"Data/{guild_id} Role IDs.json"
+	rl = OrderedDict(rl)
+	rl = list(rl.items())
+	role_id = 0
+	try:
+		rid_data = await json_read(rid_json)
+		for role in rid_data["role_ids"]:
+			if role["role_name"] == rl[0][0]:
+				role_id = role["role_id"]
+				print(role_id)
+				print(rl[0][0])
+	except:
+		role_id = 0
+
 	# Create new levels key and a level object template starting at 0 for all
 	i = 0
 	new_data = {
 		"level": 0, 
 		"level_xp": starting_xp, 
 		"total_xp": starting_xp, 
-		"role_id": 0, 
-		"role_title": "Newbie"
+		"role_id": role_id, 
+		"role_title": rl[0][0]
 		}
 	level_template = {
 		"levels": []
