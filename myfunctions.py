@@ -65,17 +65,18 @@ async def write_json(new_data, filename, name: str):
 # json_object_name: Name of the json user objects to change (ex. reading from users.json as data, user = data["users"], this arg is user)
 # levels_json_data: The variable name of the loaded json data of "levels.json", by default this is none
 # 	In loops, use this argument to avoid so many i/o operations
-async def update_levels(guild_id, json_object_name : str):
+async def update_levels(guild_name, json_object_name : str):
 	#* Get levels.json data
-	data_level = await json_read(f"Data/{guild_id} Levels.json")
+	data_level = await json_read(f"Data/{guild_name} Levels.json")
 
 	#* Variables we need from levels.json
 	current_level = json_object_name["level"]
 	current_xp = json_object_name["xp"]
 	next_xp = data_level["levels"][current_level]["total_xp"]
-
 	current_role = data_level["levels"][current_level]["role_title"]
 	new_role = data_level["levels"][current_level]["role_title"]
+	old_role_id = data_level["levels"][current_level]["role_id"]
+	new_role_id = data_level["levels"][current_level]["role_id"]
 
 	#* Use while loop to level up multiple times in case of large increase
 	while next_xp <= current_xp:
@@ -84,6 +85,7 @@ async def update_levels(guild_id, json_object_name : str):
 		current_xp = json_object_name["xp"]
 		next_xp = data_level["levels"][current_level]["total_xp"]
 		new_role = data_level["levels"][current_level]["role_title"]
+		new_role_id = data_level["levels"][current_level]["role_id"]
 	
 	#* Update roles by detecting a rank change
 	# TODO: Figure out how to connect this to the on_message event and create an embed
@@ -92,7 +94,7 @@ async def update_levels(guild_id, json_object_name : str):
 		print(f"User went from {current_role} to {new_role}!")
 		role_changed = True
 	
-	return role_changed, new_role
+	return role_changed, new_role, old_role_id, new_role_id
 
 # Updates the user objects for the specified user in users.json file and writes new ones if not found
 #? ARGUMENTS
@@ -444,7 +446,7 @@ async def update_boosters(guild_id, main_id, xp):
 			item["special_xp"] += xp
 			item["xp"] += xp
 			count += 1
-			role_changed, new_role = await update_levels(guild_id, item)
+			role_changed, new_role, old_role_id, new_role_id = await update_levels(guild_id, item)
 			#* Update Users.json and append values to list
 			rc_dict[item["user_id"]] = role_changed
 			nr_list.append(new_role)
@@ -459,12 +461,9 @@ async def update_boosters(guild_id, main_id, xp):
 #? ARGUMENTS
 # guild_id: guild id retrieved from discord api command
 # main_id: user id retrieved from discord api command
-# file_read:
-#	True: Fina user object manually
-#	False: Provide user object in argument
-async def rank_check(guild_id, main_id):
-	#* Load initial users.json
-	main_json = f"Data/{guild_id} Users.json"
+async def rank_check(guild_name, main_id):
+	#* Load some jsons
+	main_json = f"Data/{guild_name} Users.json"
 	data = await json_read(main_json)
 
 	#* Get a list of all user ids
@@ -476,13 +475,13 @@ async def rank_check(guild_id, main_id):
 		user_id_index = user_ids.index(main_id)
 		user = data["users"][user_id_index]
 		#* Return the changed role and new role from update_levels and dump
-		role_changed, new_role = await update_levels(guild_id, user)
+		role_changed, new_role, old_role_id, new_role_id = await update_levels(guild_name, user)
 		await json_dump(main_json, data)
 	except ValueError:
 		role_changed = False
 		new_role = "Newbie"
 
-	return role_changed, new_role
+	return role_changed, new_role, old_role_id, new_role_id
 
 # Sort the server leaderboard based on XP of each user
 #? ARGUMENTS

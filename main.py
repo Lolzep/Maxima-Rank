@@ -43,9 +43,17 @@ async def sendEmbed(api_call, embed_object, file_object):
 	await api_call(file=file_object, embed=embed_object)
 
 # Check if user levels up to a new rank, send special embed if True
-async def check_rank(discord_object_to_send, guild_id, user_id, user_name, user_avatar):
-	role_changed, new_role = await rank_check(guild_id, user_id)
+async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user_name, user_avatar):
+	role_changed, new_role, old_role_id, new_role_id = await rank_check(guild_name, user_id)
 	if role_changed is True:
+		old_role = discord.utils.get(bot.get_guild(guild_id).roles, id = old_role_id)
+		new_role = discord.utils.get(bot.get_guild(guild_id).roles, id = new_role_id)
+		
+		guild = discord.utils.get(bot.guilds, id = guild_id)
+		member = guild.get_member(user_id)
+		await member.add_roles(new_role)
+		await member.remove_roles(old_role)
+
 		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(user_name, user_avatar, new_role)
 		await discord_object_to_send(file=rcFILE, embed=rcEMBED)
 
@@ -93,7 +101,8 @@ async def on_message(message):
 	# Send embed if user levels up
 	await check_rank(
 		message.channel.send, 
-		message.guild, 
+		message.guild,
+		message.guild.id, 
 		message.author.id, 
 		message.author.name, 
 		message.author.display_avatar
@@ -122,7 +131,8 @@ async def on_reaction_add(reaction, user):
 	# Send embed if user levels up
 	await check_rank(
 		reaction.message.channel.send, 
-		reaction.message.guild, 
+		reaction.message.guild,
+		reaction.message.guild.id, 
 		reaction.message.author.id, 
 		reaction.message.author.name, 
 		reaction.message.author.display_avatar
@@ -152,7 +162,8 @@ async def on_voice_state_update(member, before, after):
 			# Send embed if user levels up
 			await check_rank(
 				member.guild.system_channel.send, 
-				member.guild, 
+				member.guild,
+				member.guild.id, 
 				member.id, 
 				member.name, 
 				member.display_avatar
@@ -186,7 +197,8 @@ async def on_member_update(before, after):
 		# Send embed if user levels up
 		await check_rank(
 			before.guild.system_channel.send, 
-			before.guild, 
+			before.guild,
+			before.guild.id, 
 			before.id, 
 			before.name, 
 			before.display_avatar
@@ -234,7 +246,8 @@ async def award_xp(
 	# Send embed if user levels up
 	await check_rank(
 		member.guild.system_channel.send, 
-		member.guild, 
+		member.guild,
+		member.guild.id, 
 		member.id, 
 		member.name, 
 		member.display_avatar
@@ -259,7 +272,8 @@ async def invite_xp(
 	# Send embed if user levels up
 	await check_rank(
 		member.guild.system_channel.send, 
-		member.guild, 
+		member.guild,
+		member.guild.id, 
 		member.id, 
 		member.name, 
 		member.display_avatar
@@ -447,7 +461,8 @@ async def import_channel(
 		# Check if user levels up to a new rank, send special embed if True
 		await check_rank(
 			member.guild.system_channel.send, 
-			member.guild, 
+			member.guild,
+			member.guild.id, 
 			member.id, 
 			member.name, 
 			member.display_avatar
@@ -464,7 +479,8 @@ async def import_channel(
 		# Check if user levels up to a new rank, send special embed if True
 		await check_rank(
 			member.guild.system_channel.send, 
-			member.guild, 
+			member.guild,
+			member.guild.id, 
 			member.id, 
 			member.name, 
 			member.display_avatar
@@ -481,7 +497,8 @@ async def import_channel(
 		# Check if user levels up to a new rank, send special embed if True
 		await check_rank(
 			member.guild.system_channel.send, 
-			member.guild, 
+			member.guild,
+			member.guild.id, 
 			member.id, 
 			member.name, 
 			member.display_avatar
@@ -498,7 +515,8 @@ async def import_channel(
 		# Check if user levels up to a new rank, send special embed if True
 		await check_rank(
 			member.guild.system_channel.send, 
-			member.guild, 
+			member.guild,
+			member.guild.id, 
 			member.id, 
 			member.name, 
 			member.display_avatar
@@ -604,7 +622,8 @@ async def role_xp(
 		# Send embed if user levels up
 		await check_rank(
 			user.guild.system_channel.send, 
-			user.guild, 
+			user.guild,
+			user.guild.id, 
 			user.id, 
 			user.name, 
 			user.display_avatar
