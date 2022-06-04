@@ -8,7 +8,7 @@ from discord import option
 from discord.commands import Option
 from discord.ext import commands, pages
 from dotenv import load_dotenv
-from myfunctions import update_user, my_rank_embed_values, update_boosters, rank_check, new_levels
+from myfunctions import update_user, my_rank_embed_values, update_boosters, rank_check, new_levels, write_json, json_dump, new_file
 from embeds import *
 
 load_dotenv()
@@ -172,6 +172,7 @@ async def on_member_update(before, after):
 			True, 0, 1000, 1, True
 			)
 		print("booster!")
+		await before.guild.system_channel.send(f"{before.name} was given 1000 XP for becoming a booster!")
 	elif before.premium_since is not None and after.premium_since is None:
 		await update_user(
 			before.guild, before.id, before.name, 
@@ -179,6 +180,7 @@ async def on_member_update(before, after):
 			True, 0, 0, 0, False
 			)
 		print("no longer a booster...")
+
 
 	try:
 		# Send embed if user levels up
@@ -509,7 +511,7 @@ async def import_channel(
 	
 @bot.slash_command(name="test", description="Test command for testing things")
 async def test(
-	ctx,
+	ctx: discord.ApplicationContext,
 	role: Option(discord.Role, "Select a role", required=True)
 ):
 	await ctx.respond(f"You selected {role.mention}!")
@@ -518,15 +520,92 @@ async def test(
 @option("r_name", description="Choose a role to edit", choices=["Newbie", "Bronze", "Silver"])
 @option("r_level", description="Set the level minimum (Ex. Bronze needs level 3 to be reached)")
 async def test3(
-	ctx,
+	ctx: discord.ApplicationContext,
 	r_name: str,
 	r_level: int
 ):
 	await ctx.respond(f"You selected {r_name} and changed its level to {r_level}!")
 
+@bot.slash_command(name="role_level", description="Set a level to be tied to a role")
+@option(
+	"l_name", 
+	description="Choose a role to edit", 
+	choices=["Newbie", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Grandmaster", "Exalted", "Galaxy", "Konami"]
+	)
+async def role_level(
+	ctx: discord.ApplicationContext,
+	l_name: str,
+	role: Option(discord.Role, "Select a role to link to this level", required=True)
+):
+	rid_json = f"Data/{ctx.guild} Role IDs.json"
+	rid_template = {
+		"role_ids": []
+		}
+	template = {
+		"role_name": l_name,
+		"role_id": role.id
+	}
+
+	try:
+		data = await json_read(rid_json)
+		data = data["role_ids"]
+		await write_json(template, rid_json, "role_ids")
+		data = await json_read(rid_json)
+		data = data["role_ids"]
+		unique = {each["role_name"] : each for each in data}
+		unique = list(unique.values())
+		print(unique)
+		template = {"role_ids": unique}
+		await json_dump(rid_json, template)
+	except FileNotFoundError:
+		await new_file(rid_json)
+		await json_dump(rid_json, rid_template)
+		data = await json_read(rid_json)
+		data = data["role_ids"]
+		await write_json(template, rid_json, "role_ids")
+
+	await ctx.respond(f"Set the role ID for {l_name}!")
+		
+@bot.slash_command(name="remove_role_level", description="Set a level to be tied to a role")
+@option(
+	"l_name", 
+	description="Choose a role to edit", 
+	choices=["Newbie", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Grandmaster", "Exalted", "Galaxy", "Konami"]
+	)
+async def remove_role_level(
+	ctx: discord.ApplicationContext,
+	l_name: str,
+	role: Option(discord.Role, "Select a role to link to this level", required=True)
+):
+	pass
+
+@bot.slash_command(name="role_xp", description="Give XP to a specific role")
+async def role_xp(
+	ctx: discord.ApplicationContext,
+	role: Option(discord.Role, "Select a role", required=True),
+	xp: Option(int, "Amount of XP to give to the users of this role", required=True)
+):
+
+	for user in role.members:
+		await update_user(
+			user.guild ,user.id, user.name, 
+			"special_xp", 
+			True, xp, xp, 1
+			)
+
+		# Send embed if user levels up
+		await check_rank(
+			user.guild.system_channel.send, 
+			user.guild, 
+			user.id, 
+			user.name, 
+			user.display_avatar
+			)		
+	await ctx.respond(f"You gave users with the {role.mention} role {xp} XP!")
+
 @bot.slash_command(name="make_levels", description="Make new levels and level barriers")
 async def make_levels(
-	ctx,
+	ctx: discord.ApplicationContext,
 	starting_xp: Option(int, "How much XP for level 1?", required=True),
 	level_factor: Option(int, "How much XP should each level increase by?", required=True),
 	total_levels: Option(int, "How many levels should be made? (Higher takes longer to make)", required=True)

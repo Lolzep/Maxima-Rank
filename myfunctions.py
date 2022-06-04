@@ -36,8 +36,8 @@ async def txt_read(filename):
 	return data
 
 # Create a new json objects with 2 arrays
-async def new_json_objects(filename, name1, name2):
-	new_template = {name1:[], name2:[]}
+async def new_json_objects(filename, name):
+	new_template = {name:[]}
 	async with aiofiles.open(filename, "w") as f:
 		await f.write(json.dumps(new_template, indent=2))
 
@@ -130,11 +130,11 @@ async def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, 
 	#* Check if missing or empty, if so, create new file and/or run new_json
 	try:
 		if os.stat(main_json).st_size == 0:
-			await new_json_objects(main_json, "users", "role_ids")
+			await new_json_objects(main_json, "users")
 	except FileNotFoundError:
 		await new_file(main_json)
 		if os.stat(main_json).st_size == 0:
-			await new_json_objects(main_json, "users", "role_ids")
+			await new_json_objects(main_json, "users")
 
 	#* Load initial users.json
 	data = await json_read(main_json)
