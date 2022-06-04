@@ -191,13 +191,13 @@ async def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, 
 # total_levels: How many levels should there be?
 # rl (kwargs): What should the levels be called and what should the minimum for each level be? Ex. Newbie=0, Bronze=3, etc.
 async def level_barriers(guild_id, starting_xp: int, level_factor: int, total_levels: int, make_json: bool, rl: dict):
-	#* Create new levels key and a level object template starting at 0
+	#* Use the following json files
 	main_json = f"Data/{guild_id} Levels.json"
 	rb_json = f"Data/{guild_id} Role Barriers.json"
 	rid_json = f"Data/{guild_id} Role IDs.json"
-	role_id = 0
 
 	# If it exists, add role_ids to the level objects (else it's 0)
+	role_id = 0
 	try:
 		rid_data = await json_read(rid_json)
 		for role in rid_data["role_ids"]:
@@ -206,6 +206,7 @@ async def level_barriers(guild_id, starting_xp: int, level_factor: int, total_le
 	except:
 		role_id = 0
 
+	# Create variables for i (to iterate), role_barriers, and a new_data template for starting level
 	i = 0
 	role_barriers = {}
 	new_data = {
@@ -216,11 +217,11 @@ async def level_barriers(guild_id, starting_xp: int, level_factor: int, total_le
 		"role_title": rl[0][0]
 		}
 
-	#* Create a role_barriers dict, used to know the max XP for each role (rank check embeds)
+	# Create a role_barriers dict, used to know the max XP for each role (rank check embeds)
 	for level in rl:
 		role_barriers[level[0]] = 0
 
-	#* Create a new_data object for each level from level 1 - [total_levels] (already have level 0 as new_data)
+	# Create a new_data object for each level from level 1 - [total_levels] (already have level 0 as new_data)
 	while i < total_levels:
 		# n: Current level
 		n = i + 1
@@ -260,7 +261,7 @@ async def level_barriers(guild_id, starting_xp: int, level_factor: int, total_le
 	
 	await json_dump(rb_json, role_barriers)
 
-	return role_barriers, rl
+	return role_barriers, rl, 
 
 # Create new levels with "level, xp and role_id" as the objects in a levels.json file
 # For use in knowing the current levels and where each user's level currently stands
@@ -269,12 +270,15 @@ async def level_barriers(guild_id, starting_xp: int, level_factor: int, total_le
 # starting_xp: What should the XP be to reach level 1?
 # level_factor: How much XP should each level increase by?
 # total_levels: How many levels should there be?
-# TODO: roleid should be changed to actual roleids in Discord (probably need new definition)
+# disc_cmd: If not None, return role_barriers and rl for use in discord commands
+# rl (kwargs): What should the levels be called and what should the minimum for each level be? Ex. Newbie=0, Bronze=3, etc.
 async def new_levels(guild_id, starting_xp: int, level_factor: int, total_levels: int, disc_cmd=None, **rl):
 	main_json = f"Data/{guild_id} Levels.json"
 	rid_json = f"Data/{guild_id} Role IDs.json"
 	rl = OrderedDict(rl)
 	rl = list(rl.items())
+
+	# If it exists, add role_id to level 0 level object, else its 0
 	role_id = 0
 	try:
 		rid_data = await json_read(rid_json)
@@ -286,7 +290,7 @@ async def new_levels(guild_id, starting_xp: int, level_factor: int, total_levels
 	except:
 		role_id = 0
 
-	# Create new levels key and a level object template starting at 0 for all
+	# Create a new levels template (array and object) and make a new levels.json if it doesnt exist
 	i = 0
 	new_data = {
 		"level": 0, 
@@ -298,15 +302,18 @@ async def new_levels(guild_id, starting_xp: int, level_factor: int, total_levels
 	level_template = {
 		"levels": []
 		}
-	# If the levels.json already exists, remove it to redo all calculations. Create new levels.json with level_template
+
+	# If the levels.json already exists, remove it to redo all calculations.
 	if os.path.exists(main_json):
 		os.remove(main_json)
 	await new_file(main_json)
 	await json_dump(main_json, level_template)
 	await write_json(new_data, main_json, "levels")
 
+	# level_barriers: Creates all the new level objects
 	role_barriers, rl = await level_barriers(guild_id, starting_xp, level_factor, total_levels, True, rl)
 
+	# 
 	if disc_cmd is not None:
 		return role_barriers, rl
 
