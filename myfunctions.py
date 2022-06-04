@@ -19,10 +19,19 @@ def restart_bot():
 	print("Restarting")
 	os.execv(sys.executable, ['python3'] + sys.argv)
 
-# Create a new json file
-async def new_json_file(filename):
+# Create a new file
+async def new_file(filename):
 	async with aiofiles.open(filename, "w"):
 		pass
+
+async def txt_write(filename, text):
+	async with aiofiles.open(filename, "w") as f:
+		await f.write(str(text))
+
+async def txt_read(filename):
+	async with aiofiles.open(filename, "r") as f:
+		data = json.loads(await f.read())
+	return data
 
 # Create a new json objects with 2 arrays
 async def new_json_objects(filename, name1, name2):
@@ -121,7 +130,7 @@ async def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, 
 		if os.stat(main_json).st_size == 0:
 			await new_json_objects(main_json, "users", "role_ids")
 	except FileNotFoundError:
-		await new_json_file(main_json)
+		await new_file(main_json)
 		if os.stat(main_json).st_size == 0:
 			await new_json_objects(main_json, "users", "role_ids")
 
@@ -179,8 +188,10 @@ async def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, 
 # level_factor: How much XP should each level increase by?
 # total_levels: How many levels should there be?
 # rl (kwargs): What should the levels be called and what should the minimum for each level be? Ex. Newbie=0, Bronze=3, etc.
-async def level_barriers(main_json, guild_id, starting_xp: int, level_factor: int, total_levels: int, make_json: bool, rl: dict):
+async def level_barriers(guild_id, starting_xp: int, level_factor: int, total_levels: int, make_json: bool, rl: dict):
 	#* Create new levels key and a level object template starting at 0
+	main_json = f"Data/{guild_id} Levels.json"
+	rb_json = f"Data/{guild_id} Role Barriers.json"
 	rl = OrderedDict(rl)
 	rl = list(rl.items())
 	i = 0
@@ -225,6 +236,8 @@ async def level_barriers(main_json, guild_id, starting_xp: int, level_factor: in
 		if make_json == True:
 			await write_json(new_data, main_json, "levels")
 		i += 1
+	
+	await json_dump(rb_json, role_barriers)
 
 	return role_barriers, rl
 
@@ -253,14 +266,12 @@ async def new_levels(guild_id, starting_xp: int, level_factor: int, total_levels
 	# If the levels.json already exists, remove it to redo all calculations. Create new levels.json with level_template
 	if os.path.exists(main_json):
 		os.remove(main_json)
-	await new_json_file(main_json)
+	await new_file(main_json)
 	await json_dump(main_json, level_template)
 	await write_json(new_data, main_json, "levels")
 
-	role_barriers, rl = await level_barriers(main_json, guild_id, starting_xp, level_factor, total_levels, True, rl)
+	role_barriers, rl = await level_barriers(guild_id, starting_xp, level_factor, total_levels, True, rl)
 	role_title = ""
-
-
 
 	# While i <= total_levels, create a new level object for each level 0 - i and calculate each variable as needed
 	while i < total_levels:

@@ -4,7 +4,7 @@ import re
 import random
 import math
 
-from myfunctions import templateEmbed, my_rank_embed_values, level_barriers, sort_leaderboard
+from myfunctions import templateEmbed, my_rank_embed_values, level_barriers, sort_leaderboard, txt_read, json_read
 
 VERSION = os.popen('git rev-parse HEAD').read()
 COMMIT_MESSAGE = os.popen('git show --pretty=format:%s -s HEAD').read()
@@ -116,7 +116,8 @@ class infoEmbeds:
 		#* Some extras here, need to get values of the user using a separate function (my_rank_embed_values)
 		#* This function also returns the emoji ranks to be shown next to the values in emoji_object
 		field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id = await my_rank_embed_values(guild_id, main_id, False)
-		role_barriers = await level_barriers(100, 20, 300, False)
+		role_barriers = await json_read(f"Data\{guild_id} Role Barriers.json")
+		role_barriers = dict(role_barriers)
 		myrankFILE = discord.File(
 			f"Images/Ranks/{role_title}.png", 
 			filename="image.png"
@@ -185,7 +186,8 @@ class infoEmbeds:
 		#* Some extras here, need to get values of the user using a separate function (my_rank_embed_values)
 		#* This function also returns the emoji ranks to be shown next to the values in emoji_object
 		field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id = await my_rank_embed_values(guild_id, main_id, False)
-		role_barriers = await level_barriers(100, 20, 300, False)
+		role_barriers = await json_read(f"Data\{guild_id} Role Barriers.json")
+		role_barriers = dict(role_barriers)
 		rankFILE = discord.File(
 			f"Images/Ranks/{role_title}.png", 
 			filename="image.png"
@@ -255,7 +257,7 @@ class infoEmbeds:
 		#* This section picks a random quote from a txt file to display in desc. of embed
 		q_quotes_raw = []
 		q_quotes = []
-		with open("Data\\rank_check_quotes.txt", "r") as f:
+		with open("rank_check_quotes.txt", "r") as f:
 			for line in f:
 				q_quotes_raw.append(line)
 		for quote in q_quotes_raw:
