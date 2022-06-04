@@ -4,6 +4,7 @@ import asyncio
 import json
 import time
 
+from discord import option
 from discord.commands import Option
 from discord.ext import commands, pages
 from dotenv import load_dotenv
@@ -370,7 +371,6 @@ async def import_channel(
 	#* Make dicts of each activity with {user_id: messages} etc.
 	bot_msg = await ctx.channel.send(f"Currently 0 messages in...")
 	async for message in ctx.history(limit=100000):
-		# TODO: Make the values update all at once instead of on each message
 		# Ignore bots
 		if message.author.bot == True:
 			i += 1
@@ -388,8 +388,6 @@ async def import_channel(
 		else:
 			msg_dict[user["user_id"]] += 1
 
-		print(f"Increased message count, gave 5 XP to {message.author}")
-
 		# Image counts
 		if message.attachments != []:
 			data, user = await update_user(
@@ -402,8 +400,6 @@ async def import_channel(
 				att_dict[user["user_id"]] = 1
 			else:
 				att_dict[user["user_id"]] += 1
-			
-			print(f"Increased image count, gave 10 XP to {message.author}")
 		
 		# Embed counts
 		if message.embeds != []:
@@ -418,8 +414,6 @@ async def import_channel(
 			else:
 				emb_dict[user["user_id"]] += 1
 
-			print(f"Increased embeds count, gave 10 XP to {message.author}")
-
 		# Sticker counts
 		if message.stickers != []:
 			data, user = await update_user(
@@ -432,8 +426,6 @@ async def import_channel(
 				stk_dict[user["user_id"]] = 1
 			else:
 				stk_dict[user["user_id"]] += 1
-
-			print(f"Increased stickers count, gave 10 XP to {message.author}")
 		
 		# i = History count
 		i += 1
@@ -510,10 +502,6 @@ async def import_channel(
 			member.display_avatar
 			)
 
-	print(msg_dict)
-	print(att_dict)
-	print(emb_dict)
-	print(stk_dict)
 	e_time = time.time()
 	t_time = e_time - s_time
 	t_time = "{:.2f}".format(t_time)
@@ -525,6 +513,16 @@ async def test(
 	role: Option(discord.Role, "Select a role", required=True)
 ):
 	await ctx.respond(f"You selected {role.mention}!")
+
+@bot.slash_command(name="test3", description="Test command for testing things")
+@option("r_name", description="Choose a role to edit", choices=["Newbie", "Bronze", "Silver"])
+@option("r_level", description="Set the level minimum (Ex. Bronze needs level 3 to be reached)")
+async def test3(
+	ctx,
+	r_name: str,
+	r_level: int
+):
+	await ctx.respond(f"You selected {r_name} and changed its level to {r_level}!")
 
 @bot.slash_command(name="make_levels", description="Make new levels and level barriers")
 async def make_levels(

@@ -19,15 +19,17 @@ def restart_bot():
 	print("Restarting")
 	os.execv(sys.executable, ['python3'] + sys.argv)
 
-# Create a new file
+# Create a new file (usually json)
 async def new_file(filename):
 	async with aiofiles.open(filename, "w"):
 		pass
 
+# Write to a txt file
 async def txt_write(filename, text):
 	async with aiofiles.open(filename, "w") as f:
 		await f.write(str(text))
 
+# Read a txt file
 async def txt_read(filename):
 	async with aiofiles.open(filename, "r") as f:
 		data = json.loads(await f.read())
@@ -271,39 +273,7 @@ async def new_levels(guild_id, starting_xp: int, level_factor: int, total_levels
 	await write_json(new_data, main_json, "levels")
 
 	role_barriers, rl = await level_barriers(guild_id, starting_xp, level_factor, total_levels, True, rl)
-	role_title = ""
 
-	# While i <= total_levels, create a new level object for each level 0 - i and calculate each variable as needed
-	while i < total_levels:
-		n_level = new_data["level"] + 1
-
-		p_level_xp = new_data["level_xp"]
-		level_xp = p_level_xp + level_factor
-
-		total_xp = new_data["total_xp"] + level_xp
-
-		next_id = new_data["role_id"]
-
-		# Using level_barriers(), find the role title for the current level object
-		for (title,xp) in role_barriers.items():
-			if total_xp <= xp:
-				role_title = title
-				break
-			else:
-				continue
-
-		# Create a new new_data object to then append and modify in the next loop
-		new_data = {
-			"level": n_level, 
-			"level_xp": level_xp, 
-			"total_xp": total_xp, 
-			"role_id": next_id, 
-			"role_title": role_title
-			}
-
-		await write_json(new_data, main_json, "levels")
-		i += 1
-	
 	if disc_cmd is not None:
 		return role_barriers, rl
 
@@ -595,21 +565,3 @@ async def leaderboard_embed_values(guild_id, main_id, simple : bool):
 		return emoji_object
 	else:
 		return field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id
-
-
-# asyncio.run(level_barriers(
-# 	100, 
-# 	20, 
-# 	600, 
-# 	True, 
-# 	Newbie=0, 
-# 	Bronze=3, 
-# 	Silver=5, 
-# 	Gold=10, 
-# 	Platinum=25, 
-# 	Diamond=50, 
-# 	Master=100, 
-# 	Grandmaster=150, 
-# 	Exalted=175,
-# 	Galaxy=200,
-# 	Konami=573))
