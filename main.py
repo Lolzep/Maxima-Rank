@@ -44,16 +44,26 @@ async def sendEmbed(api_call, embed_object, file_object):
 
 # Check if user levels up to a new rank, send special embed if True
 async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user_name, user_avatar):
+	# Get current guild to get current member being checked
+	guild = discord.utils.get(bot.guilds, id = guild_id)
+	member = guild.get_member(user_id)
+	# Ignore bots
+	if member.bot == True:
+		return
+	
+	# Check the rank to see if the role changed after leveling up
 	role_changed, new_role, old_role_id, new_role_id = await rank_check(guild_name, user_id)
+	# If the role did change after checking the rank...
 	if role_changed is True:
+		# Get the current role and the new role
 		old_role = discord.utils.get(bot.get_guild(guild_id).roles, id = old_role_id)
 		new_role = discord.utils.get(bot.get_guild(guild_id).roles, id = new_role_id)
 		
-		guild = discord.utils.get(bot.guilds, id = guild_id)
-		member = guild.get_member(user_id)
+		# Remove the old role from the user and add the new role to the user
 		await member.add_roles(new_role)
 		await member.remove_roles(old_role)
 
+		# Send rcEMBED to specified discord channel (default is system channel)
 		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(user_name, user_avatar, new_role)
 		await discord_object_to_send(file=rcFILE, embed=rcEMBED)
 
