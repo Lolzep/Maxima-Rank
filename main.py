@@ -532,6 +532,7 @@ async def test3(
 	description="Choose a role to edit", 
 	choices=["Newbie", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Grandmaster", "Exalted", "Galaxy", "Konami"]
 	)
+@commands.has_permissions(manage_messages=True)
 async def role_level(
 	ctx: discord.ApplicationContext,
 	l_name: str,
@@ -548,6 +549,18 @@ async def role_level(
 
 	try:
 		data = await json_read(rid_json)
+		# Read, then write, which might give repeat objects
+		data = data["role_ids"]
+		await write_json(template, rid_json, "role_ids")
+		# Read again, this time with the repeat objects
+		data = await json_read(rid_json)
+		data = data["role_ids"]
+		# Filter out these unique objects with dict comprehension
+		unique = {each["role_name"] : each for each in data}
+		unique = list(unique.values())
+		# Write only the unique roles and role IDs to the JSON
+		template = {"role_ids": unique}
+		await json_dump(rid_json, template)
 	except FileNotFoundError:
 		# If file hasn't been made, just makes a new one with a role object
 		await new_file(rid_json)
@@ -556,19 +569,6 @@ async def role_level(
 		data = data["role_ids"]
 		await write_json(template, rid_json, "role_ids")
 
-	# Read, then write, which might give repeat objects
-	data = data["role_ids"]
-	await write_json(template, rid_json, "role_ids")
-	# Read again, this time with the repeat objects
-	data = await json_read(rid_json)
-	data = data["role_ids"]
-	# Filter out these unique objects with dict comprehension
-	unique = {each["role_name"] : each for each in data}
-	unique = list(unique.values())
-	print(unique)
-	# Write only the unique roles and role IDs to the JSON
-	template = {"role_ids": unique}
-	await json_dump(rid_json, template)
 
 	await ctx.respond(f"Set the role ID for {l_name}!")
 		
@@ -578,6 +578,7 @@ async def role_level(
 	description="Choose a role to edit", 
 	choices=["Newbie", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Grandmaster", "Exalted", "Galaxy", "Konami"]
 	)
+@commands.has_permissions(manage_messages=True)
 async def remove_role_level(
 	ctx: discord.ApplicationContext,
 	l_name: str,
@@ -586,6 +587,7 @@ async def remove_role_level(
 	pass
 
 @bot.slash_command(name="role_xp", description="Give XP to a specific role")
+@commands.has_permissions(manage_messages=True)
 async def role_xp(
 	ctx: discord.ApplicationContext,
 	role: Option(discord.Role, "Select a role", required=True),
@@ -610,6 +612,7 @@ async def role_xp(
 	await ctx.respond(f"You gave users with the {role.mention} role {xp} XP!")
 
 @bot.slash_command(name="make_levels", description="Make new levels and level barriers")
+@commands.has_permissions(manage_messages=True)
 async def make_levels(
 	ctx: discord.ApplicationContext,
 	starting_xp: Option(int, "How much XP for level 1?", required=True),
