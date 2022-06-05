@@ -47,6 +47,7 @@ async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user
 	# Get current guild to get current member being checked
 	guild = discord.utils.get(bot.guilds, id = guild_id)
 	member = guild.get_member(user_id)
+
 	# Ignore bots
 	if member.bot == True:
 		return
@@ -58,10 +59,14 @@ async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user
 		# Get the current role and the new role
 		old_role = discord.utils.get(bot.get_guild(guild_id).roles, id = old_role_id)
 		new_role = discord.utils.get(bot.get_guild(guild_id).roles, id = new_role_id)
-		
+
 		# Remove the old role from the user and add the new role to the user
-		await member.add_roles(new_role)
-		await member.remove_roles(old_role)
+		# If roles don't exist, don't do anything
+		try:
+			await member.add_roles(new_role)
+			await member.remove_roles(old_role)
+		except AttributeError:
+			pass
 
 		# Send rcEMBED to specified discord channel (default is system channel)
 		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(user_name, user_avatar, new_role)
@@ -597,22 +602,7 @@ async def role_level(
 		data = data["role_ids"]
 		await write_json(template, rid_json, "role_ids")
 
-
-	await ctx.respond(f"Set the role ID for {l_name}!")
-		
-@bot.slash_command(name="remove_role_level", description="Set a level to be tied to a role")
-@option(
-	"l_name", 
-	description="Choose a role to edit", 
-	choices=["Newbie", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Grandmaster", "Exalted", "Galaxy", "Konami"]
-	)
-@commands.has_permissions(manage_messages=True)
-async def remove_role_level(
-	ctx: discord.ApplicationContext,
-	l_name: str,
-	role: Option(discord.Role, "Select a role to link to this level", required=True)
-):
-	pass
+	await ctx.respond(f"Set the role ID for {l_name} as {role.mention}!")
 
 @bot.slash_command(name="role_xp", description="Give XP to a specific role")
 @commands.has_permissions(manage_messages=True)

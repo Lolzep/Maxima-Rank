@@ -111,12 +111,12 @@ class infoEmbeds:
 
 		return adminhelpEMBED, adminhelpFILE
 	
-	async def myrankEMBED(guild_id, main_id, main_user, avatar_id, emoji : list):
+	async def myrankEMBED(guild_name, main_id, main_user, avatar_id, emoji : list):
 		'''Used for the /myrank command'''
 		#* Some extras here, need to get values of the user using a separate function (my_rank_embed_values)
 		#* This function also returns the emoji ranks to be shown next to the values in emoji_object
-		field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id = await my_rank_embed_values(guild_id, main_id, False)
-		role_barriers = await json_read(f"Data\{guild_id} Role Barriers.json")
+		field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id = await my_rank_embed_values(guild_name, main_id, False)
+		role_barriers = await json_read(f"Data\{guild_name} Role Barriers.json")
 		role_barriers = dict(role_barriers)
 		myrankFILE = discord.File(
 			f"Images/Ranks/{role_title}.png", 
@@ -180,13 +180,13 @@ class infoEmbeds:
 
 		return myrankEMBED, myrankFILE
 
-	async def rankEMBED(guild_id, main_id, main_user, avatar_id, emoji : list):
+	async def rankEMBED(guild_name, main_id, main_user, avatar_id, emoji : list):
 		'''Used for the /rank command
 		Very similar to myrankEMBED'''
 		#* Some extras here, need to get values of the user using a separate function (my_rank_embed_values)
 		#* This function also returns the emoji ranks to be shown next to the values in emoji_object
-		field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id = await my_rank_embed_values(guild_id, main_id, False)
-		role_barriers = await json_read(f"Data\{guild_id} Role Barriers.json")
+		field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id = await my_rank_embed_values(guild_name, main_id, False)
+		role_barriers = await json_read(f"Data\{guild_name} Role Barriers.json")
 		role_barriers = dict(role_barriers)
 		rankFILE = discord.File(
 			f"Images/Ranks/{role_title}.png", 
@@ -286,21 +286,21 @@ class infoEmbeds:
 		return rcFILE, rcEMBED
 
 	
-	async def lbEMBED(guild_id, guild_img, starting_rank, ending_rank, just_pages:bool):
+	async def lbEMBED(guild_name, guild_img, starting_rank, ending_rank, just_pages:bool):
 		'''Used for the /leaderboard command'''
-		users, length = await sort_leaderboard(guild_id)
+		users, length = await sort_leaderboard(guild_name)
 
 		num_pages = int(math.ceil(length/ending_rank))
 		if just_pages is True:
 			return num_pages
 		
 		lbEMBED = discord.Embed(
-			title=f"Leaderboard of activity for {guild_id}",
+			title=f"Leaderboard of activity for {guild_name}",
 			description="Gamers",
 			color = discord.Color.purple()
 			)
 		lbEMBED.set_author(
-			name=guild_id, 
+			name=guild_name, 
 			icon_url=guild_img
 			)
 		lbEMBED.set_thumbnail(

@@ -92,13 +92,14 @@ async def update_levels(guild_name, json_object_name : str):
 	role_changed = False
 	if current_role != new_role:
 		print(f"User went from {current_role} to {new_role}!")
+		print(f"Old role ID: {old_role_id}\nNew rold ID: {new_role_id}")
 		role_changed = True
 	
 	return role_changed, new_role, old_role_id, new_role_id
 
 # Updates the user objects for the specified user in users.json file and writes new ones if not found
 #? ARGUMENTS
-# guild_id: guild id retrieved from discord api command
+# guild_name: guild name retrieved from discord api command
 # main_id: user id retrieved from discord api command
 # main_user: user name retrieved from discord api command
 # key: The key to modify in the user json object
@@ -109,7 +110,7 @@ async def update_levels(guild_name, json_object_name : str):
 # amount_of_xp: Amount of value to add to the xp in the user object, which can be...
 # multiplier: ...multiplied by this value (useful for adding correct xp for >1 key value)
 # premium: A boolean, used in on_member_update to know if a user is boosting the server or not (optional)
-async def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, amount_to_add: int, amount_of_xp: int, multiplier: int, premium=None):
+async def update_user(guild_name, main_id, main_user, key : str, dump_file: bool, amount_to_add: int, amount_of_xp: int, multiplier: int, premium=None):
 	template = {
 		"user_id": main_id, 
 		"name": main_user, 
@@ -127,7 +128,7 @@ async def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, 
 		"special_xp": 0, 
 		"is_booster": False
 		}
-	main_json = f"Data/{guild_id} Users.json"
+	main_json = f"Data/{guild_name} Users.json"
 
 	#* Check if missing or empty, if so, create new file and/or run new_json
 	try:
@@ -187,16 +188,16 @@ async def update_user(guild_id, main_id, main_user, key : str, dump_file: bool, 
 # Using the same level_factor and total_levels args, makes a dict of level barriers for each rank
 # Useful for knowing XP needed to next rank
 #? ARGUMENTS
-# guild_id: Guild that these levels are for
+# guild_name: Guild that these levels are for
 # starting_xp: What should the XP be to reach level 1?
 # level_factor: How much XP should each level increase by?
 # total_levels: How many levels should there be?
 # rl (kwargs): What should the levels be called and what should the minimum for each level be? Ex. Newbie=0, Bronze=3, etc.
-async def level_barriers(guild_id, starting_xp: int, level_factor: int, total_levels: int, make_json: bool, rl: dict):
+async def level_barriers(guild_name, starting_xp: int, level_factor: int, total_levels: int, make_json: bool, rl: dict):
 	#* Use the following json files
-	main_json = f"Data/{guild_id} Levels.json"
-	rb_json = f"Data/{guild_id} Role Barriers.json"
-	rid_json = f"Data/{guild_id} Role IDs.json"
+	main_json = f"Data/{guild_name} Levels.json"
+	rb_json = f"Data/{guild_name} Role Barriers.json"
+	rid_json = f"Data/{guild_name} Role IDs.json"
 
 	# If it exists, add role_ids to the level objects (else it's 0)
 	role_id = 0
@@ -268,15 +269,15 @@ async def level_barriers(guild_id, starting_xp: int, level_factor: int, total_le
 # Create new levels with "level, xp and role_id" as the objects in a levels.json file
 # For use in knowing the current levels and where each user's level currently stands
 #? ARGUMENTS
-# guild_id: Guild that these levels are for
+# guild_name: Guild that these levels are for
 # starting_xp: What should the XP be to reach level 1?
 # level_factor: How much XP should each level increase by?
 # total_levels: How many levels should there be?
 # disc_cmd: If not None, return role_barriers and rl for use in discord commands
 # rl (kwargs): What should the levels be called and what should the minimum for each level be? Ex. Newbie=0, Bronze=3, etc.
-async def new_levels(guild_id, starting_xp: int, level_factor: int, total_levels: int, disc_cmd=None, **rl):
-	main_json = f"Data/{guild_id} Levels.json"
-	rid_json = f"Data/{guild_id} Role IDs.json"
+async def new_levels(guild_name, starting_xp: int, level_factor: int, total_levels: int, disc_cmd=None, **rl):
+	main_json = f"Data/{guild_name} Levels.json"
+	rid_json = f"Data/{guild_name} Role IDs.json"
 	rl = OrderedDict(rl)
 	rl = list(rl.items())
 
@@ -313,7 +314,7 @@ async def new_levels(guild_id, starting_xp: int, level_factor: int, total_levels
 	await write_json(new_data, main_json, "levels")
 
 	# level_barriers: Creates all the new level objects
-	role_barriers, rl = await level_barriers(guild_id, starting_xp, level_factor, total_levels, True, rl)
+	role_barriers, rl = await level_barriers(guild_name, starting_xp, level_factor, total_levels, True, rl)
 
 	# 
 	if disc_cmd is not None:
@@ -341,13 +342,13 @@ async def templateEmbed(command : str, description=None):
 # Values also have a specific rank emoji assigned to them based on the max value in the server used
 # The command returns everything needed to be used in the "embeds.py" file (fields, calc. values, etc.)
 #? ARGUMENTS
-# guild_id: guild id retrieved from discord api command
+# guild_name: guild name retrieved from discord api command
 # main_id: user id retrieved from discord api command
 # simple (boolean): If True, returns only the emoji list (useful for using in main.py and other cases where not everything needs to be returned)
-async def my_rank_embed_values(guild_id, main_id, simple : bool):
+async def my_rank_embed_values(guild_name, main_id, simple : bool):
 	#* Load initial json, find user who sent command
-	main_json = f"Data/{guild_id} Users.json"
-	levels_json = f"Data/{guild_id} Levels.json"
+	main_json = f"Data/{guild_name} Users.json"
+	levels_json = f"Data/{guild_name} Levels.json"
 	data = await json_read(main_json)
 
 	user_ids = []
@@ -429,12 +430,13 @@ async def my_rank_embed_values(guild_id, main_id, simple : bool):
 
 # Update the xp values of boosted members in the server
 #? ARGUMENTS
-# guild_id: guild id retrieved from discord api command
+# guild_name: guild name retrieved from discord api command
+# main_id: user id retrieved from discord api command
 # xp: Amount of xp retrieved from discord slash command argument
-async def update_boosters(guild_id, main_id, xp):
+async def update_boosters(guild_name, main_id, xp):
 	#* Load initial jsons (User, levels)
 	count = 0
-	main_json = f"Data/{guild_id} Users.json"
+	main_json = f"Data/{guild_name} Users.json"
 	data = await json_read(main_json)
 
 	rc_dict = {}
@@ -446,7 +448,7 @@ async def update_boosters(guild_id, main_id, xp):
 			item["special_xp"] += xp
 			item["xp"] += xp
 			count += 1
-			role_changed, new_role, old_role_id, new_role_id = await update_levels(guild_id, item)
+			role_changed, new_role, old_role_id, new_role_id = await update_levels(guild_name, item)
 			#* Update Users.json and append values to list
 			rc_dict[item["user_id"]] = role_changed
 			nr_list.append(new_role)
@@ -459,7 +461,7 @@ async def update_boosters(guild_id, main_id, xp):
 # Connected to update_levels
 # Adds ability to connect the updated levels/ranks to discord api
 #? ARGUMENTS
-# guild_id: guild id retrieved from discord api command
+# guild_name: guild name retrieved from discord api command
 # main_id: user id retrieved from discord api command
 async def rank_check(guild_name, main_id):
 	#* Load some jsons
@@ -485,10 +487,10 @@ async def rank_check(guild_name, main_id):
 
 # Sort the server leaderboard based on XP of each user
 #? ARGUMENTS
-# guild_id: guild id retrieved from discord api command
-async def sort_leaderboard(guild_id):
+# guild_name: guild name retrieved from discord api command
+async def sort_leaderboard(guild_name):
 	#* Load initial users.json
-	main_json = f"Data/{guild_id} Users.json"
+	main_json = f"Data/{guild_name} Users.json"
 	data = await json_read(main_json)
 	
 	#* Create a list of tuples where each tuple is a user and the list contains all users
@@ -522,10 +524,10 @@ async def sort_leaderboard(guild_id):
 	#* Return sorted list of tuples to be used in leaderboard embed
 	return i_users, length
 
-async def leaderboard_embed_values(guild_id, main_id, simple : bool):
+async def leaderboard_embed_values(guild_name, main_id, simple : bool):
 	#* Load initial json, find user who sent command
-	main_json = f"Data/{guild_id} Users.json"
-	level_json = f"Data/{guild_id} Levels.json"
+	main_json = f"Data/{guild_name} Users.json"
+	level_json = f"Data/{guild_name} Levels.json"
 	data = await json_read(main_json)
 
 	user_ids = []
