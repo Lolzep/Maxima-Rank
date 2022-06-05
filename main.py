@@ -679,9 +679,10 @@ async def test4(
 ):
 	pass
 
-@bot.slash_command(name="ignore_channel6", description="Set a channel to ignore")
+@bot.slash_command(name="ignore_channel", description="Set a channel to ignore")
 @option("channel", description="Put in a channel ID to ignore", required=True)
-async def ignore_channel6(
+@commands.has_permissions(manage_messages=True)
+async def ignore_channel(
 	ctx: discord.ApplicationContext,
 	channel: str,
 ):
