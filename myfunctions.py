@@ -117,6 +117,7 @@ async def update_levels(guild_name, json_object_name : str):
 # amount_of_xp: Amount of value to add to the xp in the user object, which can be...
 # multiplier: ...multiplied by this value (useful for adding correct xp for >1 key value)
 # premium: A boolean, used in on_member_update to know if a user is boosting the server or not (optional)
+# TODO: Add something to here that checks if a level boost is enabled and mutiply XP by it (txt file?)
 async def update_user(guild_name, main_id, main_user, key : str, dump_file: bool, amount_to_add: int, amount_of_xp: int, multiplier: int, premium=None):
 	template = {
 		"user_id": main_id, 
@@ -179,7 +180,7 @@ async def update_user(guild_name, main_id, main_user, key : str, dump_file: bool
 	#* XP Block
 	# Based on amount_of_xp given
 	# Add xp to the specified user
-	#! Ranks are updated in main.py with rank_check
+	#? Ranks are updated in main.py with rank_check
 	user["xp"] += amount_of_xp * multiplier
 
 	#* Using the dump_file boolean argument, should the current file be overwritten after completion?
@@ -327,6 +328,42 @@ async def new_levels(guild_name, starting_xp: int, level_factor: int, total_leve
 	if disc_cmd is not None:
 		return role_barriers, rl
 
+# Update roles inside the *role IDs.json file (used by /role_level)
+#? ARGUMENTS
+# guild_name: Guild that these ids are for
+# level_name: Name of the level to change (from /role_level)
+# role_id: Role ID to change it to (from /role_level)
+async def update_roles(guild_name, level_name, role_id):
+	rid_json = f"Data/{guild_name} Role IDs.json"
+	rid_template = {
+		"role_ids": []
+		}
+	template = {
+		"role_name": level_name,
+		"role_id": role_id
+	}
+
+	try:
+		data = await json_read(rid_json)
+		# Read, then write, which might give repeat objects
+		data = data["role_ids"]
+		await write_json(template, rid_json, "role_ids")
+		# Read again, this time with the repeat objects
+		data = await json_read(rid_json)
+		data = data["role_ids"]
+		# Filter out these unique objects with dict comprehension
+		unique = {each["role_name"] : each for each in data}
+		unique = list(unique.values())
+		# Write only the unique roles and role IDs to the JSON
+		template = {"role_ids": unique}
+		await json_dump(rid_json, template)
+	except FileNotFoundError:
+		# If file hasn't been made, just makes a new one with a role object
+		await new_file(rid_json)
+		await json_dump(rid_json, rid_template)
+		data = await json_read(rid_json)
+		data = data["role_ids"]
+		await write_json(template, rid_json, "role_ids")
 
 # Creates a simple embed for the most general of embed implementations (help, about, etc.)
 #? ARGUMENTS

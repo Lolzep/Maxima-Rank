@@ -8,7 +8,7 @@ from discord import option
 from discord.commands import Option
 from discord.ext import commands, pages
 from dotenv import load_dotenv
-from myfunctions import update_user, my_rank_embed_values, update_boosters, rank_check, new_levels, write_json, json_dump, new_file
+from myfunctions import update_user, my_rank_embed_values, update_boosters, rank_check, new_levels, write_json, json_dump, new_file, update_roles
 from embeds import *
 
 load_dotenv()
@@ -481,36 +481,8 @@ async def role_level(
 	l_name: str,
 	role: Option(discord.Role, "Select a role to link to this level", required=True)
 ):
-	rid_json = f"Data/{ctx.guild} Role IDs.json"
-	rid_template = {
-		"role_ids": []
-		}
-	template = {
-		"role_name": l_name,
-		"role_id": role.id
-	}
 
-	try:
-		data = await json_read(rid_json)
-		# Read, then write, which might give repeat objects
-		data = data["role_ids"]
-		await write_json(template, rid_json, "role_ids")
-		# Read again, this time with the repeat objects
-		data = await json_read(rid_json)
-		data = data["role_ids"]
-		# Filter out these unique objects with dict comprehension
-		unique = {each["role_name"] : each for each in data}
-		unique = list(unique.values())
-		# Write only the unique roles and role IDs to the JSON
-		template = {"role_ids": unique}
-		await json_dump(rid_json, template)
-	except FileNotFoundError:
-		# If file hasn't been made, just makes a new one with a role object
-		await new_file(rid_json)
-		await json_dump(rid_json, rid_template)
-		data = await json_read(rid_json)
-		data = data["role_ids"]
-		await write_json(template, rid_json, "role_ids")
+	await update_roles(ctx.guild, l_name, role.id)
 
 	await ctx.respond(f"Set the role ID for {l_name} as {role.mention}!")
 
@@ -688,6 +660,16 @@ async def test3(
 	r_level: int
 ):
 	await ctx.respond(f"You selected {r_name} and changed its level to {r_level}!")
+
+@bot.slash_command(name="test4", description="Test command for testing things")
+@option("multiplier", description="How much should XP be multiplied by?")
+@option("time", description="How long should it last?")
+async def test4(
+	ctx: discord.ApplicationContext,
+	multiplier: int,
+	time: int
+):
+	pass
 
 @bot.slash_command(name='greet', description='Greet someone!', guild_ids=[273567091368656898])
 async def greet(ctx, name: Option(str, "Enter your friend's name", required = False, default = '')):
