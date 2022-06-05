@@ -25,22 +25,11 @@ bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 82866777560
 #? Command ideas!
 
 #? Small projects
-#* set_role_ids(): Set the role_ids in the Users.json role_ids section so that the correct roles are given when roles need to be updated
-#* set_levels(): Make a new levels.json
-#* update_boosters -> update_role: Change boosters command to update a role that is given instead
+#* None as of now
 
 #? Large projects 
-#* set_xp: Set all xp values in a slash command embed (admin panel)
-#* top_rankers: Leaderboard of activity, similar to ActivityRank's style
 #* xp_multiplier: Give extra XP multiplied by a given multiplier in an argument during a certain time period
 #* end_multiplier: End the multiplier early if someone messes up
-#* (funcs) update_roles(): Using role_ids from users.json and on_message event, update the roles in the server on rank change
-
-# Used to send discord embeds in channels
-# TODO: Not implemented yet
-async def sendEmbed(api_call, embed_object, file_object):
-	embed_object, file_object = await infoEmbeds.embed_object()
-	await api_call(file=file_object, embed=embed_object)
 
 # Check if user levels up to a new rank, send special embed if True
 async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user_name, user_avatar):
@@ -71,6 +60,8 @@ async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user
 		# Send rcEMBED to specified discord channel (default is system channel)
 		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(user_name, user_avatar, new_role)
 		await discord_object_to_send(file=rcFILE, embed=rcEMBED)
+
+#! Bot events (Keeps track of the activity of users in the server)
 
 @bot.event
 async def on_ready():
@@ -226,6 +217,7 @@ async def on_member_update(before, after):
 			True, 0, 0, 0
 		)
 
+#! Normal User Commands (Commands used by regular members of the server)
 
 @bot.slash_command(description="Sends information about the bot")
 async def about(ctx):
@@ -236,83 +228,6 @@ async def about(ctx):
 async def help(ctx):
 	helpEMBED, helpFILE = await infoEmbeds.helpEMBED()
 	await ctx.respond(file=helpFILE, embed=helpEMBED)
-
-@bot.slash_command(description="Admin commands and their usage")
-@commands.has_permissions(manage_messages=True)
-async def adminhelp(ctx):
-	adminhelpEMBED, adminhelpFILE = await infoEmbeds.adminhelpEMBED()
-	await ctx.respond(file=adminhelpFILE, embed=adminhelpEMBED)
-
-@bot.slash_command(name="award_xp", description="Add XP to a specified user or users for being such a good person")
-@commands.has_permissions(manage_messages=True)
-async def award_xp(
-	ctx: discord.ApplicationContext, 
-	member: Option(discord.Member, "Member to get id from", required = True), 
-	xp: Option(int, "Amount of XP to give to user", required=True)
-):
-
-	await update_user(
-		member.guild ,member.id, member.name, 
-		"special_xp", 
-		True, xp, xp, 1
-		)
-	await ctx.respond(f"You gave {member.name} {xp} XP!")
-
-	# Send embed if user levels up
-	await check_rank(
-		member.guild.system_channel.send, 
-		member.guild,
-		member.guild.id, 
-		member.id, 
-		member.name, 
-		member.display_avatar
-		)
-
-@bot.slash_command(name="invite_xp", description="Increase invite count for a user and give a specified amount of XP for doing so")
-@commands.has_permissions(manage_messages=True)
-async def invite_xp(
-	ctx: discord.ApplicationContext, 
-	member: Option(discord.Member, "Member to get id from", required = True), 
-	invite_count: Option(int, "Amount of invites the user gave", required=True), 
-	xp: Option(int, "Amount of XP to give for each invite", required=True)
-):
-	
-	await update_user(
-		member.guild ,member.id, member.name, 
-		"invites", 
-		True, invite_count, xp, invite_count
-		)
-	await ctx.respond(f"You verifyed that {member.name} gave {invite_count} invite(s) and doing so increased their XP by {xp * invite_count}!")
-
-	# Send embed if user levels up
-	await check_rank(
-		member.guild.system_channel.send, 
-		member.guild,
-		member.guild.id, 
-		member.id, 
-		member.name, 
-		member.display_avatar
-		)
-
-# TODO: Rewrite for roles, not boosters
-@bot.slash_command(name="booster_xp", description="Add XP to all boosted users")
-@commands.has_permissions(manage_messages=True)
-async def booster_xp(
-	ctx: discord.ApplicationContext, 
-	xp: Option(int, "Amount of XP to give to boosted members", required=True)
-):
-
-	#* Use the update_booster function to get a list of boosters and if their role changed or not due to XP increase
-	count, rc_dict, nr_list = await update_boosters(ctx.user.guild, ctx.user.id, xp)
-
-	#* For each user that is a booster AND their ranks updated as a result, send a rank_update embed
-	i = 0
-	for key in rc_dict:
-		user2 = await ctx.guild.fetch_member(key)
-		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(user2.name, user2.display_avatar, nr_list[i])
-		await ctx.guild.system_channel.send(file=rcFILE, embed=rcEMBED)
-		i += 1
-	await ctx.respond(f"You gave everyone who is currently boosting the server {xp} XP!\n Count of boosted members: {count}")
 
 @bot.slash_command(description="Statistics about yourself")
 async def myrank(ctx):
@@ -413,7 +328,191 @@ async def leaderboard(
 	paginator = pages.Paginator(pages=embeds)
 	await paginator.respond(ctx.interaction)
 
-#! THE TEST ZONE (not final commands)
+#! Admin Commands (Commands used by admins of the server)
+
+@bot.slash_command(description="Admin commands and their usage")
+@commands.has_permissions(manage_messages=True)
+async def adminhelp(ctx):
+	adminhelpEMBED, adminhelpFILE = await infoEmbeds.adminhelpEMBED()
+	await ctx.respond(file=adminhelpFILE, embed=adminhelpEMBED)
+
+@bot.slash_command(name="award_xp", description="Add XP to a specified user or users for being such a good person")
+@commands.has_permissions(manage_messages=True)
+async def award_xp(
+	ctx: discord.ApplicationContext, 
+	member: Option(discord.Member, "Member to get id from", required = True), 
+	xp: Option(int, "Amount of XP to give to user", required=True)
+):
+
+	await update_user(
+		member.guild ,member.id, member.name, 
+		"special_xp", 
+		True, xp, xp, 1
+		)
+	await ctx.respond(f"You gave {member.name} {xp} XP!")
+
+	# Send embed if user levels up
+	await check_rank(
+		member.guild.system_channel.send, 
+		member.guild,
+		member.guild.id, 
+		member.id, 
+		member.name, 
+		member.display_avatar
+		)
+
+@bot.slash_command(name="role_xp", description="Give XP to a specific role")
+@commands.has_permissions(manage_messages=True)
+async def role_xp(
+	ctx: discord.ApplicationContext,
+	role: Option(discord.Role, "Select a role", required=True),
+	xp: Option(int, "Amount of XP to give to the users of this role", required=True)
+):
+
+	for user in role.members:
+		await update_user(
+			user.guild ,user.id, user.name, 
+			"special_xp", 
+			True, xp, xp, 1
+			)
+
+		# Send embed if user levels up
+		await check_rank(
+			user.guild.system_channel.send, 
+			user.guild,
+			user.guild.id, 
+			user.id, 
+			user.name, 
+			user.display_avatar
+			)		
+	await ctx.respond(f"You gave users with the {role.mention} role {xp} XP!")
+
+@bot.slash_command(name="invite_xp", description="Increase invite count for a user and give a specified amount of XP for doing so")
+@commands.has_permissions(manage_messages=True)
+async def invite_xp(
+	ctx: discord.ApplicationContext, 
+	member: Option(discord.Member, "Member to get id from", required = True), 
+	invite_count: Option(int, "Amount of invites the user gave", required=True), 
+	xp: Option(int, "Amount of XP to give for each invite", required=True)
+):
+	
+	await update_user(
+		member.guild ,member.id, member.name, 
+		"invites", 
+		True, invite_count, xp, invite_count
+		)
+	await ctx.respond(f"You verifyed that {member.name} gave {invite_count} invite(s) and doing so increased their XP by {xp * invite_count}!")
+
+	# Send embed if user levels up
+	await check_rank(
+		member.guild.system_channel.send, 
+		member.guild,
+		member.guild.id, 
+		member.id, 
+		member.name, 
+		member.display_avatar
+		)
+
+# TODO: Rewrite for roles, not boosters
+@bot.slash_command(name="booster_xp", description="Add XP to all boosted users")
+@commands.has_permissions(manage_messages=True)
+async def booster_xp(
+	ctx: discord.ApplicationContext, 
+	xp: Option(int, "Amount of XP to give to boosted members", required=True)
+):
+
+	#* Use the update_booster function to get a list of boosters and if their role changed or not due to XP increase
+	count, rc_dict, nr_list = await update_boosters(ctx.user.guild, ctx.user.id, xp)
+
+	#* For each user that is a booster AND their ranks updated as a result, send a rank_update embed
+	i = 0
+	for key in rc_dict:
+		user2 = await ctx.guild.fetch_member(key)
+		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(user2.name, user2.display_avatar, nr_list[i])
+		await ctx.guild.system_channel.send(file=rcFILE, embed=rcEMBED)
+		i += 1
+	await ctx.respond(f"You gave everyone who is currently boosting the server {xp} XP!\n Count of boosted members: {count}")
+
+#! Management Commands (Also admin commands, but should only be used once for making new things)
+
+@bot.slash_command(name="make_levels", description="Make new levels and level barriers")
+@commands.has_permissions(manage_messages=True)
+async def make_levels(
+	ctx: discord.ApplicationContext,
+	starting_xp: Option(int, "How much XP for level 1?", required=True),
+	level_factor: Option(int, "How much XP should each level increase by?", required=True),
+	total_levels: Option(int, "How many levels should be made? (Higher takes longer to make)", required=True)
+):
+	s_time = time.time()
+	await ctx.respond(f"Now making new levels...")
+	role_barriers, rl = await new_levels(
+		ctx.guild,
+		starting_xp, 
+		level_factor, 
+		total_levels, 
+		True, 
+		Newbie=0, 
+		Bronze=3, 
+		Silver=5, 
+		Gold=10, 
+		Platinum=25, 
+		Diamond=50, 
+		Master=100, 
+		Grandmaster=150, 
+		Exalted=175,
+		Galaxy=200,
+		Konami=573
+	)
+
+	e_time = time.time()
+	t_time = e_time - s_time
+	t_time = "{:.2f}".format(t_time)
+	await ctx.respond(f"New levels created! This took {t_time} seconds.\n\n**Each level name and starting level is:**\n{rl}\n\n**Barriers for XP are:**\n{role_barriers}")
+
+@bot.slash_command(name="role_level", description="Set a level to be tied to a role")
+@option(
+	"l_name", 
+	description="Choose a role to edit", 
+	choices=["Newbie", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Grandmaster", "Exalted", "Galaxy", "Konami"]
+	)
+@commands.has_permissions(manage_messages=True)
+async def role_level(
+	ctx: discord.ApplicationContext,
+	l_name: str,
+	role: Option(discord.Role, "Select a role to link to this level", required=True)
+):
+	rid_json = f"Data/{ctx.guild} Role IDs.json"
+	rid_template = {
+		"role_ids": []
+		}
+	template = {
+		"role_name": l_name,
+		"role_id": role.id
+	}
+
+	try:
+		data = await json_read(rid_json)
+		# Read, then write, which might give repeat objects
+		data = data["role_ids"]
+		await write_json(template, rid_json, "role_ids")
+		# Read again, this time with the repeat objects
+		data = await json_read(rid_json)
+		data = data["role_ids"]
+		# Filter out these unique objects with dict comprehension
+		unique = {each["role_name"] : each for each in data}
+		unique = list(unique.values())
+		# Write only the unique roles and role IDs to the JSON
+		template = {"role_ids": unique}
+		await json_dump(rid_json, template)
+	except FileNotFoundError:
+		# If file hasn't been made, just makes a new one with a role object
+		await new_file(rid_json)
+		await json_dump(rid_json, rid_template)
+		data = await json_read(rid_json)
+		data = data["role_ids"]
+		await write_json(template, rid_json, "role_ids")
+
+	await ctx.respond(f"Set the role ID for {l_name} as {role.mention}!")
 
 @bot.slash_command(name="import_channel", description="In the channel this command is used, import activity to Maxima Rank")
 @commands.has_permissions(manage_messages=True)
@@ -570,7 +669,9 @@ async def import_channel(
 	t_time = e_time - s_time
 	t_time = "{:.2f}".format(t_time)
 	await ctx.respond(f"Message history parsed for {i} messages in #{message.channel}.\nTime taken: {t_time} seconds")
-	
+
+#! THE TEST ZONE (not final commands)
+
 @bot.slash_command(name="test", description="Test command for testing things")
 async def test(
 	ctx: discord.ApplicationContext,
@@ -587,112 +688,6 @@ async def test3(
 	r_level: int
 ):
 	await ctx.respond(f"You selected {r_name} and changed its level to {r_level}!")
-
-@bot.slash_command(name="role_level", description="Set a level to be tied to a role")
-@option(
-	"l_name", 
-	description="Choose a role to edit", 
-	choices=["Newbie", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Grandmaster", "Exalted", "Galaxy", "Konami"]
-	)
-@commands.has_permissions(manage_messages=True)
-async def role_level(
-	ctx: discord.ApplicationContext,
-	l_name: str,
-	role: Option(discord.Role, "Select a role to link to this level", required=True)
-):
-	rid_json = f"Data/{ctx.guild} Role IDs.json"
-	rid_template = {
-		"role_ids": []
-		}
-	template = {
-		"role_name": l_name,
-		"role_id": role.id
-	}
-
-	try:
-		data = await json_read(rid_json)
-		# Read, then write, which might give repeat objects
-		data = data["role_ids"]
-		await write_json(template, rid_json, "role_ids")
-		# Read again, this time with the repeat objects
-		data = await json_read(rid_json)
-		data = data["role_ids"]
-		# Filter out these unique objects with dict comprehension
-		unique = {each["role_name"] : each for each in data}
-		unique = list(unique.values())
-		# Write only the unique roles and role IDs to the JSON
-		template = {"role_ids": unique}
-		await json_dump(rid_json, template)
-	except FileNotFoundError:
-		# If file hasn't been made, just makes a new one with a role object
-		await new_file(rid_json)
-		await json_dump(rid_json, rid_template)
-		data = await json_read(rid_json)
-		data = data["role_ids"]
-		await write_json(template, rid_json, "role_ids")
-
-	await ctx.respond(f"Set the role ID for {l_name} as {role.mention}!")
-
-@bot.slash_command(name="role_xp", description="Give XP to a specific role")
-@commands.has_permissions(manage_messages=True)
-async def role_xp(
-	ctx: discord.ApplicationContext,
-	role: Option(discord.Role, "Select a role", required=True),
-	xp: Option(int, "Amount of XP to give to the users of this role", required=True)
-):
-
-	for user in role.members:
-		await update_user(
-			user.guild ,user.id, user.name, 
-			"special_xp", 
-			True, xp, xp, 1
-			)
-
-		# Send embed if user levels up
-		await check_rank(
-			user.guild.system_channel.send, 
-			user.guild,
-			user.guild.id, 
-			user.id, 
-			user.name, 
-			user.display_avatar
-			)		
-	await ctx.respond(f"You gave users with the {role.mention} role {xp} XP!")
-
-@bot.slash_command(name="make_levels", description="Make new levels and level barriers")
-@commands.has_permissions(manage_messages=True)
-async def make_levels(
-	ctx: discord.ApplicationContext,
-	starting_xp: Option(int, "How much XP for level 1?", required=True),
-	level_factor: Option(int, "How much XP should each level increase by?", required=True),
-	total_levels: Option(int, "How many levels should be made? (Higher takes longer to make)", required=True)
-):
-	s_time = time.time()
-	await ctx.respond(f"Now making new levels...")
-	role_barriers, rl = await new_levels(
-		ctx.guild,
-		starting_xp, 
-		level_factor, 
-		total_levels, 
-		True, 
-		Newbie=0, 
-		Bronze=3, 
-		Silver=5, 
-		Gold=10, 
-		Platinum=25, 
-		Diamond=50, 
-		Master=100, 
-		Grandmaster=150, 
-		Exalted=175,
-		Galaxy=200,
-		Konami=573
-	)
-
-	e_time = time.time()
-	t_time = e_time - s_time
-	t_time = "{:.2f}".format(t_time)
-	await ctx.respond(f"New levels created! This took {t_time} seconds.\n\n**Each level name and starting level is:**\n{rl}\n\n**Barriers for XP are:**\n{role_barriers}")
-
 
 @bot.slash_command(name='greet', description='Greet someone!', guild_ids=[273567091368656898])
 async def greet(ctx, name: Option(str, "Enter your friend's name", required = False, default = '')):
