@@ -264,7 +264,7 @@ async def level_barriers(guild_name, starting_xp: int, level_factor: int, total_
 	
 	await json_dump(rb_json, role_barriers)
 
-	return role_barriers, rl, 
+	return role_barriers, rl
 
 # Create new levels with "level, xp and role_id" as the objects in a levels.json file
 # For use in knowing the current levels and where each user's level currently stands
@@ -390,7 +390,7 @@ async def my_rank_embed_values(guild_name, main_id, simple : bool):
 	# Dicts and lists to match json object keys to json object values and emoji ranks, as well as calculate max_values
 	amounts = {}
 	max_values = {}
-	ranks = {"MR_D": 0.00, "MR_C": 0.16, "MR_B": 0.33, "MR_A": 0.50, "MR_S": 0.66, "MR_SS": 0.82, "MR_MAX": 1.00}
+	ranks = {"MR_D": 0.00, "MR_C": 0.02, "MR_B": 0.05, "MR_A": 0.20, "MR_S": 0.50, "MR_SS": 0.75, "MR_MAX": 1.00}
 	embed_emj = "MR_D"
 	emoji_object = []
 
@@ -488,7 +488,7 @@ async def rank_check(guild_name, main_id):
 # Sort the server leaderboard based on XP of each user
 #? ARGUMENTS
 # guild_name: guild name retrieved from discord api command
-async def sort_leaderboard(guild_name):
+async def sort_leaderboard(guild_name, activity):
 	#* Load initial users.json
 	main_json = f"Data/{guild_name} Users.json"
 	data = await json_read(main_json)
@@ -509,27 +509,54 @@ async def sort_leaderboard(guild_name):
 			user["is_booster"])
 		i_users.append(i_tuple)
 	
-	#* Bubble sort the users by XP
+	#* Bubble sort the users by activity
 	length = len(i_users)
 	# How many users have already been sorted
 	for user in range(0, length):
 		# For every user not sorted yet, compare with next user in list
 		for n_user in range(0, length-user-1):
-			# If next user in list has less XP, then flip the two user positions
-			if i_users[n_user][2] < i_users[n_user + 1][2]:
-				temp = i_users[n_user]
-				i_users[n_user] = i_users[n_user + 1]
-				i_users[n_user + 1] = temp
+			if activity == "Everything":
+				# If next user in list has less XP, then flip the two user positions
+				if i_users[n_user][2] < i_users[n_user + 1][2]:
+					temp = i_users[n_user]
+					i_users[n_user] = i_users[n_user + 1]
+					i_users[n_user + 1] = temp
+			elif activity == "Messages":
+				# If next user in list has less messages, then flip the two user positions
+				if i_users[n_user][4] < i_users[n_user + 1][4]:
+					temp = i_users[n_user]
+					i_users[n_user] = i_users[n_user + 1]
+					i_users[n_user + 1] = temp
+			elif activity == "Voice":
+				# If next user in list has less messages, then flip the two user positions
+				if i_users[n_user][6] < i_users[n_user + 1][6]:
+					temp = i_users[n_user]
+					i_users[n_user] = i_users[n_user + 1]
+					i_users[n_user + 1] = temp
+			elif activity == "Invites":
+				# If next user in list has less messages, then flip the two user positions
+				if i_users[n_user][7] < i_users[n_user + 1][7]:
+					temp = i_users[n_user]
+					i_users[n_user] = i_users[n_user + 1]
+					i_users[n_user + 1] = temp
+			elif activity == "Special XP":
+				# If next user in list has less messages, then flip the two user positions
+				if i_users[n_user][8] < i_users[n_user + 1][8]:
+					temp = i_users[n_user]
+					i_users[n_user] = i_users[n_user + 1]
+					i_users[n_user + 1] = temp
 	
 	#* Return sorted list of tuples to be used in leaderboard embed
 	return i_users, length
 
-async def leaderboard_embed_values(guild_name, main_id, simple : bool):
-	#* Load initial json, find user who sent command
+async def leaderboard_embed_values(guild_name, main_id, activity, simple: bool):
+	#* Load initial jsons
 	main_json = f"Data/{guild_name} Users.json"
 	level_json = f"Data/{guild_name} Levels.json"
+	rb_json = f"Data/{guild_name} Role Barriers.json"
 	data = await json_read(main_json)
 
+	#* Find current user in users.json
 	user_ids = []
 	for items in data["users"]:
 		user_ids.append(items["user_id"])
@@ -544,32 +571,43 @@ async def leaderboard_embed_values(guild_name, main_id, simple : bool):
 	data_level = await json_read(level_json)
 	data_level = data_level["levels"][level]
 
+	#* Find current role from role barriers.json
+	data_rb = await json_read(rb_json)
+	data_rb = OrderedDict(data_rb)
+
+	for role, exp in data_rb.items():
+		if xp < exp:
+			rb_role = role
+		else:
+			rb_role = role[-1]
+
 	#* A metric ton of variables for appending as a field in embed
 	# Users.json values
 	xp = user["xp"]
 	level = user["level"]
+	messages = user["messages"]
+	voice_minutes = user["voice_minutes"]
+	invites = user["invites"]
+	special_xp = user["special_xp"]
+
 	next_xp = data_level["total_xp"]
 	level_xp = data_level["level_xp"]
 	role_title = data_level["role_title"]
 	role_id = data_level["role_id"]
-	progress_to_next = level_xp - (next_xp - xp)
 	
 	# Users.json values to be used in the embed field
 	types = (
-		"messages", 
-		"reactions_added", 
-		"reactions_recieved", 
-		"stickers", "images", 
-		"embeds", 
-		"voice_minutes", 
-		"invites", 
+		"xp",
+		"messages",
+		"voice_minutes",
+		"invites",
 		"special_xp"
 		)
 	
 	# Dicts and lists to match json object keys to json object values and emoji ranks, as well as calculate max_values
 	amounts = {}
 	max_values = {}
-	ranks = {"MR_D": 0.00, "MR_C": 0.16, "MR_B": 0.33, "MR_A": 0.50, "MR_S": 0.66, "MR_SS": 0.82, "MR_MAX": 1.00}
+	ranks = {"MR_D": 0.00, "MR_C": 0.02, "MR_B": 0.05, "MR_A": 0.20, "MR_S": 0.50, "MR_SS": 0.75, "MR_MAX": 1.00}
 	embed_emj = "MR_D"
 	emoji_object = []
 
@@ -597,12 +635,20 @@ async def leaderboard_embed_values(guild_name, main_id, simple : bool):
 				embed_emj = emj
 		emoji_object.append(embed_emj)
 
-	#* Embed field to be used in "/myrank"
-	field_display = f"> emoji1 **💬 Messages**: {amounts['messages']}\n> emoji2 **😃 Reactions Added**: {amounts['reactions_added']}\n> emoji3 **🥰 Reactions Recieved**: {amounts['reactions_recieved']}\n> emoji4 **🎭 Stickers**: {amounts['stickers']}\n> emoji5 **🖼️ Images**: {amounts['images']}\n> emoji6 **🔗 Embeds**: {amounts['embeds']}\n> emoji7 **🎙️ Voice (minutes)**: {amounts['voice_minutes']}\n> emoji8 **✉️ Invites**: {amounts['invites']}\n> emoji9 **🌟 Special XP**: {amounts['special_xp']}"
+	#* Embed field to be used in "/leaderboard"
+	if activity == "Everything":
+		field_display = f"> emoji1 **{xp} XP** : 💬 {messages} | 🎙️ {voice_minutes} | ✉️ {invites} | 🌟 {special_xp}"
+	elif activity == "Messages":
+		field_display = f"> emoji2 💬 {messages}"
+	elif activity == "Voice":
+		field_display = f"> emoji3 🎙️ {voice_minutes}"
+	elif activity == "Invites":
+		field_display = f"> emoji4 ✉️ {invites}"
+	elif activity == "Special_XP":
+		field_display = f"> emoji5 🌟 {special_xp}"
 	
 	#* return embed field, emoji list for embed field, and other values for current user
-	# if simple explained in arguments
 	if simple == True:
 		return emoji_object
 	else:
-		return field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id
+		return field_display, emoji_object, role_title

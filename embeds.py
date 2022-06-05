@@ -4,7 +4,7 @@ import re
 import random
 import math
 
-from myfunctions import templateEmbed, my_rank_embed_values, level_barriers, sort_leaderboard, txt_read, json_read
+from myfunctions import templateEmbed, my_rank_embed_values,sort_leaderboard, json_read, leaderboard_embed_values
 
 VERSION = os.popen('git rev-parse HEAD').read()
 COMMIT_MESSAGE = os.popen('git show --pretty=format:%s -s HEAD').read()
@@ -286,16 +286,16 @@ class infoEmbeds:
 		return rcFILE, rcEMBED
 
 	
-	async def lbEMBED(guild_name, guild_img, starting_rank, ending_rank, just_pages:bool):
+	async def lbEMBED(bot, guild_name, guild_img, starting_rank, ending_rank, activity, just_pages:bool):
 		'''Used for the /leaderboard command'''
-		users, length = await sort_leaderboard(guild_name)
+		users, length = await sort_leaderboard(guild_name, activity)
 
 		num_pages = int(math.ceil(length/ending_rank))
 		if just_pages is True:
 			return num_pages
 		
 		lbEMBED = discord.Embed(
-			title=f"Leaderboard of activity for {guild_name}",
+			title=f"Leaderboard of activity for {guild_name} based on {activity}",
 			description="Gamers",
 			color = discord.Color.purple()
 			)
@@ -311,19 +311,47 @@ class infoEmbeds:
 		i = starting_rank
 		try:
 			for user in users[starting_rank - 1:ending_rank]:
+				field_display, emoji_object, role_title = await leaderboard_embed_values(guild_name, user[0], activity, False)
+				
+				#* Replaces "emojiX" string values in field_display with the actual emojis
+				emoji = lambda item : discord.utils.get(bot.emojis, name=item)
+				in_embed = map(emoji, emoji_object)
+				j = 1
+				for item in in_embed:
+					subbed = re.sub(f"\\bemoji{j}\\b", str(item), field_display)
+					field_display = subbed
+					j += 1
+				
+				#* Add the emoji for the specified role_title
+				r_emoji = discord.utils.get(bot.emojis, name=role_title)
+
 				lbEMBED.add_field(
-					name=f"#{i}: {user[1]}", 
-					value=f"{user[2]} XP", 
+					name=f"#{i}: {user[1]} {r_emoji} {user[3]}", 
+					value=field_display, 
 					inline=False
 					)
 				i += 1
 		except ValueError:
-			for user in users[starting_rank::]:
+			for user in users[starting_rank - 1:ending_rank]:
+				field_display, emoji_object, role_title = await leaderboard_embed_values(guild_name, user[0], activity, False)
+				
+				#* Replaces "emojiX" string values in field_display with the actual emojis
+				emoji = lambda item : discord.utils.get(bot.emojis, name=item)
+				in_embed = map(emoji, emoji_object)
+				j = 1
+				for item in in_embed:
+					subbed = re.sub(f"\\bemoji{j}\\b", str(item), field_display)
+					field_display = subbed
+					j += 1
+				
+				#* Add the emoji for the specified role_title
+				r_emoji = discord.utils.get(bot.emojis, name=role_title)
+
 				lbEMBED.add_field(
-					name=f"#{i}: {user[1]}", 
-					value=f"{user[2]} XP", 
+					name=f"#{i}: {user[1]} {r_emoji} {user[3]}", 
+					value=field_display, 
 					inline=False
 					)
-				i += 1			
+				i += 1
 
 		return lbEMBED
