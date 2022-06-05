@@ -422,7 +422,7 @@ async def booster_xp(
 ):
 
 	#* Use the update_booster function to get a list of boosters and if their role changed or not due to XP increase
-	count, rc_dict, nr_list = await update_boosters(ctx.user.guild, ctx.user.id, xp)
+	count, rc_dict, nr_list = await update_boosters(ctx.user.guild, xp)
 
 	#* For each user that is a booster AND their ranks updated as a result, send a rank_update embed
 	i = 0

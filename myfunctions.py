@@ -9,15 +9,21 @@ import asyncio
 from collections import OrderedDict
 from operator import itemgetter
 
-#? ARGUMENTS (for json defs)
-# filename : Path to file name to perform func. on
-# name : New file name to create
-# new_data : Data variable of updated loaded json content to append to [filename] json
-
 # Restart Monke Rank
+# TODO: Link this to a discord command
 def restart_bot():
 	print("Restarting")
 	os.execv(sys.executable, ['python3'] + sys.argv)
+
+#? File writing commands
+# All file writing is done with these commands
+# The module "aiofiles" is used
+# This helps keep track of file I/O (which doesn't natively support asyncio)
+#? ARGUMENTS (for all file writing commands
+# filename : Path to file name to perform func. on
+# name : New file name to create
+# new_data : Data variable of updated loaded json content to append to [filename] json
+# text : text from a text document
 
 # Create a new file (usually json)
 async def new_file(filename):
@@ -60,11 +66,12 @@ async def write_json(new_data, filename, name: str):
 		await f.seek(0)
 		await f.write(json.dumps(file_data, indent=2))
 
+#? Main commands
+
 # Used to update the levels, ranks, and roles of users after an xp change
 #? ARGUMENTS
+# guild_name: guild name retrieved from discord api command
 # json_object_name: Name of the json user objects to change (ex. reading from users.json as data, user = data["users"], this arg is user)
-# levels_json_data: The variable name of the loaded json data of "levels.json", by default this is none
-# 	In loops, use this argument to avoid so many i/o operations
 async def update_levels(guild_name, json_object_name : str):
 	#* Get levels.json data
 	data_level = await json_read(f"Data/{guild_name} Levels.json")
@@ -432,9 +439,8 @@ async def my_rank_embed_values(guild_name, main_id, simple : bool):
 # Update the xp values of boosted members in the server
 #? ARGUMENTS
 # guild_name: guild name retrieved from discord api command
-# main_id: user id retrieved from discord api command
 # xp: Amount of xp retrieved from discord slash command argument
-async def update_boosters(guild_name, main_id, xp):
+async def update_boosters(guild_name, xp):
 	#* Load initial jsons (User, levels)
 	count = 0
 	main_json = f"Data/{guild_name} Users.json"
@@ -486,9 +492,10 @@ async def rank_check(guild_name, main_id):
 
 	return role_changed, new_role, old_role_id, new_role_id
 
-# Sort the server leaderboard based on XP of each user
+# Sort the server leaderboard based on [activity] of each user
 #? ARGUMENTS
 # guild_name: guild name retrieved from discord api command
+# activity: The current activity (messages, voice, embeds, etc.) gotten from /leaderboard. Default is "Everything"
 async def sort_leaderboard(guild_name, activity):
 	#* Load initial users.json
 	main_json = f"Data/{guild_name} Users.json"
@@ -576,6 +583,14 @@ async def sort_leaderboard(guild_name, activity):
 	#* Return sorted list of tuples to be used in leaderboard embed
 	return i_users, length
 
+# Activity values to be used inside the "/leaderboard" command embed
+# Values also have a specific rank emoji assigned to them based on the max value of [activity] in the server used
+# The command returns everything needed to be used in the "embeds.py" file (fields, calc. values, etc.)
+#? ARGUMENTS
+# guild_name: guild name retrieved from discord api command
+# main_id: user id retrieved from discord api command
+# activity: The current activity (messages, voice, embeds, etc.) gotten from /leaderboard. Default is "Everything"
+# simple (boolean): If True, returns only the emoji list (useful for using in main.py and other cases where not everything needs to be returned)
 async def leaderboard_embed_values(guild_name, main_id, activity, simple: bool):
 	#* Load initial jsons
 	main_json = f"Data/{guild_name} Users.json"

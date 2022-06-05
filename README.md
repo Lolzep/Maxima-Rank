@@ -26,14 +26,8 @@ Run bot:</br>
 6. If you want this bot to continue running, consider running it on a dedicated server to keep it up all the time. There are tutorials online for this if you wish to do so.
 
 #### **TODO:**
-- **[In progress]** Change roles in a server depending on level of user 
-- **[In progress]** Create a leaderboard of all top users in the server that shows xp, level, messages, etc. 
-- Transfer over/export current ActivityRank levels to this bot (will need to be done manually but not too hard)
-- Special things for boosted members, such as extra xp
+- **[In Progress]** Make a command that gives extra xp for a specified amount of time (used for an event in the server to promote engagement)
 - Return of a special ranking...
-- Amount of channels active in the past week
-- Guess future ranks and time of arrival by extrapolation?
-- Make a command that gives extra xp for a specified amount of time (used for an event in the server to promote engagement)
 
 #### **Done!:**
 - Create new users in the users.json file
@@ -42,3 +36,7 @@ Run bot:</br>
 - Track new things that ActivityRanker does not: Reaction counts, images/embeds sent counts
 - Send an embed using a command to show the current user's level and activity
 - Create embeds that show users level, xp, message count, etc. 
+- Transfer over/export current ActivityRank levels to this bot ~~(will need to be done manually but not too hard)~~ Made a command for it and it's functional (with a few exceptions such as voice history)
+- Special things for boosted members, such as extra xp
+- Create a leaderboard of all top users in the server that shows xp, level, messages, etc. 
+- Change roles in a server depending on level of user 
