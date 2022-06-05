@@ -346,11 +346,34 @@ async def rank(
 	rankEMBED, rankFILE = await infoEmbeds.rankEMBED(member.guild, member.id, member.display_name, member.display_avatar, in_embed)
 	await ctx.respond(file=rankFILE, embed=rankEMBED)
 
-@bot.slash_command(name="leaderboard2", description="Activity leaderboard for the server")
-async def leaderboard2(
+@bot.slash_command(name="leaderboard", description="Activity leaderboard for the server")
+async def leaderboard(
 	ctx: discord.ApplicationContext,
-	activity: Option(str, "Choose what you want to sort by", choices=["Everything", "Messages", "Voice", "Invites", "Special XP"]),
-	page_length: Option(int, "How many users on each page?", min_value=2, max_value=20, default=10, required=False)
+	activity: Option(
+		str, 
+		"Choose what you want to sort by", 
+		choices=[
+			"messages", 
+			"reactions_added", 
+			"reactions_recieved", 
+			"stickers", 
+			"images", 
+			"embeds", 
+			"voice_minutes", 
+			"invites", 
+			"special_xp"
+			], 
+			default="Everything", 
+			required=False
+			),
+	page_length: Option(
+		int, 
+		"How many users on each page?", 
+		min_value=2, 
+		max_value=20, 
+		default=10, 
+		required=False
+		)
 ):
 	#* starting_rank and ending_rank indicate how many users are on each page of the leaderboard embed
 	starting_rank = 1

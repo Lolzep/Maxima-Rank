@@ -380,7 +380,8 @@ async def my_rank_embed_values(guild_name, main_id, simple : bool):
 		"messages", 
 		"reactions_added", 
 		"reactions_recieved", 
-		"stickers", "images", 
+		"stickers", 
+		"images", 
 		"embeds", 
 		"voice_minutes", 
 		"invites", 
@@ -502,7 +503,11 @@ async def sort_leaderboard(guild_name, activity):
 			user["xp"], 
 			user["level"], 
 			user["messages"], 
-			user["reactions_added"] + user["reactions_recieved"] + user["stickers"] + user["images"] + user["embeds"],
+			user["reactions_added"],
+			user["reactions_recieved"],
+			user["stickers"],
+			user["images"],
+			user["embeds"],
 			user["voice_minutes"],
 			user["invites"],
 			user["special_xp"],
@@ -510,6 +515,7 @@ async def sort_leaderboard(guild_name, activity):
 		i_users.append(i_tuple)
 	
 	#* Bubble sort the users by activity
+	# TODO: Please code this better aaaaaa
 	length = len(i_users)
 	# How many users have already been sorted
 	for user in range(0, length):
@@ -521,27 +527,48 @@ async def sort_leaderboard(guild_name, activity):
 					temp = i_users[n_user]
 					i_users[n_user] = i_users[n_user + 1]
 					i_users[n_user + 1] = temp
-			elif activity == "Messages":
-				# If next user in list has less messages, then flip the two user positions
+			elif activity == "messages":
 				if i_users[n_user][4] < i_users[n_user + 1][4]:
 					temp = i_users[n_user]
 					i_users[n_user] = i_users[n_user + 1]
 					i_users[n_user + 1] = temp
-			elif activity == "Voice":
-				# If next user in list has less messages, then flip the two user positions
+			elif activity == "reactions_added":
+				if i_users[n_user][5] < i_users[n_user + 1][5]:
+					temp = i_users[n_user]
+					i_users[n_user] = i_users[n_user + 1]
+					i_users[n_user + 1] = temp
+			elif activity == "reactions_recieved":
 				if i_users[n_user][6] < i_users[n_user + 1][6]:
 					temp = i_users[n_user]
 					i_users[n_user] = i_users[n_user + 1]
 					i_users[n_user + 1] = temp
-			elif activity == "Invites":
-				# If next user in list has less messages, then flip the two user positions
+			elif activity == "stickers":
 				if i_users[n_user][7] < i_users[n_user + 1][7]:
 					temp = i_users[n_user]
 					i_users[n_user] = i_users[n_user + 1]
 					i_users[n_user + 1] = temp
-			elif activity == "Special XP":
-				# If next user in list has less messages, then flip the two user positions
+			elif activity == "images":
 				if i_users[n_user][8] < i_users[n_user + 1][8]:
+					temp = i_users[n_user]
+					i_users[n_user] = i_users[n_user + 1]
+					i_users[n_user + 1] = temp
+			elif activity == "embeds":
+				if i_users[n_user][9] < i_users[n_user + 1][9]:
+					temp = i_users[n_user]
+					i_users[n_user] = i_users[n_user + 1]
+					i_users[n_user + 1] = temp
+			elif activity == "voice_minutes":
+				if i_users[n_user][10] < i_users[n_user + 1][10]:
+					temp = i_users[n_user]
+					i_users[n_user] = i_users[n_user + 1]
+					i_users[n_user + 1] = temp
+			elif activity == "invites":
+				if i_users[n_user][11] < i_users[n_user + 1][11]:
+					temp = i_users[n_user]
+					i_users[n_user] = i_users[n_user + 1]
+					i_users[n_user + 1] = temp
+			elif activity == "special_xp":
+				if i_users[n_user][12] < i_users[n_user + 1][12]:
 					temp = i_users[n_user]
 					i_users[n_user] = i_users[n_user + 1]
 					i_users[n_user + 1] = temp
@@ -590,15 +617,22 @@ async def leaderboard_embed_values(guild_name, main_id, activity, simple: bool):
 	invites = user["invites"]
 	special_xp = user["special_xp"]
 
-	next_xp = data_level["total_xp"]
-	level_xp = data_level["level_xp"]
+	try:
+		act = user[activity]
+	except:
+		pass
+
 	role_title = data_level["role_title"]
-	role_id = data_level["role_id"]
 	
 	# Users.json values to be used in the embed field
 	types = (
 		"xp",
 		"messages",
+		"reactions_added",
+		"reactions_recieved",
+		"stickers",
+		"images",
+		"embeds",
 		"voice_minutes",
 		"invites",
 		"special_xp"
@@ -636,16 +670,27 @@ async def leaderboard_embed_values(guild_name, main_id, activity, simple: bool):
 		emoji_object.append(embed_emj)
 
 	#* Embed field to be used in "/leaderboard"
+	# TODO: Code this better at some point
 	if activity == "Everything":
 		field_display = f"> emoji1 **{xp} XP** : 💬 {messages} | 🎙️ {voice_minutes} | ✉️ {invites} | 🌟 {special_xp}"
-	elif activity == "Messages":
-		field_display = f"> emoji2 💬 {messages}"
-	elif activity == "Voice":
-		field_display = f"> emoji3 🎙️ {voice_minutes}"
-	elif activity == "Invites":
-		field_display = f"> emoji4 ✉️ {invites}"
-	elif activity == "Special_XP":
-		field_display = f"> emoji5 🌟 {special_xp}"
+	elif activity == "messages":
+		field_display = f"> emoji2 💬 {act}"
+	elif activity == "reactions_added":
+		field_display = f"> emoji3 😃 {act}"
+	elif activity == "reactions_recieved":
+		field_display = f"> emoji4 🥰 {act}"
+	elif activity == "stickers":
+		field_display = f"> emoji5 🎭 {act}"
+	elif activity == "images":
+		field_display = f"> emoji6 🖼️ {act}"
+	elif activity == "embeds":
+		field_display = f"> emoji7 🔗 {act}"
+	elif activity == "voice_minutes":
+		field_display = f"> emoji8 🎙️ {act}"
+	elif activity == "invites":
+		field_display = f"> emoji9 ✉️ {act}"
+	elif activity == "special_xp":
+		field_display = f"> emoji10 🌟 {act}"
 	
 	#* return embed field, emoji list for embed field, and other values for current user
 	if simple == True:
