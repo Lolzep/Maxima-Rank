@@ -41,7 +41,7 @@ async def txt_read(filename):
 		data = json.loads(await f.read())
 	return data
 
-# Create a new json objects with 2 arrays
+# Create a new json objects with 1 array
 async def new_json_objects(filename, name):
 	new_template = {name:[]}
 	async with aiofiles.open(filename, "w") as f:
@@ -364,6 +364,51 @@ async def update_roles(guild_name, level_name, role_id):
 		data = await json_read(rid_json)
 		data = data["role_ids"]
 		await write_json(template, rid_json, "role_ids")
+
+async def update_channel_ignore(guild_name, guild_id, channel):
+	ch_json = f"Data/{guild_name} Ignored Channels.json"
+	ch_template = {
+		"channels": []
+		}
+	template = {
+		"channel": channel
+	}
+
+	try:
+		data = await json_read(ch_json)
+		# Read, then write, which might give repeat objects
+		data = data["channels"]
+		await write_json(template, ch_json, "channels")
+		# Read again, this time with the repeat objects
+		data = await json_read(ch_json)
+		data = data["channels"]
+		# Filter out these unique objects with dict comprehension
+		unique = {each["channel"] : each for each in data}
+		unique = list(unique.values())
+		# Write only the unique roles and role IDs to the JSON
+		template = {"channels": unique}
+		await json_dump(ch_json, template)
+	except FileNotFoundError:
+		# If file hasn't been made, just makes a new one with a channel object
+		await new_file(ch_json)
+		await json_dump(ch_json, ch_template)
+		data = await json_read(ch_json)
+		data = data["channels"]
+		await write_json(template, ch_json, "channels")
+
+# Checks the Ignored Channels.json for ignored channels and returns True if ignored
+#? ARGUMENTS
+# guild_name: Guild that these channels are for
+# guild_channel_id: Channel ID to be checked
+async def check_channel(guild_name, guild_channel_id):
+	ch_json = f"Data/{guild_name} Ignored Channels.json"
+	data = await json_read(ch_json)
+	data = data["channels"]
+	channel_check = False
+	for channel in data:
+		if channel["channel"] == guild_channel_id:
+			channel_check = True
+	return channel_check
 
 # Creates a simple embed for the most general of embed implementations (help, about, etc.)
 #? ARGUMENTS

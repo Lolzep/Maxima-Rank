@@ -8,7 +8,7 @@ from discord import option
 from discord.commands import Option
 from discord.ext import commands, pages
 from dotenv import load_dotenv
-from myfunctions import update_user, my_rank_embed_values, update_boosters, rank_check, new_levels, write_json, json_dump, new_file, update_roles
+from myfunctions import update_user, my_rank_embed_values, update_boosters, rank_check, new_levels, update_roles, update_channel_ignore, check_channel
 from embeds import *
 
 load_dotenv()
@@ -28,6 +28,7 @@ bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 82866777560
 #* None as of now
 
 #? Large projects 
+#* channel_ignore: Ignore certain channels in a discord to give activity for (another json file wooo)
 #* xp_multiplier: Give extra XP multiplied by a given multiplier in an argument during a certain time period
 #* end_multiplier: End the multiplier early if someone messes up
 
@@ -71,6 +72,11 @@ async def on_ready():
 async def on_message(message):
 	# Ignore bots
 	if message.author.bot == True:
+		return
+
+	# Ignore channel if channel is ignored (/ignore_channel)
+	channel_check = await check_channel(message.guild, message.channel.id)
+	if channel_check == True:
 		return
 
 	# Message counts
@@ -120,6 +126,11 @@ async def on_message(message):
 
 @bot.event
 async def on_reaction_add(reaction, user):
+	# Ignore channel if channel is ignored (/ignore_channel)
+	channel_check = await check_channel(reaction.message.guild, reaction.message.channel.id)
+	if channel_check == True:
+		return
+
 	# For reactions ADDED, add values and xp to respective user
 	await update_user(
 		user.guild, user.id, user.name, 
@@ -248,7 +259,6 @@ async def rank(
 	ctx: discord.ApplicationContext, 
 	member: Option(discord.Member, "Member to get id from", required = True)
 ):
-	
 	emoji_object = await my_rank_embed_values(member.guild, member.id, True)
 	emoji = lambda item : discord.utils.get(bot.emojis, name=item)
 	in_embed = map(emoji, emoji_object)
@@ -325,7 +335,7 @@ async def leaderboard(
 		ending_rank += ranks_per_page
 
 	#* Using a "paginator" from discord commands, use the list of embeds to create pages of leaderboards from 1 - num_users
-	paginator = pages.Paginator(pages=embeds)
+	paginator = pages.Paginator(pages=embeds, author_check=False)
 	await paginator.respond(ctx.interaction)
 
 #! Admin Commands (Commands used by admins of the server)
@@ -481,9 +491,7 @@ async def role_level(
 	l_name: str,
 	role: Option(discord.Role, "Select a role to link to this level", required=True)
 ):
-
 	await update_roles(ctx.guild, l_name, role.id)
-
 	await ctx.respond(f"Set the role ID for {l_name} as {role.mention}!")
 
 @bot.slash_command(name="import_channel", description="In the channel this command is used, import activity to Maxima Rank")
@@ -670,6 +678,24 @@ async def test4(
 	time: int
 ):
 	pass
+
+@bot.slash_command(name="ignore_channel6", description="Set a channel to ignore")
+@option("channel", description="Put in a channel ID to ignore", required=True)
+async def ignore_channel6(
+	ctx: discord.ApplicationContext,
+	channel: str,
+):
+	if len(channel) != 18:
+		await ctx.respond(f"Please enter a valid channel ID")
+		return
+	try:
+		channel = int(channel)
+	except ValueError:
+		await ctx.respond(f"Please enter a valid channel ID")
+		return
+
+	await update_channel_ignore(ctx.guild.name, ctx.guild_id, channel)
+	await ctx.respond(f"The selected channel is now ignored")
 
 @bot.slash_command(name='greet', description='Greet someone!', guild_ids=[273567091368656898])
 async def greet(ctx, name: Option(str, "Enter your friend's name", required = False, default = '')):
