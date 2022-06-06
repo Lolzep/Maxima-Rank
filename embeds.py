@@ -70,8 +70,8 @@ class infoEmbeds:
 			inline=False
 			)
 		helpEMBED.add_field(
-			name="/leaderboard", 
-			value="Activity leaderboard for the server", 
+			name="/leaderboard [activity] [page_length]", 
+			value="Activity leaderboard for the server based on [activity] (default is everything). Each page has [page_length] users.", 
 			inline=False
 			)
 
@@ -94,8 +94,23 @@ class infoEmbeds:
 			inline=False
 			)
 		adminhelpEMBED.add_field(
+			name="/role_xp [role] [xp]", 
+			value="Gives a specified [role] [amount] xp", 
+			inline=False
+			)
+		adminhelpEMBED.add_field(
 			name="/booster_xp [amount]", 
 			value="Gives [amount] xp to all boosted users", 
+			inline=False
+			)
+		adminhelpEMBED.add_field(
+			name="/xp_boost [multiplier] [time]", 
+			value="Start an XP boost event which multiplies all XP by [multiplier] for [time] minutes", 
+			inline=False
+			)
+		adminhelpEMBED.add_field(
+			name="/xp_boost_end", 
+			value="End an XP boost event manually", 
 			inline=False
 			)
 		adminhelpEMBED.add_field(
@@ -104,8 +119,23 @@ class infoEmbeds:
 			inline=False
 			)
 		adminhelpEMBED.add_field(
+			name="/make_levels [starting_xp] [level_factor] [total_levels]", 
+			value="Make new levels and level barriers based on [starting_xp] where each level is [starting_xp] * level * [level_factor] for [total_levels] levels", 
+			inline=False
+			)
+		adminhelpEMBED.add_field(
+			name="/role_level [level_name] [role]", 
+			value="Link a [level_name] in the bot to a [role] in the server", 
+			inline=False
+			)
+		adminhelpEMBED.add_field(
 			name="/import_channel", 
 			value="In the channel this command is used, import activity to Maxima Rank", 
+			inline=False
+			)
+		adminhelpEMBED.add_field(
+			name="/ignore_channel [channel ID]", 
+			value="Ignore a channel in the server based on the ID given", 
 			inline=False
 			)
 

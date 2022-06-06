@@ -26,7 +26,6 @@ Run bot:</br>
 6. If you want this bot to continue running, consider running it on a dedicated server to keep it up all the time. There are tutorials online for this if you wish to do so.
 
 #### **TODO:**
-- **[In Progress]** Make a command that gives extra xp for a specified amount of time (used for an event in the server to promote engagement)
 - Return of a special ranking...
 
 #### **Done!:**
@@ -39,4 +38,6 @@ Run bot:</br>
 - Transfer over/export current ActivityRank levels to this bot ~~(will need to be done manually but not too hard)~~ Made a command for it and it's functional (with a few exceptions such as voice history)
 - Special things for boosted members, such as extra xp
 - Create a leaderboard of all top users in the server that shows xp, level, messages, etc. 
-- Change roles in a server depending on level of user 
+- Change roles in a server depending on level of user
+- Make a command that gives extra xp for a specified amount of time (used for an event in the server to promote engagement)
+- Make a command to add channels to a list to ignore for activity

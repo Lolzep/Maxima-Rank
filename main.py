@@ -28,8 +28,7 @@ bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 82866777560
 #* None as of now
 
 #? Large projects 
-#* xp_multiplier: Give extra XP multiplied by a given multiplier in an argument during a certain time period
-#* end_multiplier: End the multiplier early if someone messes up
+#* None as of now
 
 # Check if user levels up to a new rank, send special embed if True
 async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user_name, user_avatar):
@@ -80,7 +79,10 @@ async def on_message(message):
 
 	# See if there is an active XP boost event, return multiplier to multiply xp by if True
 	xp_boost_mult = 1
-	xp_boost_mult = await check_xp_boost(message.guild)
+	try:
+		xp_boost_mult = await check_xp_boost(message.guild)
+	except:
+		pass
 
 	# Message counts
 	await update_user(
@@ -94,7 +96,7 @@ async def on_message(message):
 		await update_user(
 			message.guild, message.author.id, message.author.name, 
 			"images", 
-			True, 1, 10, 1, xp_boost_mult
+			True, 1, 5, 1, xp_boost_mult
 			)
 	
 	# Embed counts
@@ -102,7 +104,7 @@ async def on_message(message):
 		await update_user(
 			message.guild, message.author.id, message.author.name, 
 			"embeds", 
-			True, 1, 10, 1, xp_boost_mult
+			True, 1, 5, 1, xp_boost_mult
 			)
 
 	# Sticker counts
@@ -110,7 +112,7 @@ async def on_message(message):
 		await update_user(
 			message.guild, message.author.id, message.author.name, 
 			"stickers", 
-			True, 1, 10, 1, xp_boost_mult
+			True, 1, 3, 1, xp_boost_mult
 			)
 
 	# Send embed if user levels up
@@ -142,14 +144,14 @@ async def on_reaction_add(reaction, user):
 	await update_user(
 		user.guild, user.id, user.name, 
 		"reactions_added",
-		True, 1, 5, 1, xp_boost_mult
+		True, 1, 1, 1, xp_boost_mult
 		)
 
 	# For reactions RECIEVED, add values and xp to respective user
 	await update_user(
 		reaction.message.guild, reaction.message.author.id, reaction.message.author.name, 
 		"reactions_recieved",
-		True, 1, 5, 1, xp_boost_mult
+		True, 1, 1, 1, xp_boost_mult
 		)
 
 	# Send embed if user levels up
@@ -173,9 +175,8 @@ async def on_voice_state_update(member, before, after):
 
 	# While the user is in a voice chat (including switching to different voice chats)...
 	while before.channel is None and after.channel is not None:
-		print("in_channel")
 		# Add 1 voice_minute every 60 seconds
-		await asyncio.sleep(2)
+		await asyncio.sleep(60)
 		voice_minutes += 1
 		print(f"Voice Minutes: {voice_minutes}")
 
@@ -184,7 +185,7 @@ async def on_voice_state_update(member, before, after):
 			await update_user(
 				member.guild , member.id, member.name, 
 				"voice_minutes", 
-				True, 5, 5, 5, xp_boost_mult
+				True, 5, 3, 5, xp_boost_mult
 				)
 			# Send embed if user levels up
 			await check_rank(
@@ -204,7 +205,7 @@ async def on_voice_state_update(member, before, after):
 			await update_user(
 				member.guild , member.id, member.name, 
 				"voice_minutes", 
-				True, voice_minutes % 5, 5, voice_minutes % 5, xp_boost_mult
+				True, voice_minutes % 5, 3, voice_minutes % 5, xp_boost_mult
 				)
 			
 			# Send embed if user levels up
@@ -217,10 +218,8 @@ async def on_voice_state_update(member, before, after):
 				member.display_avatar
 				)
 
-			print("out_of_channel")
 			break
 
-# TODO: Make it so it doesn't check for premium on EVERY member update, only when premium for a member changes
 # TODO: Make sure this well... works? No way to test boosted members (without paying ofc)
 @bot.event
 async def on_member_update(before, after):
@@ -230,7 +229,7 @@ async def on_member_update(before, after):
 			"is_booster", 
 			True, 0, 1000, 1, 1, True
 			)
-		print("booster!")
+		print(f"{before.name} is now a booster! They got 1000 XP!")
 		await before.guild.system_channel.send(f"{before.name} was given 1000 XP for becoming a booster!")
 	elif before.premium_since is not None and after.premium_since is None:
 		await update_user(
@@ -238,7 +237,7 @@ async def on_member_update(before, after):
 			"is_booster", 
 			True, 0, 0, 0, 1, False
 			)
-		print("no longer a booster...")
+		print(f"{before.name} is no longer a booster.")
 
 
 	try:
@@ -256,7 +255,7 @@ async def on_member_update(before, after):
 		await update_user(
 			before.guild, before.id, before.name, 
 			"special_xp", 
-			True, 0, 0, 0
+			True, 0, 0, 0, 1
 		)
 
 #! Normal User Commands (Commands used by regular members of the server)
@@ -388,7 +387,7 @@ async def award_xp(
 	await update_user(
 		member.guild ,member.id, member.name, 
 		"special_xp", 
-		True, xp, xp, 1
+		True, xp, xp, 1, 1
 		)
 	await ctx.respond(f"You gave {member.name} {xp} XP!")
 
@@ -454,7 +453,6 @@ async def invite_xp(
 		member.display_avatar
 		)
 
-# TODO: Rewrite for roles, not boosters
 @bot.slash_command(name="booster_xp", description="Add XP to all boosted users")
 @commands.has_permissions(manage_messages=True)
 async def booster_xp(
@@ -473,6 +471,29 @@ async def booster_xp(
 		await ctx.guild.system_channel.send(file=rcFILE, embed=rcEMBED)
 		i += 1
 	await ctx.respond(f"You gave everyone who is currently boosting the server {xp} XP!\n Count of boosted members: {count}")
+
+@bot.slash_command(name="xp_boost", description="Give an XP boost to the server for a specified amount of hours")
+@option("multiplier", description="How much should XP be multiplied by?")
+@option("time", description="How long should it last in minutes?")
+@commands.has_permissions(manage_messages=True)
+async def xp_boost(
+	ctx: discord.ApplicationContext,
+	multiplier: int,
+	time: int
+):
+	await update_xp_boost(ctx.guild, True, multiplier)
+	await ctx.respond(f"XP boost event started for {time} minutes!")
+	await asyncio.sleep(time * 60)
+	await update_xp_boost(ctx.guild, False, multiplier)
+	await ctx.respond(f"{ctx.author.mention} The XP boost event has ended!")
+
+@bot.slash_command(name="xp_boost_end", description="End an XP boost manually")
+@commands.has_permissions(manage_messages=True)
+async def xp_boost_end(
+	ctx: discord.ApplicationContext
+):
+	multiplier = 1
+	await update_xp_boost(ctx.guild, False, multiplier)
 
 #! Management Commands (Also admin commands, but should only be used once for making new things)
 
@@ -563,7 +584,7 @@ async def import_channel(
 			data, user = await update_user(
 				message.guild, message.author.id, message.author.name, 
 				"images", 
-				False, 1, 10, 1, 1
+				False, 1, 5, 1, 1
 				)
 
 			if user["user_id"] not in att_dict.keys():
@@ -576,7 +597,7 @@ async def import_channel(
 			data, user = await update_user(
 				message.guild, message.author.id, message.author.name, 
 				"embeds", 
-				False, 1, 10, 1, 1
+				False, 1, 5, 1, 1
 				)
 
 			if user["user_id"] not in emb_dict.keys():
@@ -589,7 +610,7 @@ async def import_channel(
 			data, user = await update_user(
 				message.guild, message.author.id, message.author.name, 
 				"stickers", 
-				False, 1, 10, 1, 1
+				False, 1, 3, 1, 1
 				)
 
 			if user["user_id"] not in stk_dict.keys():
@@ -664,7 +685,7 @@ async def import_channel(
 		await update_user(
 			member.guild, member.id, member.name,
 			"stickers",
-			True, stickers, 5, stickers, 1
+			True, stickers, 3, stickers, 1
 			)
 		# Check if user levels up to a new rank, send special embed if True
 		await check_rank(
@@ -718,25 +739,6 @@ async def test3(
 	r_level: int
 ):
 	await ctx.respond(f"You selected {r_name} and changed its level to {r_level}!")
-
-@bot.slash_command(name="xp_boost", description="Give an XP boost to the server for a specified amount of hours")
-@option("multiplier", description="How much should XP be multiplied by?")
-@option("time", description="How long should it last in hours?")
-async def xp_boost(
-	ctx: discord.ApplicationContext,
-	multiplier: int,
-	time: int
-):
-	await update_xp_boost(ctx.guild, True, multiplier)
-	await asyncio.sleep(time)
-	await update_xp_boost(ctx.guild, False, multiplier)
-
-@bot.slash_command(name="xp_boost_end", description="End an XP boost manually")
-async def xp_boost_end(
-	ctx: discord.ApplicationContext
-):
-	multiplier = 1
-	await update_xp_boost(ctx.guild, False, multiplier)
 
 @bot.slash_command(name='greet', description='Greet someone!', guild_ids=[273567091368656898])
 async def greet(ctx, name: Option(str, "Enter your friend's name", required = False, default = '')):
