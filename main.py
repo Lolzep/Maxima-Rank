@@ -50,6 +50,9 @@ async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user
 		old_role = discord.utils.get(bot.get_guild(guild_id).roles, id = old_role_id)
 		new_role = discord.utils.get(bot.get_guild(guild_id).roles, id = new_role_id)
 
+		print(old_role)
+		print(new_role)
+
 		# Remove the old role from the user and add the new role to the user
 		# If roles don't exist, don't do anything
 		try:
@@ -57,6 +60,7 @@ async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user
 			await member.remove_roles(old_role)
 		except AttributeError:
 			pass
+			print("AttributeError")
 
 		# Send rcEMBED to specified discord channel (default is system channel)
 		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(user_name, user_avatar, new_role)
