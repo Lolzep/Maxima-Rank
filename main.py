@@ -675,6 +675,8 @@ async def import_channel(
 				)
 		except AttributeError:
 			pass
+		except json.JSONDecodeError:
+			pass
 		await asyncio.sleep(0.1)
 
 	await bot_msg.edit(content=f"Finished reading all data! Now adding activity and XP to each user.\nCurrently on images...")
@@ -698,6 +700,8 @@ async def import_channel(
 				member.display_avatar
 				)
 		except AttributeError:
+			pass
+		except json.JSONDecodeError:
 			pass
 		await asyncio.sleep(0.1)
 
@@ -723,6 +727,8 @@ async def import_channel(
 				)
 		except AttributeError:
 			pass
+		except json.JSONDecodeError:
+			pass
 		await asyncio.sleep(0.1)
 
 	await bot_msg.edit(content=f"Finished reading all data! Now adding activity and XP to each user.\nCurrently on stickers...")	
@@ -746,6 +752,8 @@ async def import_channel(
 				member.display_avatar
 				)
 		except AttributeError:
+			pass
+		except json.JSONDecodeError:
 			pass
 		await asyncio.sleep(0.1)
 
