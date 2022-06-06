@@ -101,10 +101,10 @@ class infoEmbeds:
 			inline=False
 			)
 		adminhelpEMBED.add_field(
-			name="/booster_xp [amount]", 
-			value="Gives [amount] xp to all boosted users", 
+			name="/act_xp [user] [activity] [act_count] [xp_per_act]", 
+			value="Gives [activity] ([xp_per_act] * [act_count]) XP to a [user]", 
 			inline=False
-			)
+			)			
 		adminhelpEMBED.add_field(
 			name="/xp_boost [multiplier] [time]", 
 			value="Start an XP boost event which multiplies all XP by [multiplier] for [time] minutes", 
@@ -113,11 +113,6 @@ class infoEmbeds:
 		adminhelpEMBED.add_field(
 			name="/xp_boost_end", 
 			value="End an XP boost event manually", 
-			inline=False
-			)
-		adminhelpEMBED.add_field(
-			name="/invite_xp [member] [invite_count] [xp]", 
-			value="Increase invites of [member] by [invite_count] and give [xp] for each invite", 
 			inline=False
 			)
 		adminhelpEMBED.add_field(

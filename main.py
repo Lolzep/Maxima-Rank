@@ -10,7 +10,7 @@ from discord.commands import Option
 from discord.ext import commands, pages
 from discord.ext.commands import MissingPermissions
 from dotenv import load_dotenv
-from myfunctions import update_user, my_rank_embed_values, update_boosters, rank_check, new_levels, update_roles, update_channel_ignore, check_channel, update_xp_boost, check_xp_boost
+from myfunctions import update_user, my_rank_embed_values, rank_check, new_levels, update_roles, update_channel_ignore, check_channel, update_xp_boost, check_xp_boost
 from embeds import *
 
 load_dotenv()
@@ -28,10 +28,6 @@ bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 82866777560
 
 #? Small projects
 #* /add_act : Add activity manually. used for importing
-#* /reset_users : Reset user data
-#* /backup : Backup user data (do automatically on a timer?)
-#* Fix user roles from only showing Platinum rank
-#* Change any rank ups to use system channel
 
 #? Large projects 
 #* None as of now
@@ -131,7 +127,7 @@ async def on_message(message):
 
 	# Send embed if user levels up
 	await check_rank(
-		message.channel.send, 
+		message.guild.system_channel.send,
 		message.guild,
 		message.guild.id, 
 		message.author.id, 
@@ -179,7 +175,7 @@ async def on_reaction_add(reaction, user):
 
 	# Send embed if user levels up
 	await check_rank(
-		reaction.message.channel.send, 
+		reaction.message.guild.system_channel.send, 
 		reaction.message.guild,
 		reaction.message.guild.id, 
 		reaction.message.author.id, 
@@ -471,21 +467,37 @@ async def role_xp(
 			)		
 	await ctx.respond(f"You gave users with the {role.mention} role {xp} XP!")
 
-@bot.slash_command(name="invite_xp", description="Increase invite count for a user and give a specified amount of XP for doing so")
+@bot.slash_command(name="act_xp", description="Increase activity and XP for that activity")
 @commands.has_permissions(manage_messages=True)
-async def invite_xp(
+async def act_xp(
 	ctx: discord.ApplicationContext, 
-	member: Option(discord.Member, "Member to get id from", required = True), 
-	invite_count: Option(int, "Amount of invites the user gave", required=True), 
-	xp: Option(int, "Amount of XP to give for each invite", required=True)
+	member: Option(discord.Member, "Member to get id from", required = True),
+	activity: Option(
+		str, 
+		"Choose the activity to add to", 
+		choices=[
+			"messages", 
+			"reactions_added", 
+			"reactions_recieved", 
+			"stickers", 
+			"images", 
+			"embeds", 
+			"voice_minutes", 
+			"invites", 
+			"special_xp"
+			], 
+			required=True
+			),	
+	act_count: Option(int, "Amount of the activity", required=True), 
+	xp: Option(int, "Amount of XP to give for each activity", required=True)
 ):
 	
 	await update_user(
 		member.guild ,member.id, member.name, 
-		"invites", 
-		True, invite_count, xp, invite_count, 1
+		activity, 
+		True, act_count, xp, act_count, 1
 		)
-	await ctx.respond(f"You verifyed that {member.mention} gave {invite_count} invite(s) and doing so increased their XP by {xp * invite_count}!")
+	await ctx.respond(f"You verifyed that {member.mention} had {act_count} '{activity}' and doing so increased their XP by {xp * act_count}!")
 
 	# Send embed if user levels up
 	await check_rank(
@@ -496,25 +508,6 @@ async def invite_xp(
 		member.name, 
 		member.display_avatar
 		)
-
-@bot.slash_command(name="booster_xp", description="Add XP to all boosted users")
-@commands.has_permissions(manage_messages=True)
-async def booster_xp(
-	ctx: discord.ApplicationContext, 
-	xp: Option(int, "Amount of XP to give to boosted members", required=True)
-):
-
-	#* Use the update_booster function to get a list of boosters and if their role changed or not due to XP increase
-	count, rc_dict, nr_list = await update_boosters(ctx.user.guild, xp)
-
-	#* For each user that is a booster AND their ranks updated as a result, send a rank_update embed
-	i = 0
-	for key in rc_dict:
-		user2 = await ctx.guild.fetch_member(key)
-		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(user2.name, user2.display_avatar, nr_list[i])
-		await ctx.guild.system_channel.send(file=rcFILE, embed=rcEMBED)
-		i += 1
-	await ctx.respond(f"You gave everyone who is currently boosting the server {xp} XP!\n Count of boosted members: {count}")
 
 @bot.slash_command(name="xp_boost", description="Give an XP boost to the server for a specified amount of minutes")
 @option("multiplier", description="How much should XP be multiplied by?")
@@ -689,7 +682,7 @@ async def import_channel(
 		# i = History count
 		i += 1
 		if i % 250 == 0:
-			await bot_msg.edit(content=f"Currently {i} messages in...\n*(This may take awhile. Expect ~5000 messages/minute)*")
+			await bot_msg.edit(content=f"Currently {i} messages in...\n*(Activity tracking is disabled while running)*\n*(This may take awhile. Expect ~5000 messages/minute)*")
 
 	#* Append these dicts into the json file all at once for each user (decrease I/O operations)
 	# Messages
