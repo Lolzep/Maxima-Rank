@@ -285,12 +285,9 @@ class infoEmbeds:
 	async def rcEMBED(main_user, author_id, new_role):
 		'''Appears when a user levels up to a new rank
 		This is detected using rank_check and update_levels in myfunctions'''
-		print("Start")
-		print("New file")
 		rcFILE = discord.File(
 			f"Images/Ranks/{new_role}.png", 
 			filename="image.png")
-		print(rcFILE)
 		#* This section picks a random quote from a txt file to display in desc. of embed
 		# q_quotes_raw = []
 		q_quotes = []
@@ -341,33 +338,25 @@ class infoEmbeds:
 				"You're the cream of the crop!"
 			]
 
-		print("Quotes Raw")
 		for quote in q_quotes_raw:
 			quote = quote[:-1]
 			q_quotes.append(quote)
-		print("New quotes")
 
 		ran_quote = q_quotes[random.randint(0, len(q_quotes)-1)]
-		print("Random quotes")
 		#* Embed and embed fields
-		print("New embed")
 		rcEMBED = discord.Embed(
 			title=f"{main_user} just advanced to {new_role}!",
 			description=ran_quote,
 			color = discord.Color.purple()
 			)
 
-
-		print("New tn")
 		rcEMBED.set_thumbnail(url="attachment://image.png")
 
-		print("New auth")
 		rcEMBED.set_author(
 			name=main_user,
 			icon_url=author_id
 			)
 
-		print("return")
 		return rcFILE, rcEMBED
 
 	

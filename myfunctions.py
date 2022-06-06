@@ -98,8 +98,7 @@ async def update_levels(guild_name, json_object_name : str):
 	# TODO: Figure out how to connect this to the on_message event and create an embed
 	role_changed = False
 	if current_role != new_role:
-		print(f"User went from {current_role} to {new_role}!")
-		print(f"Old role ID: {old_role_id}\nNew rold ID: {new_role_id}")
+		print(f"User went from {current_role} to {new_role}! Old role ID: {old_role_id} New rold ID: {new_role_id}")
 		role_changed = True
 	
 	return role_changed, new_role, old_role_id, new_role_id

@@ -651,15 +651,10 @@ async def import_channel(
 		i += 1
 		if i % 250 == 0:
 			await bot_msg.edit(content=f"Currently {i} messages in...\n*(This may take awhile. Expect ~5000 messages/minute)*")
-	await bot_msg.edit(content=f"Finished reading all data! Now adding activity and XP to each user.")
-	
-	print(msg_dict)
-	print(att_dict)
-	print(emb_dict)
-	print(stk_dict)
 
 	#* Append these dicts into the json file all at once for each user (decrease I/O operations)
 	# Messages
+	await bot_msg.edit(content=f"Finished reading all data! Now adding activity and XP to each user.\nCurrently on messages...")
 	for users, messages in msg_dict.items():
 		print(f"Added {users} messages count")
 		member = ctx.guild.get_member(users)
@@ -680,8 +675,9 @@ async def import_channel(
 				)
 		except AttributeError:
 			pass
-		await asyncio.sleep(0.2)
+		await asyncio.sleep(0.1)
 
+	await bot_msg.edit(content=f"Finished reading all data! Now adding activity and XP to each user.\nCurrently on images...")
 	# Images
 	for users, images in att_dict.items():
 		print(f"Added {users} images count")
@@ -703,8 +699,9 @@ async def import_channel(
 				)
 		except AttributeError:
 			pass
-		await asyncio.sleep(0.2)
-	
+		await asyncio.sleep(0.1)
+
+	await bot_msg.edit(content=f"Finished reading all data! Now adding activity and XP to each user.\nCurrently on embeds...")	
 	# Embeds
 	for users, embeds in emb_dict.items():
 		print(f"Added {users} embeds count")
@@ -726,8 +723,9 @@ async def import_channel(
 				)
 		except AttributeError:
 			pass
-		await asyncio.sleep(0.2)
-	
+		await asyncio.sleep(0.1)
+
+	await bot_msg.edit(content=f"Finished reading all data! Now adding activity and XP to each user.\nCurrently on stickers...")	
 	# Stickers
 	for users, stickers in stk_dict.items():
 		print(f"Added {users} sticker count")
@@ -749,7 +747,7 @@ async def import_channel(
 				)
 		except AttributeError:
 			pass
-		await asyncio.sleep(0.2)
+		await asyncio.sleep(0.1)
 
 	e_time = time.time()
 	t_time = e_time - s_time
