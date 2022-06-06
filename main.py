@@ -661,79 +661,95 @@ async def import_channel(
 	#* Append these dicts into the json file all at once for each user (decrease I/O operations)
 	# Messages
 	for users, messages in msg_dict.items():
-		member = ctx.guild.get_member(users)
-		await update_user(
-			member.guild, member.id, member.name,
-			"messages",
-			True, messages, 5, messages, 1
-			)
-		# Check if user levels up to a new rank, send special embed if True
-		await check_rank(
-			member.guild.system_channel.send, 
-			member.guild,
-			member.guild.id, 
-			member.id, 
-			member.name, 
-			member.display_avatar
-			)
 		print(f"Added {users} messages count")
+		member = ctx.guild.get_member(users)
+		try:
+			await update_user(
+				member.guild, member.id, member.name,
+				"messages",
+				True, messages, 5, messages, 1
+				)
+			# Check if user levels up to a new rank, send special embed if True
+			await check_rank(
+				member.guild.system_channel.send, 
+				member.guild,
+				member.guild.id, 
+				member.id, 
+				member.name, 
+				member.display_avatar
+				)
+		except AttributeError:
+			pass
+		asyncio.sleep(0.2)
 
 	# Images
 	for users, images in att_dict.items():
-		member = ctx.guild.get_member(users)
-		await update_user(
-			member.guild, member.id, member.name,
-			"images",
-			True, images, 5, images, 1
-			)
-		# Check if user levels up to a new rank, send special embed if True
-		await check_rank(
-			member.guild.system_channel.send, 
-			member.guild,
-			member.guild.id, 
-			member.id, 
-			member.name, 
-			member.display_avatar
-			)
 		print(f"Added {users} images count")
+		member = ctx.guild.get_member(users)
+		try:
+			await update_user(
+				member.guild, member.id, member.name,
+				"images",
+				True, images, 5, images, 1
+				)
+			# Check if user levels up to a new rank, send special embed if True
+			await check_rank(
+				member.guild.system_channel.send, 
+				member.guild,
+				member.guild.id, 
+				member.id, 
+				member.name, 
+				member.display_avatar
+				)
+		except AttributeError:
+			pass
+		asyncio.sleep(0.2)
 	
 	# Embeds
 	for users, embeds in emb_dict.items():
-		member = ctx.guild.get_member(users)
-		await update_user(
-			member.guild, member.id, member.name,
-			"embeds",
-			True, embeds, 5, embeds, 1
-			)
-		# Check if user levels up to a new rank, send special embed if True
-		await check_rank(
-			member.guild.system_channel.send, 
-			member.guild,
-			member.guild.id, 
-			member.id, 
-			member.name, 
-			member.display_avatar
-			)
 		print(f"Added {users} embeds count")
+		member = ctx.guild.get_member(users)
+		try:
+			await update_user(
+				member.guild, member.id, member.name,
+				"embeds",
+				True, embeds, 5, embeds, 1
+				)
+			# Check if user levels up to a new rank, send special embed if True
+			await check_rank(
+				member.guild.system_channel.send, 
+				member.guild,
+				member.guild.id, 
+				member.id, 
+				member.name, 
+				member.display_avatar
+				)
+		except AttributeError:
+			pass
+		asyncio.sleep(0.2)
 	
 	# Stickers
 	for users, stickers in stk_dict.items():
-		member = ctx.guild.get_member(users)
-		await update_user(
-			member.guild, member.id, member.name,
-			"stickers",
-			True, stickers, 3, stickers, 1
-			)
-		# Check if user levels up to a new rank, send special embed if True
-		await check_rank(
-			member.guild.system_channel.send, 
-			member.guild,
-			member.guild.id, 
-			member.id, 
-			member.name, 
-			member.display_avatar
-			)
 		print(f"Added {users} sticker count")
+		member = ctx.guild.get_member(users)
+		try:
+			await update_user(
+				member.guild, member.id, member.name,
+				"stickers",
+				True, stickers, 3, stickers, 1
+				)
+			# Check if user levels up to a new rank, send special embed if True
+			await check_rank(
+				member.guild.system_channel.send, 
+				member.guild,
+				member.guild.id, 
+				member.id, 
+				member.name, 
+				member.display_avatar
+				)
+		except AttributeError:
+			pass
+		asyncio.sleep(0.2)
 
 	e_time = time.time()
 	t_time = e_time - s_time
