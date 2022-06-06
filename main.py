@@ -1,5 +1,6 @@
 import discord
 import os
+import sys
 import asyncio
 import json
 import time
@@ -725,60 +726,81 @@ async def ignore_channel(
 	await update_channel_ignore(ctx.guild.name, ctx.guild_id, channel)
 	await ctx.respond(f"The selected channel is now ignored")
 
+@bot.slash_command(name="restart", description="Restart the bot")
+@commands.has_permissions(manage_messages=True)
+async def restart(ctx):
+	await ctx.respond("Restarting Kanade Bot")
+	os.execv(sys.executable, ['python3'] + sys.argv)
+
+@bot.slash_command(name="gitpull", description="Pull latest version from Github repo")
+@commands.has_permissions(manage_messages=True)
+async def gitpull(ctx):
+	await ctx.respond(os.popen('git pull').read())
+
 #! Error handling for permissions
 
 @adminhelp.error
-async def adminhelp_error(ctx, error):
+async def permission_errors(ctx, error):
     if isinstance(error, MissingPermissions):
         await ctx.respond(":warning: You don't have permission to do this!")
 
 @award_xp.error
-async def award_xp_error(ctx, error):
+async def permission_errors(ctx, error):
     if isinstance(error, MissingPermissions):
         await ctx.respond(":warning: You don't have permission to do this!")
 
 @role_xp.error
-async def award_xp_error(ctx, error):
+async def permission_errors(ctx, error):
     if isinstance(error, MissingPermissions):
         await ctx.respond(":warning: You don't have permission to do this!")
 
 @invite_xp.error
-async def award_xp_error(ctx, error):
+async def permission_errors(ctx, error):
 	if isinstance(error, MissingPermissions):
 		await ctx.respond(":warning: You don't have permission to do this!")
 
 @booster_xp.error
-async def award_xp_error(ctx, error):
+async def permission_errors(ctx, error):
 	if isinstance(error, MissingPermissions):
 		await ctx.respond(":warning: You don't have permission to do this!")
 
 @xp_boost.error
-async def award_xp_error(ctx, error):
+async def permission_errors(ctx, error):
 	if isinstance(error, MissingPermissions):
 		await ctx.respond(":warning: You don't have permission to do this!")
 
 @xp_boost_end.error
-async def award_xp_error(ctx, error):
+async def permission_errors(ctx, error):
 	if isinstance(error, MissingPermissions):
 		await ctx.respond(":warning: You don't have permission to do this!")
 
 @make_levels.error
-async def award_xp_error(ctx, error):
+async def permission_errors(ctx, error):
 	if isinstance(error, MissingPermissions):
 		await ctx.respond(":warning: You don't have permission to do this!")
 
 @role_level.error
-async def award_xp_error(ctx, error):
+async def permission_errors(ctx, error):
 	if isinstance(error, MissingPermissions):
 		await ctx.respond(":warning: You don't have permission to do this!")
 
 @import_channel.error
-async def award_xp_error(ctx, error):
+async def permission_errors(ctx, error):
 	if isinstance(error, MissingPermissions):
 		await ctx.respond(":warning: You don't have permission to do this!")
 
 @ignore_channel.error
-async def award_xp_error(ctx, error):
+async def permission_errors(ctx, error):
+	if isinstance(error, MissingPermissions):
+		await ctx.respond(":warning: You don't have permission to do this!")
+
+@restart.error
+async def permission_errors(ctx, error):
+	if isinstance(error, MissingPermissions):
+		await ctx.respond(":warning: You don't have permission to do this!")
+
+@gitpull.error
+async def permission_errors(ctx, error):
 	if isinstance(error, MissingPermissions):
 		await ctx.respond(":warning: You don't have permission to do this!")
 
