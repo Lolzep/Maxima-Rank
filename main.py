@@ -27,7 +27,11 @@ bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 82866777560
 #? Command ideas!
 
 #? Small projects
-#* None as of now
+#* /add_act : Add activity manually. used for importing
+#* /reset_users : Reset user data
+#* /backup : Backup user data (do automatically on a timer?)
+#* Fix user roles from only showing Platinum rank
+#* Change any rank ups to use system channel
 
 #? Large projects 
 #* None as of now
@@ -263,6 +267,12 @@ async def on_member_update(before, after):
 			)
 	except json.JSONDecodeError:
 		# Used to add a new user if they don't exist 
+		await update_user(
+			before.guild, before.id, before.name, 
+			"special_xp", 
+			True, 0, 0, 0, 1
+		)
+	except UnboundLocalError:
 		await update_user(
 			before.guild, before.id, before.name, 
 			"special_xp", 
@@ -768,6 +778,13 @@ async def gitpull(ctx):
 @commands.has_permissions(manage_messages=True)
 async def setup(ctx):
 	await ctx.respond(f"1. Add any channels you want to ignore with: ```/ignore_channel```\n2. Add roles you want to assign to ranks in the bot with: ```/role_level```\n3. Make new levels and XP barriers to your liking with: ```/make_levels```\n4. Should just work and track activity!")
+
+@bot.slash_command(name="reset_users", description="Reset all user activity (DANGEROUS! MAKE SURE YOU REALLY WANT TO DO THIS)")
+@commands.has_permissions(manage_messages=True)
+async def reset_users(ctx):
+	guild_name = ctx.guild
+	os.remove(f"Data/{guild_name} Users.json")
+	await ctx.respond(f"User activity for {guild_name} has been reset!")
 
 #! Error handling for permissions
 
