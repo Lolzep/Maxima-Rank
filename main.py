@@ -86,7 +86,7 @@ async def on_message(message):
 	xp_boost_mult = 1
 	try:
 		xp_boost_mult = await check_xp_boost(message.guild)
-	except:
+	except FileNotFoundError:
 		pass
 
 	# Message counts
@@ -144,9 +144,11 @@ async def on_reaction_add(reaction, user):
 	except FileNotFoundError:
 		channel_check == False
 
-	# See if there is an active XP boost event, return multiplier to multiply xp by if True
 	xp_boost_mult = 1
-	xp_boost_mult = await check_xp_boost(reaction.message.guild)
+	try:
+		xp_boost_mult = await check_xp_boost(reaction.message.guild)
+	except FileNotFoundError:
+		pass
 
 	# For reactions ADDED, add values and xp to respective user
 	await update_user(
