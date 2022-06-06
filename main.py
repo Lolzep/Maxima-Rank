@@ -37,6 +37,8 @@ async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user
 	# Get current guild to get current member being checked
 	guild = discord.utils.get(bot.guilds, id = guild_id)
 	member = guild.get_member(user_id)
+	print(guild)
+	print(member)
 
 	# Ignore bots
 	if member.bot == True:
@@ -64,7 +66,9 @@ async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user
 
 		# Send rcEMBED to specified discord channel (default is system channel)
 		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(user_name, user_avatar, new_role)
+		print("Embed made")
 		await discord_object_to_send(file=rcFILE, embed=rcEMBED)
+		print("Sent embed")
 
 #! Activity tracking bot events
 
