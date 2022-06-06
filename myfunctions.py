@@ -418,6 +418,11 @@ async def check_channel(guild_name, guild_channel_id):
 			channel_check = True
 	return channel_check
 
+# Updates/make XP Boost.json
+#? ARGUMENTS
+# guild_name: Guild that the boost is for
+# is_active: Bool, set to True to start a new event, False to end an event
+# multiplier: Int, How much should XP be multiplied by?
 async def update_xp_boost(guild_name, is_active, multiplier):
 	xp_json = f"Data/{guild_name} XP Boost.json"
 	xp_template = {"xp_boost" : [{
@@ -433,6 +438,9 @@ async def update_xp_boost(guild_name, is_active, multiplier):
 		await new_file(xp_json)
 		await json_dump(xp_json, xp_template)
 
+# Checks the XP Boost.json for an active XP boost event, returns a mult of 1 if False or the current mult if True
+#? ARGUMENTS
+# guild_name: Guild that the boost is for
 async def check_xp_boost(guild_name):
 	xp_json = f"Data/{guild_name} XP Boost.json"
 	xp_data = await json_read(xp_json)

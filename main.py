@@ -4,9 +4,10 @@ import asyncio
 import json
 import time
 
-from discord import option
+from discord import option, HTTPException
 from discord.commands import Option
 from discord.ext import commands, pages
+from discord.ext.commands import MissingPermissions
 from dotenv import load_dotenv
 from myfunctions import update_user, my_rank_embed_values, update_boosters, rank_check, new_levels, update_roles, update_channel_ignore, check_channel, update_xp_boost, check_xp_boost
 from embeds import *
@@ -60,7 +61,7 @@ async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user
 		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(user_name, user_avatar, new_role)
 		await discord_object_to_send(file=rcFILE, embed=rcEMBED)
 
-#! Bot events (Keeps track of the activity of users in the server)
+#! Activity tracking bot events
 
 @bot.event
 async def on_ready():
@@ -178,7 +179,6 @@ async def on_voice_state_update(member, before, after):
 		# Add 1 voice_minute every 60 seconds
 		await asyncio.sleep(60)
 		voice_minutes += 1
-		print(f"Voice Minutes: {voice_minutes}")
 
 		# Update voice_minutes to the users.json every 5 minutes
 		if voice_minutes % 5 == 0:
@@ -260,17 +260,17 @@ async def on_member_update(before, after):
 
 #! Normal User Commands (Commands used by regular members of the server)
 
-@bot.slash_command(description="Sends information about the bot")
+@bot.slash_command(name="about", description="Sends information about the bot")
 async def about(ctx):
 	aboutEMBED, aboutFILE = await infoEmbeds.aboutEMBED()
 	await ctx.respond(file=aboutFILE, embed=aboutEMBED)
 
-@bot.slash_command(description="Commands and their usage")
+@bot.slash_command(name="help", description="Commands and their usage")
 async def help(ctx):
 	helpEMBED, helpFILE = await infoEmbeds.helpEMBED()
 	await ctx.respond(file=helpFILE, embed=helpEMBED)
 
-@bot.slash_command(description="Statistics about yourself")
+@bot.slash_command(name="myrank", description="Statistics about yourself")
 async def myrank(ctx):
 	emoji_object = await my_rank_embed_values(ctx.user.guild, ctx.user.id, True)
 	emoji = lambda item : discord.utils.get(bot.emojis, name=item)
@@ -370,7 +370,7 @@ async def leaderboard(
 
 #! Admin Commands (Commands used by admins of the server)
 
-@bot.slash_command(description="Admin commands and their usage")
+@bot.slash_command(name="adminhelp", description="Admin commands and their usage")
 @commands.has_permissions(manage_messages=True)
 async def adminhelp(ctx):
 	adminhelpEMBED, adminhelpFILE = await infoEmbeds.adminhelpEMBED()
@@ -389,7 +389,7 @@ async def award_xp(
 		"special_xp", 
 		True, xp, xp, 1, 1
 		)
-	await ctx.respond(f"You gave {member.name} {xp} XP!")
+	await ctx.respond(f"You gave {member.mention} {xp} XP!")
 
 	# Send embed if user levels up
 	await check_rank(
@@ -553,14 +553,14 @@ async def import_channel(
 ):
 	s_time = time.time()
 	i = 0
-	await ctx.respond(f"Now getting the channel activity for all users in #{ctx.channel}.\nThis may take awhile...")
+	await ctx.respond(f"Now getting the channel activity for all users in {ctx.channel.mention}.")
 	msg_dict = {}
 	att_dict = {}
 	emb_dict = {}
 	stk_dict = {}
 
 	#* Make dicts of each activity with {user_id: messages} etc.
-	bot_msg = await ctx.channel.send(f"Currently 0 messages in...")
+	bot_msg = await ctx.channel.send(f"Currently 0 messages in...\n*(This may take awhile. Expect ~5000 messages/minute)*")
 	async for message in ctx.history(limit=100000):
 		# Ignore bots
 		if message.author.bot == True:
@@ -621,7 +621,7 @@ async def import_channel(
 		# i = History count
 		i += 1
 		if i % 250 == 0:
-			await bot_msg.edit(content=f"Currently {i} messages in...")
+			await bot_msg.edit(content=f"Currently {i} messages in...\n*(This may take awhile. Expect ~5000 messages/minute)*")
 	await bot_msg.edit(content=f"Finished reading all data! Now adding activity and XP to each user.")
 	
 	#* Append these dicts into the json file all at once for each user (decrease I/O operations)
@@ -699,8 +699,12 @@ async def import_channel(
 
 	e_time = time.time()
 	t_time = e_time - s_time
-	t_time = "{:.2f}".format(t_time)
-	await ctx.respond(f"Message history parsed for {i} messages in #{message.channel}.\nTime taken: {t_time} seconds")
+	f_t_time = "{:.0f}".format(t_time)
+	await bot_msg.delete()
+	if t_time <= 1:
+		await ctx.channel.send(f"**Total Messages:** {i} in {message.channel.mention}.\n**Time taken:** < 1 second")
+	else:
+		await ctx.channel.send(f"**Total Messages:** {i} in {message.channel.mention}.\n**Time taken:** {f_t_time} seconds")
 
 @bot.slash_command(name="ignore_channel", description="Set a channel to ignore")
 @option("channel", description="Put in a channel ID to ignore", required=True)
@@ -720,6 +724,63 @@ async def ignore_channel(
 
 	await update_channel_ignore(ctx.guild.name, ctx.guild_id, channel)
 	await ctx.respond(f"The selected channel is now ignored")
+
+#! Error handling for permissions
+
+@adminhelp.error
+async def adminhelp_error(ctx, error):
+    if isinstance(error, MissingPermissions):
+        await ctx.respond(":warning: You don't have permission to do this!")
+
+@award_xp.error
+async def award_xp_error(ctx, error):
+    if isinstance(error, MissingPermissions):
+        await ctx.respond(":warning: You don't have permission to do this!")
+
+@role_xp.error
+async def award_xp_error(ctx, error):
+    if isinstance(error, MissingPermissions):
+        await ctx.respond(":warning: You don't have permission to do this!")
+
+@invite_xp.error
+async def award_xp_error(ctx, error):
+	if isinstance(error, MissingPermissions):
+		await ctx.respond(":warning: You don't have permission to do this!")
+
+@booster_xp.error
+async def award_xp_error(ctx, error):
+	if isinstance(error, MissingPermissions):
+		await ctx.respond(":warning: You don't have permission to do this!")
+
+@xp_boost.error
+async def award_xp_error(ctx, error):
+	if isinstance(error, MissingPermissions):
+		await ctx.respond(":warning: You don't have permission to do this!")
+
+@xp_boost_end.error
+async def award_xp_error(ctx, error):
+	if isinstance(error, MissingPermissions):
+		await ctx.respond(":warning: You don't have permission to do this!")
+
+@make_levels.error
+async def award_xp_error(ctx, error):
+	if isinstance(error, MissingPermissions):
+		await ctx.respond(":warning: You don't have permission to do this!")
+
+@role_level.error
+async def award_xp_error(ctx, error):
+	if isinstance(error, MissingPermissions):
+		await ctx.respond(":warning: You don't have permission to do this!")
+
+@import_channel.error
+async def award_xp_error(ctx, error):
+	if isinstance(error, MissingPermissions):
+		await ctx.respond(":warning: You don't have permission to do this!")
+
+@ignore_channel.error
+async def award_xp_error(ctx, error):
+	if isinstance(error, MissingPermissions):
+		await ctx.respond(":warning: You don't have permission to do this!")
 
 #! THE TEST ZONE (not final commands)
 
