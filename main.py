@@ -586,6 +586,8 @@ async def import_channel(
 		else:
 			msg_dict[user["user_id"]] += 1
 
+		print(f"{message.author.name}: Message XP Added")
+
 		# Image counts
 		if message.attachments != []:
 			data, user = await update_user(
@@ -598,6 +600,8 @@ async def import_channel(
 				att_dict[user["user_id"]] = 1
 			else:
 				att_dict[user["user_id"]] += 1
+
+		print(f"{message.author.name}: Message XP Added")
 		
 		# Embed counts
 		if message.embeds != []:
@@ -612,6 +616,8 @@ async def import_channel(
 			else:
 				emb_dict[user["user_id"]] += 1
 
+		print(f"{message.author.name}: Message XP Added")
+
 		# Sticker counts
 		if message.stickers != []:
 			data, user = await update_user(
@@ -624,6 +630,8 @@ async def import_channel(
 				stk_dict[user["user_id"]] = 1
 			else:
 				stk_dict[user["user_id"]] += 1
+
+		print(f"{message.author.name}: Message XP Added")
 		
 		# i = History count
 		i += 1
@@ -631,6 +639,11 @@ async def import_channel(
 			await bot_msg.edit(content=f"Currently {i} messages in...\n*(This may take awhile. Expect ~5000 messages/minute)*")
 	await bot_msg.edit(content=f"Finished reading all data! Now adding activity and XP to each user.")
 	
+	print(msg_dict)
+	print(att_dict)
+	print(emb_dict)
+	print(stk_dict)
+
 	#* Append these dicts into the json file all at once for each user (decrease I/O operations)
 	# Messages
 	for users, messages in msg_dict.items():
@@ -649,6 +662,7 @@ async def import_channel(
 			member.name, 
 			member.display_avatar
 			)
+		print(f"Added {users} messages count")
 
 	# Images
 	for users, images in att_dict.items():
@@ -667,6 +681,7 @@ async def import_channel(
 			member.name, 
 			member.display_avatar
 			)
+		print(f"Added {users} images count")
 	
 	# Embeds
 	for users, embeds in emb_dict.items():
@@ -685,6 +700,7 @@ async def import_channel(
 			member.name, 
 			member.display_avatar
 			)
+		print(f"Added {users} embeds count")
 	
 	# Stickers
 	for users, stickers in stk_dict.items():
@@ -703,6 +719,7 @@ async def import_channel(
 			member.name, 
 			member.display_avatar
 			)
+		print(f"Added {users} sticker count")
 
 	e_time = time.time()
 	t_time = e_time - s_time
