@@ -75,9 +75,12 @@ async def on_message(message):
 		return
 
 	# Ignore channel if channel is ignored (/ignore_channel)
-	channel_check = await check_channel(message.guild, message.channel.id)
-	if channel_check == True:
-		return
+	try:
+		channel_check = await check_channel(message.guild, message.channel.id)
+		if channel_check == True:
+			return
+	except FileNotFoundError:
+		channel_check == False
 
 	# See if there is an active XP boost event, return multiplier to multiply xp by if True
 	xp_boost_mult = 1
@@ -134,9 +137,12 @@ async def on_message(message):
 @bot.event
 async def on_reaction_add(reaction, user):
 	# Ignore channel if channel is ignored (/ignore_channel)
-	channel_check = await check_channel(reaction.message.guild, reaction.message.channel.id)
-	if channel_check == True:
-		return
+	try:
+		channel_check = await check_channel(reaction.message.guild, reaction.message.channel.id)
+		if channel_check == True:
+			return
+	except FileNotFoundError:
+		channel_check == False
 
 	# See if there is an active XP boost event, return multiplier to multiply xp by if True
 	xp_boost_mult = 1
@@ -737,6 +743,11 @@ async def restart(ctx):
 async def gitpull(ctx):
 	await ctx.respond(os.popen('git pull').read())
 
+@bot.slash_command(name="setup", description="What to do on first joining")
+@commands.has_permissions(manage_messages=True)
+async def setup(ctx):
+	await ctx.respond(f"1. Add any channels you want to ignore with: ```/ignore_channel```\n2. Add roles you want to assign to ranks in the bot with: ```/role_level```\n3. Make new levels and XP barriers to your liking with: ```/make_levels```\n4. Should just work and track activity!")
+
 #! Error handling for permissions
 
 @adminhelp.error
@@ -800,6 +811,11 @@ async def permission_errors(ctx, error):
 		await ctx.respond(":warning: You don't have permission to do this!")
 
 @gitpull.error
+async def permission_errors(ctx, error):
+	if isinstance(error, MissingPermissions):
+		await ctx.respond(":warning: You don't have permission to do this!")
+
+@setup.error
 async def permission_errors(ctx, error):
 	if isinstance(error, MissingPermissions):
 		await ctx.respond(":warning: You don't have permission to do this!")

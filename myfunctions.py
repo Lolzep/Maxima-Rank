@@ -118,7 +118,6 @@ async def update_levels(guild_name, json_object_name : str):
 # act_mult: ...multiplied by this value (useful for adding correct xp for >1 key value)
 # boost_mult: ...multiplied again by this value (for xp boosts)
 # premium: A boolean, used in on_member_update to know if a user is boosting the server or not (optional)
-# TODO: Add something to here that checks if a level boost is enabled and mutiply XP by it (txt file?)
 async def update_user(guild_name, main_id, main_user, key : str, dump_file: bool, amount_to_add: int, amount_of_xp: int, act_mult: int, boost_mult: int, premium=None):
 	template = {
 		"user_id": main_id, 
@@ -138,7 +137,6 @@ async def update_user(guild_name, main_id, main_user, key : str, dump_file: bool
 		"is_booster": False
 		}
 	main_json = f"Data/{guild_name} Users.json"
-	xp_json = f"Data/{guild_name} XP Boost.json"
 
 	#* Check if missing or empty, if so, create new file and/or run new_json
 	try:
@@ -171,9 +169,6 @@ async def update_user(guild_name, main_id, main_user, key : str, dump_file: bool
 	else:
 		user_id_index = user_ids.index(main_id)
 		user = data["users"][user_id_index]
-
-	#* Check if there is an active XP boost event
-
 
 	#* Add amount_to_add to the specified key in the user object
 	# If premium is not None, do not add, change the boolean to premium argument
@@ -217,7 +212,7 @@ async def level_barriers(guild_name, starting_xp: int, level_factor: int, total_
 		for role in rid_data["role_ids"]:
 			if role["role_name"] == rl[0][0]:
 				role_id = role["role_id"]
-	except:
+	except FileNotFoundError:
 		role_id = 0
 
 	# Create variables for i (to iterate), role_barriers, and a new_data template for starting level
@@ -254,7 +249,7 @@ async def level_barriers(guild_name, starting_xp: int, level_factor: int, total_
 			for role in rid_data["role_ids"]:
 				if role["role_name"] == cur_level:
 					role_id = role["role_id"]
-		except:
+		except FileNotFoundError:
 			role_id = 0	
 
 		# Update the role_barrier as the current total_xp for the level
@@ -301,7 +296,7 @@ async def new_levels(guild_name, starting_xp: int, level_factor: int, total_leve
 				role_id = role["role_id"]
 				print(role_id)
 				print(rl[0][0])
-	except:
+	except FileNotFoundError:
 		role_id = 0
 
 	# Create a new levels template (array and object) and make a new levels.json if it doesnt exist
