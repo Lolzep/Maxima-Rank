@@ -64,6 +64,7 @@ async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user
 			pass
 
 		# Send rcEMBED to specified discord channel (default is system channel)
+		print("Trying to make embed")
 		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(user_name, user_avatar, new_role)
 		print("Embed made")
 		await discord_object_to_send(file=rcFILE, embed=rcEMBED)
