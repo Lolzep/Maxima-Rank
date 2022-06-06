@@ -771,74 +771,74 @@ async def setup(ctx):
 
 #! Error handling for permissions
 
-@adminhelp.error
-async def permission_errors(ctx, error):
-    if isinstance(error, MissingPermissions):
-        await ctx.respond(":warning: You don't have permission to do this!")
+# @adminhelp.error
+# async def permission_errors(ctx, error):
+#     if isinstance(error, MissingPermissions):
+#         await ctx.respond(":warning: You don't have permission to do this!")
 
-@award_xp.error
-async def permission_errors(ctx, error):
-    if isinstance(error, MissingPermissions):
-        await ctx.respond(":warning: You don't have permission to do this!")
+# @award_xp.error
+# async def permission_errors(ctx, error):
+#     if isinstance(error, MissingPermissions):
+#         await ctx.respond(":warning: You don't have permission to do this!")
 
-@role_xp.error
-async def permission_errors(ctx, error):
-    if isinstance(error, MissingPermissions):
-        await ctx.respond(":warning: You don't have permission to do this!")
+# @role_xp.error
+# async def permission_errors(ctx, error):
+#     if isinstance(error, MissingPermissions):
+#         await ctx.respond(":warning: You don't have permission to do this!")
 
-@invite_xp.error
-async def permission_errors(ctx, error):
-	if isinstance(error, MissingPermissions):
-		await ctx.respond(":warning: You don't have permission to do this!")
+# @invite_xp.error
+# async def permission_errors(ctx, error):
+# 	if isinstance(error, MissingPermissions):
+# 		await ctx.respond(":warning: You don't have permission to do this!")
 
-@booster_xp.error
-async def permission_errors(ctx, error):
-	if isinstance(error, MissingPermissions):
-		await ctx.respond(":warning: You don't have permission to do this!")
+# @booster_xp.error
+# async def permission_errors(ctx, error):
+# 	if isinstance(error, MissingPermissions):
+# 		await ctx.respond(":warning: You don't have permission to do this!")
 
-@xp_boost.error
-async def permission_errors(ctx, error):
-	if isinstance(error, MissingPermissions):
-		await ctx.respond(":warning: You don't have permission to do this!")
+# @xp_boost.error
+# async def permission_errors(ctx, error):
+# 	if isinstance(error, MissingPermissions):
+# 		await ctx.respond(":warning: You don't have permission to do this!")
 
-@xp_boost_end.error
-async def permission_errors(ctx, error):
-	if isinstance(error, MissingPermissions):
-		await ctx.respond(":warning: You don't have permission to do this!")
+# @xp_boost_end.error
+# async def permission_errors(ctx, error):
+# 	if isinstance(error, MissingPermissions):
+# 		await ctx.respond(":warning: You don't have permission to do this!")
 
-@make_levels.error
-async def permission_errors(ctx, error):
-	if isinstance(error, MissingPermissions):
-		await ctx.respond(":warning: You don't have permission to do this!")
+# @make_levels.error
+# async def permission_errors(ctx, error):
+# 	if isinstance(error, MissingPermissions):
+# 		await ctx.respond(":warning: You don't have permission to do this!")
 
-@role_level.error
-async def permission_errors(ctx, error):
-	if isinstance(error, MissingPermissions):
-		await ctx.respond(":warning: You don't have permission to do this!")
+# @role_level.error
+# async def permission_errors(ctx, error):
+# 	if isinstance(error, MissingPermissions):
+# 		await ctx.respond(":warning: You don't have permission to do this!")
 
-@import_channel.error
-async def permission_errors(ctx, error):
-	if isinstance(error, MissingPermissions):
-		await ctx.respond(":warning: You don't have permission to do this!")
+# @import_channel.error
+# async def permission_errors(ctx, error):
+# 	if isinstance(error, MissingPermissions):
+# 		await ctx.respond(":warning: You don't have permission to do this!")
 
-@ignore_channel.error
-async def permission_errors(ctx, error):
-	if isinstance(error, MissingPermissions):
-		await ctx.respond(":warning: You don't have permission to do this!")
+# @ignore_channel.error
+# async def permission_errors(ctx, error):
+# 	if isinstance(error, MissingPermissions):
+# 		await ctx.respond(":warning: You don't have permission to do this!")
 
-@restart.error
-async def permission_errors(ctx, error):
-	if isinstance(error, MissingPermissions):
-		await ctx.respond(":warning: You don't have permission to do this!")
+# @restart.error
+# async def permission_errors(ctx, error):
+# 	if isinstance(error, MissingPermissions):
+# 		await ctx.respond(":warning: You don't have permission to do this!")
 
-@gitpull.error
-async def permission_errors(ctx, error):
-	if isinstance(error, MissingPermissions):
-		await ctx.respond(":warning: You don't have permission to do this!")
+# @gitpull.error
+# async def permission_errors(ctx, error):
+# 	if isinstance(error, MissingPermissions):
+# 		await ctx.respond(":warning: You don't have permission to do this!")
 
-@setup.error
-async def permission_errors(ctx, error):
-	if isinstance(error, MissingPermissions):
-		await ctx.respond(":warning: You don't have permission to do this!")
+# @setup.error
+# async def permission_errors(ctx, error):
+# 	if isinstance(error, MissingPermissions):
+# 		await ctx.respond(":warning: You don't have permission to do this!")
 
 bot.run(TOKEN)
