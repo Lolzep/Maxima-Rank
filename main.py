@@ -21,7 +21,7 @@ intents.reactions = True
 intents.members = True
 intents.messages = True
 
-bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 828667775605669888])
+bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 828667775605669888, 744622412267782234])
 
 #? Command ideas!
 
@@ -441,7 +441,7 @@ async def invite_xp(
 		"invites", 
 		True, invite_count, xp, invite_count, 1
 		)
-	await ctx.respond(f"You verifyed that {member.name} gave {invite_count} invite(s) and doing so increased their XP by {xp * invite_count}!")
+	await ctx.respond(f"You verifyed that {member.mention} gave {invite_count} invite(s) and doing so increased their XP by {xp * invite_count}!")
 
 	# Send embed if user levels up
 	await check_rank(
@@ -781,28 +781,5 @@ async def award_xp_error(ctx, error):
 async def award_xp_error(ctx, error):
 	if isinstance(error, MissingPermissions):
 		await ctx.respond(":warning: You don't have permission to do this!")
-
-#! THE TEST ZONE (not final commands)
-
-@bot.slash_command(name="test", description="Test command for testing things")
-async def test(
-	ctx: discord.ApplicationContext,
-	role: Option(discord.Role, "Select a role", required=True)
-):
-	await ctx.respond(f"You selected {role.mention}!")
-
-@bot.slash_command(name="test3", description="Test command for testing things")
-@option("r_name", description="Choose a role to edit", choices=["Newbie", "Bronze", "Silver"])
-@option("r_level", description="Set the level minimum (Ex. Bronze needs level 3 to be reached)")
-async def test3(
-	ctx: discord.ApplicationContext,
-	r_name: str,
-	r_level: int
-):
-	await ctx.respond(f"You selected {r_name} and changed its level to {r_level}!")
-
-@bot.slash_command(name='greet', description='Greet someone!', guild_ids=[273567091368656898])
-async def greet(ctx, name: Option(str, "Enter your friend's name", required = False, default = '')):
-    await ctx.respond(f'Hello {name}!')
 
 bot.run(TOKEN)
