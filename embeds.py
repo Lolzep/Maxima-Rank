@@ -3,6 +3,7 @@ import os
 import re
 import random
 import math
+import aiofiles
 
 from myfunctions import templateEmbed, my_rank_embed_values,sort_leaderboard, json_read, leaderboard_embed_values
 
@@ -283,13 +284,15 @@ class infoEmbeds:
 	async def rcEMBED(main_user, author_id, new_role):
 		'''Appears when a user levels up to a new rank
 		This is detected using rank_check and update_levels in myfunctions'''
-
+		print("Start")
 		#* This section picks a random quote from a txt file to display in desc. of embed
 		q_quotes_raw = []
 		q_quotes = []
-		with open("rank_check_quotes.txt", "r") as f:
-			for line in f:
+		
+		async with aiofiles.open("rank_check_quotes.txt", mode="r") as f:
+			async for line in f:
 				q_quotes_raw.append(line)
+
 		for quote in q_quotes_raw:
 			quote = quote[:-1]
 			q_quotes.append(quote)
@@ -306,6 +309,7 @@ class infoEmbeds:
 		rcFILE = discord.File(
 			f"Images/Ranks/{new_role}.png", 
 			filename="image.png")
+
 		rcEMBED.set_thumbnail(url="attachment://image.png")
 
 		rcEMBED.set_author(

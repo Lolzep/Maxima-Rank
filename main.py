@@ -40,14 +40,12 @@ async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user
 
 	# Ignore bots
 	if member.bot == True:
-		print("Member is a bot")
 		return
 	
 	# Check the rank to see if the role changed after leveling up
 	role_changed, new_role, old_role_id, new_role_id = await rank_check(guild_name, user_id)
 	# If the role did change after checking the rank...
 	if role_changed is True:
-		print("If statement")
 		# Get the current role and the new role
 		old_role = discord.utils.get(bot.get_guild(guild_id).roles, id = old_role_id)
 		new_role = discord.utils.get(bot.get_guild(guild_id).roles, id = new_role_id)
@@ -55,16 +53,12 @@ async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user
 		# Remove the old role from the user and add the new role to the user
 		# If roles don't exist, don't do anything
 		try:
-			print("Start of try")
 			await member.add_roles(new_role)
 			await member.remove_roles(old_role)
-			print("End of try")
 		except AttributeError:
-			print("AttributeError")
 			pass
 
 		# Send rcEMBED to specified discord channel (default is system channel)
-		print("Trying to make embed")
 		rcFILE, rcEMBED = await infoEmbeds.rcEMBED(user_name, user_avatar, new_role)
 		print("Embed made")
 		await discord_object_to_send(file=rcFILE, embed=rcEMBED)
