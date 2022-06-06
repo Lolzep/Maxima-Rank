@@ -4,6 +4,7 @@ import re
 import random
 import math
 import aiofiles
+import asyncio
 
 from myfunctions import templateEmbed, my_rank_embed_values,sort_leaderboard, json_read, leaderboard_embed_values
 
@@ -288,10 +289,13 @@ class infoEmbeds:
 		#* This section picks a random quote from a txt file to display in desc. of embed
 		q_quotes_raw = []
 		q_quotes = []
-		
-		async with aiofiles.open("rank_check_quotes.txt", mode="r") as f:
-			async for line in f:
-				q_quotes_raw.append(line)
+
+		data = await json_read("rank_check_quotes.json")
+		q_quotes_raw = data["rc_quotes"][0]["responses"]
+
+		# async with aiofiles.open("rank_check_quotes.txt", mode="r") as f:
+		# 	async for line in f:
+		# 		q_quotes_raw.append(line)
 
 		for quote in q_quotes_raw:
 			quote = quote[:-1]
