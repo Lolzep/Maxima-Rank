@@ -286,6 +286,11 @@ class infoEmbeds:
 		'''Appears when a user levels up to a new rank
 		This is detected using rank_check and update_levels in myfunctions'''
 		print("Start")
+		print("New file")
+		rcFILE = discord.File(
+			f"Images/Ranks/{new_role}.png", 
+			filename="image.png")
+		print(rcFILE)
 		#* This section picks a random quote from a txt file to display in desc. of embed
 		# q_quotes_raw = []
 		q_quotes = []
@@ -352,11 +357,6 @@ class infoEmbeds:
 			color = discord.Color.purple()
 			)
 
-		print("New file")
-		rcFILE = discord.File(
-			f"Images/Ranks/{new_role}.png", 
-			filename="image.png")
-		print(rcFILE)
 
 		print("New tn")
 		rcEMBED.set_thumbnail(url="attachment://image.png")
