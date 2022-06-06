@@ -336,30 +336,37 @@ class infoEmbeds:
 				"You're the cream of the crop!"
 			]
 
+		print("Quotes Raw")
 		for quote in q_quotes_raw:
 			quote = quote[:-1]
 			q_quotes.append(quote)
+		print("New quotes")
 
 		ran_quote = q_quotes[random.randint(0, len(q_quotes)-1)]
-
+		print("Random quotes")
 		#* Embed and embed fields
+		print("New embed")
 		rcEMBED = discord.Embed(
 			title=f"{main_user} just advanced to {new_role}!",
 			description=ran_quote,
 			color = discord.Color.purple()
 			)
 
+		print("New file")
 		rcFILE = discord.File(
 			f"Images/Ranks/{new_role}.png", 
 			filename="image.png")
 
+		print("New tn")
 		rcEMBED.set_thumbnail(url="attachment://image.png")
 
+		print("New auth")
 		rcEMBED.set_author(
 			name=main_user,
 			icon_url=author_id
 			)
 
+		print("return")
 		return rcFILE, rcEMBED
 
 	
