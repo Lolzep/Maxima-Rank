@@ -353,10 +353,10 @@ class infoEmbeds:
 			)
 
 		print("New file")
-		print(new_role)
 		rcFILE = discord.File(
-			f"Images/Ranks/{new_role}.png", 
+			f"/Images/Ranks/{new_role}.png", 
 			filename="image.png")
+		print(rcFILE)
 
 		print("New tn")
 		rcEMBED.set_thumbnail(url="attachment://image.png")
