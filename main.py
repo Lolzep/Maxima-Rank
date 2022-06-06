@@ -47,14 +47,14 @@ async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user
 	# If the role did change after checking the rank...
 	if role_changed is True:
 		# Get the current role and the new role
-		old_role = discord.utils.get(bot.get_guild(guild_id).roles, id = old_role_id)
-		new_role = discord.utils.get(bot.get_guild(guild_id).roles, id = new_role_id)
+		old_role_obj = discord.utils.get(bot.get_guild(guild_id).roles, id = old_role_id)
+		new_role_obj = discord.utils.get(bot.get_guild(guild_id).roles, id = new_role_id)
 
 		# Remove the old role from the user and add the new role to the user
 		# If roles don't exist, don't do anything
 		try:
-			await member.add_roles(new_role)
-			await member.remove_roles(old_role)
+			await member.add_roles(new_role_obj)
+			await member.remove_roles(old_role_obj)
 		except AttributeError:
 			pass
 
