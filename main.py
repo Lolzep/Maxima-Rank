@@ -680,7 +680,7 @@ async def import_channel(
 				)
 		except AttributeError:
 			pass
-		asyncio.sleep(0.2)
+		await asyncio.sleep(0.2)
 
 	# Images
 	for users, images in att_dict.items():
@@ -703,7 +703,7 @@ async def import_channel(
 				)
 		except AttributeError:
 			pass
-		asyncio.sleep(0.2)
+		await asyncio.sleep(0.2)
 	
 	# Embeds
 	for users, embeds in emb_dict.items():
@@ -726,7 +726,7 @@ async def import_channel(
 				)
 		except AttributeError:
 			pass
-		asyncio.sleep(0.2)
+		await asyncio.sleep(0.2)
 	
 	# Stickers
 	for users, stickers in stk_dict.items():
@@ -749,7 +749,7 @@ async def import_channel(
 				)
 		except AttributeError:
 			pass
-		asyncio.sleep(0.2)
+		await asyncio.sleep(0.2)
 
 	e_time = time.time()
 	t_time = e_time - s_time
