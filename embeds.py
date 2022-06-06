@@ -287,12 +287,13 @@ class infoEmbeds:
 		This is detected using rank_check and update_levels in myfunctions'''
 		print("Start")
 		#* This section picks a random quote from a txt file to display in desc. of embed
-		q_quotes_raw = []
+		# q_quotes_raw = []
 		q_quotes = []
 
-		with open("rank_check_quotes.txt", "r", encoding="utf8") as f:
-			for line in f:
-				q_quotes_raw.append(line)
+		#! Corpses (none of these work on friend's computer)
+		# with open("rank_check_quotes.txt", "r", encoding="utf8") as f:
+		# 	for line in f:
+		# 		q_quotes_raw.append(line)
 
 		# data = await json_read("rank_check_quotes.json")
 		# q_quotes_raw = data["rc_quotes"][0]["responses"]
@@ -300,6 +301,40 @@ class infoEmbeds:
 		# async with aiofiles.open("rank_check_quotes.txt", mode="r") as f:
 		# 	async for line in f:
 		# 		q_quotes_raw.append(line)
+
+		#! LOLZEP BOT METHOD IT IS
+		q_quotes_raw = [
+				"I'm so impressed I could cry! Thank you very much for your best dance!",
+				"You're not an ordinary fella!",
+				"This is the cool Konami sound!",
+				"Can I call you a dancin' master?!",
+				"Look at all that bling!",	
+				"You showed us... YOUR ULTIMATE DANCE! I can't stop crying buckets of tears!",
+				"Excuse me, is your name Affection?",
+				"Is there an earthquake 'cuz this party's crackin'!",
+				"You're the king!",
+				"Bling bling, yo how many carats you got on - that was golden...",
+				"You're gonna break the meter! Can't wait to see it!",
+				"This one's gonna be KUHRAAAAAYYYYYZEH!!!",
+				"AWWWW YEAH! THAT'S WHAT I'M TALKIN' ABOUT!",
+				"This is gettin' *adlib disc scratching* WHACK!",
+				"You're like sunshine on a rainy day!",
+				"I can see a dream in your dance, I can see tomorrow in your dance! We can call it... 'Our Hope'.",
+				"Uh excuse me? Is your name perfection?",
+				"Perfection is your first, last and middle name. Your skills are un... be... lievable!",
+				"Music, saikou da!",
+				"Make some noise! Holla! Wooooop wooooop!",
+				"We're dancin', we're groovin', you know this floor is movin'!",
+				"You're on fire!",
+				"Superb! Perfection! Greatness...thy name suits YOU.",
+				"Aww yeah! They're givin' it up fo' you, holmes!",
+				"Check it out! They're cheerin' for ya!",
+				"Whoooooooooo-hoo! That blew my mind!",
+				"I think your 360 is starting to smoke.",
+				"Toasty!",
+				"You're so fantastic, I can't stop crying... buckets of tears!",
+				"You're the cream of the crop!"
+			]
 
 		for quote in q_quotes_raw:
 			quote = quote[:-1]
