@@ -90,8 +90,11 @@ async def on_message(message):
 
 	# See if there is an active XP boost event, return multiplier to multiply xp by if True
 	xp_boost_mult = 1
+	no_xp = False
 	try:
-		xp_boost_mult = await check_xp_boost(message.guild)
+		xp_boost_mult, no_xp = await check_xp_boost(message.guild)
+		if no_xp == True:
+			return
 	except FileNotFoundError:
 		pass
 
@@ -150,9 +153,13 @@ async def on_reaction_add(reaction, user):
 	except FileNotFoundError:
 		channel_check == False
 
+	# See if there is an active XP boost event, return multiplier to multiply xp by if True
 	xp_boost_mult = 1
+	no_xp = False
 	try:
-		xp_boost_mult = await check_xp_boost(reaction.message.guild)
+		xp_boost_mult, no_xp = await check_xp_boost(reaction.message.guild)
+		if no_xp == True:
+			return
 	except FileNotFoundError:
 		pass
 
@@ -187,7 +194,13 @@ async def on_voice_state_update(member, before, after):
 	voice_minutes = 0
 	# See if there is an active XP boost event, return multiplier to multiply xp by if True
 	xp_boost_mult = 1
-	xp_boost_mult = await check_xp_boost(member.guild)
+	no_xp = False
+	try:
+		xp_boost_mult, no_xp = await check_xp_boost(member.guild)
+		if no_xp == True:
+			return
+	except FileNotFoundError:
+		pass
 
 	# While the user is in a voice chat (including switching to different voice chats)...
 	while before.channel is None and after.channel is not None:
@@ -238,6 +251,16 @@ async def on_voice_state_update(member, before, after):
 # TODO: Make sure this well... works? No way to test boosted members (without paying ofc)
 @bot.event
 async def on_member_update(before, after):
+	# See if there is an active XP boost event, return multiplier to multiply xp by if True
+	xp_boost_mult = 1
+	no_xp = False
+	try:
+		xp_boost_mult, no_xp = await check_xp_boost(before.guild)
+		if no_xp == True:
+			return
+	except FileNotFoundError:
+		pass
+
 	if before.premium_since is None and after.premium_since is not None:
 		await update_user(
 			before.guild, before.id, before.name, 
@@ -493,7 +516,7 @@ async def booster_xp(
 		i += 1
 	await ctx.respond(f"You gave everyone who is currently boosting the server {xp} XP!\n Count of boosted members: {count}")
 
-@bot.slash_command(name="xp_boost", description="Give an XP boost to the server for a specified amount of hours")
+@bot.slash_command(name="xp_boost", description="Give an XP boost to the server for a specified amount of minutes")
 @option("multiplier", description="How much should XP be multiplied by?")
 @option("time", description="How long should it last in minutes?")
 @commands.has_permissions(manage_messages=True)
@@ -502,10 +525,10 @@ async def xp_boost(
 	multiplier: int,
 	time: int
 ):
-	await update_xp_boost(ctx.guild, True, multiplier)
+	await update_xp_boost(ctx.guild, True, multiplier, False)
 	await ctx.respond(f"XP boost event started for {time} minutes!")
 	await asyncio.sleep(time * 60)
-	await update_xp_boost(ctx.guild, False, multiplier)
+	await update_xp_boost(ctx.guild, False, multiplier, False)
 	await ctx.respond(f"{ctx.author.mention} The XP boost event has ended!")
 
 @bot.slash_command(name="xp_boost_end", description="End an XP boost manually")
@@ -514,7 +537,22 @@ async def xp_boost_end(
 	ctx: discord.ApplicationContext
 ):
 	multiplier = 1
-	await update_xp_boost(ctx.guild, False, multiplier)
+	await update_xp_boost(ctx.guild, False, multiplier, False)
+
+@bot.slash_command(name="no_xp", description="Stop all activity tracking for a specified amount of minutes")
+@option("multiplier", description="How much should XP be multiplied by?")
+@option("time", description="How long should it last in minutes?")
+@commands.has_permissions(manage_messages=True)
+async def no_xp(
+	ctx: discord.ApplicationContext,
+	time: int
+):
+	multiplier = 1
+	await update_xp_boost(ctx.guild, False, multiplier, True)
+	await ctx.respond(f"Activity tracking disabled for {time} minutes!")
+	await asyncio.sleep(time * 60)
+	await update_xp_boost(ctx.guild, False, multiplier, False)
+	await ctx.respond(f"{ctx.author.mention} Activity tracking has been reenabled")
 
 #! Management Commands (Also admin commands, but should only be used once for making new things)
 
@@ -575,13 +613,14 @@ async def import_channel(
 	s_time = time.time()
 	i = 0
 	await ctx.respond(f"Now getting the channel activity for all users in {ctx.channel.mention}.")
+	await update_xp_boost(ctx.guild, True, 1, True)
 	msg_dict = {}
 	att_dict = {}
 	emb_dict = {}
 	stk_dict = {}
 
 	#* Make dicts of each activity with {user_id: messages} etc.
-	bot_msg = await ctx.channel.send(f"Currently 0 messages in...\n*(This may take awhile. Expect ~5000 messages/minute)*")
+	bot_msg = await ctx.channel.send(f"Currently 0 messages in...\n*(Activity tracking is disabled while running)*\n*(This may take awhile. Expect ~5000 messages/minute)*")
 	async for message in ctx.history(limit=100000):
 		# Ignore bots
 		if message.author.bot == True:
@@ -600,7 +639,7 @@ async def import_channel(
 		else:
 			msg_dict[user["user_id"]] += 1
 
-		print(f"{message.author.name}: Message XP Added")
+		# print(f"{message.author.name}: Message XP Added")
 
 		# Image counts
 		if message.attachments != []:
@@ -615,7 +654,7 @@ async def import_channel(
 			else:
 				att_dict[user["user_id"]] += 1
 
-		print(f"{message.author.name}: Message XP Added")
+		# print(f"{message.author.name}: Message XP Added")
 		
 		# Embed counts
 		if message.embeds != []:
@@ -630,7 +669,7 @@ async def import_channel(
 			else:
 				emb_dict[user["user_id"]] += 1
 
-		print(f"{message.author.name}: Message XP Added")
+		# print(f"{message.author.name}: Message XP Added")
 
 		# Sticker counts
 		if message.stickers != []:
@@ -645,7 +684,7 @@ async def import_channel(
 			else:
 				stk_dict[user["user_id"]] += 1
 
-		print(f"{message.author.name}: Message XP Added")
+		# print(f"{message.author.name}: Message XP Added")
 		
 		# i = History count
 		i += 1
@@ -765,6 +804,7 @@ async def import_channel(
 		await ctx.channel.send(f"**Total Messages:** {i} in {message.channel.mention}.\n**Time taken:** < 1 second")
 	else:
 		await ctx.channel.send(f"**Total Messages:** {i} in {message.channel.mention}.\n**Time taken:** {f_t_time} seconds")
+	await update_xp_boost(ctx.guild, True, 1, False)
 
 @bot.slash_command(name="ignore_channel", description="Set a channel to ignore")
 @option("channel", description="Put in a channel ID to ignore", required=True)

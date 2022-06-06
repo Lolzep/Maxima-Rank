@@ -417,14 +417,15 @@ async def check_channel(guild_name, guild_channel_id):
 # guild_name: Guild that the boost is for
 # is_active: Bool, set to True to start a new event, False to end an event
 # multiplier: Int, How much should XP be multiplied by?
-async def update_xp_boost(guild_name, is_active, multiplier):
+async def update_xp_boost(guild_name, is_active, multiplier, no_xp=False):
 	xp_json = f"Data/{guild_name} XP Boost.json"
 	xp_template = {"xp_boost" : [{
 		"is_active": is_active,
-		"multiplier": multiplier
+		"multiplier": multiplier,
+		"no_xp": no_xp
 	}]}
 	try:
-		data = await json_read(xp_json)
+		await json_read(xp_json)
 		# Read, then write
 		await json_dump(xp_json, xp_template)
 	except FileNotFoundError:
@@ -438,12 +439,15 @@ async def update_xp_boost(guild_name, is_active, multiplier):
 async def check_xp_boost(guild_name):
 	xp_json = f"Data/{guild_name} XP Boost.json"
 	xp_data = await json_read(xp_json)
+
+	no_xp = xp_data["xp_boost"][0]["no_xp"]
+
 	xp_obj = xp_data["xp_boost"]
 	xp_boost_mult = 1
 	if xp_obj[0]["is_active"] == True:
 		xp_boost_mult = xp_obj[0]["multiplier"]
 	
-	return xp_boost_mult
+	return xp_boost_mult, no_xp
 
 # Creates a simple embed for the most general of embed implementations (help, about, etc.)
 #? ARGUMENTS
