@@ -290,8 +290,12 @@ class infoEmbeds:
 		q_quotes_raw = []
 		q_quotes = []
 
-		data = await json_read("rank_check_quotes.json")
-		q_quotes_raw = data["rc_quotes"][0]["responses"]
+		with open("rank_check_quotes.txt", "r", encoding="utf8") as f:
+			for line in f:
+				q_quotes_raw.append(line)
+
+		# data = await json_read("rank_check_quotes.json")
+		# q_quotes_raw = data["rc_quotes"][0]["responses"]
 
 		# async with aiofiles.open("rank_check_quotes.txt", mode="r") as f:
 		# 	async for line in f:
