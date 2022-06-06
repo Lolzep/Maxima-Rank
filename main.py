@@ -8,7 +8,7 @@ from discord import option
 from discord.commands import Option
 from discord.ext import commands, pages
 from dotenv import load_dotenv
-from myfunctions import update_user, my_rank_embed_values, update_boosters, rank_check, new_levels, update_roles, update_channel_ignore, check_channel
+from myfunctions import update_user, my_rank_embed_values, update_boosters, rank_check, new_levels, update_roles, update_channel_ignore, check_channel, update_xp_boost, check_xp_boost
 from embeds import *
 
 load_dotenv()
@@ -28,7 +28,6 @@ bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 82866777560
 #* None as of now
 
 #? Large projects 
-#* channel_ignore: Ignore certain channels in a discord to give activity for (another json file wooo)
 #* xp_multiplier: Give extra XP multiplied by a given multiplier in an argument during a certain time period
 #* end_multiplier: End the multiplier early if someone messes up
 
@@ -66,7 +65,7 @@ async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user
 
 @bot.event
 async def on_ready():
-    print(f'We have logged in as {bot.user}')
+	print(f'We have logged in as {bot.user}')
 
 @bot.event
 async def on_message(message):
@@ -79,11 +78,15 @@ async def on_message(message):
 	if channel_check == True:
 		return
 
+	# See if there is an active XP boost event, return multiplier to multiply xp by if True
+	xp_boost_mult = 1
+	xp_boost_mult = await check_xp_boost(message.guild)
+
 	# Message counts
 	await update_user(
 		message.guild, message.author.id, message.author.name, # retrieve values from discord api
 		"messages", # key value to change
-		True, 1, 5, 1 # attributes of XP
+		True, 1, 5, 1, xp_boost_mult # attributes of XP
 		)
 
 	# Image counts
@@ -91,7 +94,7 @@ async def on_message(message):
 		await update_user(
 			message.guild, message.author.id, message.author.name, 
 			"images", 
-			True, 1, 10, 1
+			True, 1, 10, 1, xp_boost_mult
 			)
 	
 	# Embed counts
@@ -99,7 +102,7 @@ async def on_message(message):
 		await update_user(
 			message.guild, message.author.id, message.author.name, 
 			"embeds", 
-			True, 1, 10, 1
+			True, 1, 10, 1, xp_boost_mult
 			)
 
 	# Sticker counts
@@ -107,7 +110,7 @@ async def on_message(message):
 		await update_user(
 			message.guild, message.author.id, message.author.name, 
 			"stickers", 
-			True, 1, 10, 1
+			True, 1, 10, 1, xp_boost_mult
 			)
 
 	# Send embed if user levels up
@@ -131,18 +134,22 @@ async def on_reaction_add(reaction, user):
 	if channel_check == True:
 		return
 
+	# See if there is an active XP boost event, return multiplier to multiply xp by if True
+	xp_boost_mult = 1
+	xp_boost_mult = await check_xp_boost(reaction.message.guild)
+
 	# For reactions ADDED, add values and xp to respective user
 	await update_user(
 		user.guild, user.id, user.name, 
 		"reactions_added",
-		True, 1, 5, 1
+		True, 1, 5, 1, xp_boost_mult
 		)
 
 	# For reactions RECIEVED, add values and xp to respective user
 	await update_user(
 		reaction.message.guild, reaction.message.author.id, reaction.message.author.name, 
 		"reactions_recieved",
-		True, 1, 5, 1
+		True, 1, 5, 1, xp_boost_mult
 		)
 
 	# Send embed if user levels up
@@ -160,20 +167,44 @@ async def on_reaction_add(reaction, user):
 async def on_voice_state_update(member, before, after):
 	# ActivityRank: Voiceminutes are 5 XP
 	voice_minutes = 0
+	# See if there is an active XP boost event, return multiplier to multiply xp by if True
+	xp_boost_mult = 1
+	xp_boost_mult = await check_xp_boost(member.guild)
+
 	# While the user is in a voice chat (including switching to different voice chats)...
-	# Add 1 voice_minute every 60 seconds
 	while before.channel is None and after.channel is not None:
 		print("in_channel")
+		# Add 1 voice_minute every 60 seconds
 		await asyncio.sleep(2)
 		voice_minutes += 1
 		print(f"Voice Minutes: {voice_minutes}")
+
+		# Update voice_minutes to the users.json every 5 minutes
+		if voice_minutes % 5 == 0:
+			await update_user(
+				member.guild , member.id, member.name, 
+				"voice_minutes", 
+				True, 5, 5, 5, xp_boost_mult
+				)
+			# Send embed if user levels up
+			await check_rank(
+				member.guild.system_channel.send, 
+				member.guild,
+				member.guild.id, 
+				member.id, 
+				member.name, 
+				member.display_avatar
+				)
+			continue
+
 		# When the user leaves voice chat...
 		# Update users.json with updated voice_minutes, xp, and levels
+		# Add voice_minutes not added to the user (1-4 minutes extra)
 		if before.channel is None and after.channel is None:
 			await update_user(
 				member.guild , member.id, member.name, 
 				"voice_minutes", 
-				True, voice_minutes, 5, voice_minutes
+				True, voice_minutes % 5, 5, voice_minutes % 5, xp_boost_mult
 				)
 			
 			# Send embed if user levels up
@@ -197,7 +228,7 @@ async def on_member_update(before, after):
 		await update_user(
 			before.guild, before.id, before.name, 
 			"is_booster", 
-			True, 0, 1000, 1, True
+			True, 0, 1000, 1, 1, True
 			)
 		print("booster!")
 		await before.guild.system_channel.send(f"{before.name} was given 1000 XP for becoming a booster!")
@@ -205,7 +236,7 @@ async def on_member_update(before, after):
 		await update_user(
 			before.guild, before.id, before.name, 
 			"is_booster", 
-			True, 0, 0, 0, False
+			True, 0, 0, 0, 1, False
 			)
 		print("no longer a booster...")
 
@@ -383,7 +414,7 @@ async def role_xp(
 		await update_user(
 			user.guild ,user.id, user.name, 
 			"special_xp", 
-			True, xp, xp, 1
+			True, xp, xp, 1, 1
 			)
 
 		# Send embed if user levels up
@@ -409,7 +440,7 @@ async def invite_xp(
 	await update_user(
 		member.guild ,member.id, member.name, 
 		"invites", 
-		True, invite_count, xp, invite_count
+		True, invite_count, xp, invite_count, 1
 		)
 	await ctx.respond(f"You verifyed that {member.name} gave {invite_count} invite(s) and doing so increased their XP by {xp * invite_count}!")
 
@@ -519,7 +550,7 @@ async def import_channel(
 		data, user = await update_user(
 			message.guild, message.author.id, message.author.name,
 			"messages",
-			False, 1, 5, 1
+			False, 1, 5, 1, 1
 			)
 		
 		if user["user_id"] not in msg_dict.keys():
@@ -532,7 +563,7 @@ async def import_channel(
 			data, user = await update_user(
 				message.guild, message.author.id, message.author.name, 
 				"images", 
-				False, 1, 10, 1
+				False, 1, 10, 1, 1
 				)
 
 			if user["user_id"] not in att_dict.keys():
@@ -545,7 +576,7 @@ async def import_channel(
 			data, user = await update_user(
 				message.guild, message.author.id, message.author.name, 
 				"embeds", 
-				False, 1, 10, 1
+				False, 1, 10, 1, 1
 				)
 
 			if user["user_id"] not in emb_dict.keys():
@@ -558,7 +589,7 @@ async def import_channel(
 			data, user = await update_user(
 				message.guild, message.author.id, message.author.name, 
 				"stickers", 
-				False, 1, 10, 1
+				False, 1, 10, 1, 1
 				)
 
 			if user["user_id"] not in stk_dict.keys():
@@ -579,7 +610,7 @@ async def import_channel(
 		await update_user(
 			member.guild, member.id, member.name,
 			"messages",
-			True, messages, 5, messages
+			True, messages, 5, messages, 1
 			)
 		# Check if user levels up to a new rank, send special embed if True
 		await check_rank(
@@ -597,7 +628,7 @@ async def import_channel(
 		await update_user(
 			member.guild, member.id, member.name,
 			"images",
-			True, images, 5, images
+			True, images, 5, images, 1
 			)
 		# Check if user levels up to a new rank, send special embed if True
 		await check_rank(
@@ -615,7 +646,7 @@ async def import_channel(
 		await update_user(
 			member.guild, member.id, member.name,
 			"embeds",
-			True, embeds, 5, embeds
+			True, embeds, 5, embeds, 1
 			)
 		# Check if user levels up to a new rank, send special embed if True
 		await check_rank(
@@ -633,7 +664,7 @@ async def import_channel(
 		await update_user(
 			member.guild, member.id, member.name,
 			"stickers",
-			True, stickers, 5, stickers
+			True, stickers, 5, stickers, 1
 			)
 		# Check if user levels up to a new rank, send special embed if True
 		await check_rank(
@@ -649,6 +680,25 @@ async def import_channel(
 	t_time = e_time - s_time
 	t_time = "{:.2f}".format(t_time)
 	await ctx.respond(f"Message history parsed for {i} messages in #{message.channel}.\nTime taken: {t_time} seconds")
+
+@bot.slash_command(name="ignore_channel", description="Set a channel to ignore")
+@option("channel", description="Put in a channel ID to ignore", required=True)
+@commands.has_permissions(manage_messages=True)
+async def ignore_channel(
+	ctx: discord.ApplicationContext,
+	channel: str,
+):
+	if len(channel) != 18:
+		await ctx.respond(f"Please enter a valid channel ID")
+		return
+	try:
+		channel = int(channel)
+	except ValueError:
+		await ctx.respond(f"Please enter a valid channel ID")
+		return
+
+	await update_channel_ignore(ctx.guild.name, ctx.guild_id, channel)
+	await ctx.respond(f"The selected channel is now ignored")
 
 #! THE TEST ZONE (not final commands)
 
@@ -669,34 +719,24 @@ async def test3(
 ):
 	await ctx.respond(f"You selected {r_name} and changed its level to {r_level}!")
 
-@bot.slash_command(name="test4", description="Test command for testing things")
+@bot.slash_command(name="xp_boost", description="Give an XP boost to the server for a specified amount of hours")
 @option("multiplier", description="How much should XP be multiplied by?")
-@option("time", description="How long should it last?")
-async def test4(
+@option("time", description="How long should it last in hours?")
+async def xp_boost(
 	ctx: discord.ApplicationContext,
 	multiplier: int,
 	time: int
 ):
-	pass
+	await update_xp_boost(ctx.guild, True, multiplier)
+	await asyncio.sleep(time)
+	await update_xp_boost(ctx.guild, False, multiplier)
 
-@bot.slash_command(name="ignore_channel", description="Set a channel to ignore")
-@option("channel", description="Put in a channel ID to ignore", required=True)
-@commands.has_permissions(manage_messages=True)
-async def ignore_channel(
-	ctx: discord.ApplicationContext,
-	channel: str,
+@bot.slash_command(name="xp_boost_end", description="End an XP boost manually")
+async def xp_boost_end(
+	ctx: discord.ApplicationContext
 ):
-	if len(channel) != 18:
-		await ctx.respond(f"Please enter a valid channel ID")
-		return
-	try:
-		channel = int(channel)
-	except ValueError:
-		await ctx.respond(f"Please enter a valid channel ID")
-		return
-
-	await update_channel_ignore(ctx.guild.name, ctx.guild_id, channel)
-	await ctx.respond(f"The selected channel is now ignored")
+	multiplier = 1
+	await update_xp_boost(ctx.guild, False, multiplier)
 
 @bot.slash_command(name='greet', description='Greet someone!', guild_ids=[273567091368656898])
 async def greet(ctx, name: Option(str, "Enter your friend's name", required = False, default = '')):
