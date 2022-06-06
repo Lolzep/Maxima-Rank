@@ -148,7 +148,7 @@ class infoEmbeds:
 		#* Some extras here, need to get values of the user using a separate function (my_rank_embed_values)
 		#* This function also returns the emoji ranks to be shown next to the values in emoji_object
 		field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id = await my_rank_embed_values(guild_name, main_id, False)
-		role_barriers = await json_read(f"Data\{guild_name} Role Barriers.json")
+		role_barriers = await json_read(f"Data/{guild_name} Role Barriers.json")
 		role_barriers = dict(role_barriers)
 		myrankFILE = discord.File(
 			f"Images/Ranks/{role_title}.png", 
@@ -218,7 +218,7 @@ class infoEmbeds:
 		#* Some extras here, need to get values of the user using a separate function (my_rank_embed_values)
 		#* This function also returns the emoji ranks to be shown next to the values in emoji_object
 		field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id = await my_rank_embed_values(guild_name, main_id, False)
-		role_barriers = await json_read(f"Data\{guild_name} Role Barriers.json")
+		role_barriers = await json_read(f"Data/{guild_name} Role Barriers.json")
 		role_barriers = dict(role_barriers)
 		rankFILE = discord.File(
 			f"Images/Ranks/{role_title}.png", 
@@ -353,6 +353,7 @@ class infoEmbeds:
 			)
 
 		print("New file")
+		print(new_role)
 		rcFILE = discord.File(
 			f"Images/Ranks/{new_role}.png", 
 			filename="image.png")
