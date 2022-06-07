@@ -23,28 +23,28 @@ class infoEmbeds:
 
 		#* Embed fields
 		aboutEMBED.add_field(
-			name="Maxima Rank", 
-			value="An activity tracker for Discord for tracking messages, time in voice, etc. and using that for levels for rewarding the most active users in a Discord", 
+			name="Maxima Rank",
+			value="An activity tracker for Discord for tracking messages, time in voice, etc. and using that for levels for rewarding the most active users in a Discord",
 			inline=False
 			)
 		aboutEMBED.add_field(
-			name="Commit", 
-			value=str(VERSION), 
+			name="Commit",
+			value=str(VERSION),
 			inline=False
 			)
 		aboutEMBED.add_field(
-			name="Recent Changes", 
-			value=COMMIT_MESSAGE, 
+			name="Recent Changes",
+			value=COMMIT_MESSAGE,
 			inline=False
 			)
 		aboutEMBED.add_field(
-			name="Contributors", 
-			value="Lolzep #5723", 
+			name="Contributors",
+			value="Lolzep #5723",
 			inline=False
 			)
 
 		return aboutEMBED, aboutFILE
-	
+
 	async def helpEMBED():
 		'''Used for the /help command'''
 		#* Since simple embed, use templateEmbed
@@ -52,28 +52,28 @@ class infoEmbeds:
 
 		#* Embed fields
 		helpEMBED.add_field(
-			name="/help", 
-			value="You are here! Commands for Maxima Rank", 
+			name="/help",
+			value="You are here! Commands for Maxima Rank",
 			inline=False
 			)
 		helpEMBED.add_field(
-			name="/about", 
-			value="Info about the bot", 
+			name="/about",
+			value="Info about the bot",
 			inline=False
 			)
 		helpEMBED.add_field(
-			name="/my_rank", 
-			value="Statistics about yourself", 
+			name="/my_rank",
+			value="Statistics about yourself",
 			inline=False
 			)
 		helpEMBED.add_field(
-			name="/rank [username]", 
-			value="Statistics about a specified user", 
+			name="/rank [username]",
+			value="Statistics about a specified user",
 			inline=False
 			)
 		helpEMBED.add_field(
-			name="/leaderboard [activity] [page_length]", 
-			value="Activity leaderboard for the server based on [activity] (default is everything). Each page has [page_length] users.", 
+			name="/leaderboard [activity] [page_length]",
+			value="Activity leaderboard for the server based on [activity] (default is everything). Each page has [page_length] users.",
 			inline=False
 			)
 
@@ -86,58 +86,58 @@ class infoEmbeds:
 
 		#* Embed fields
 		adminhelpEMBED.add_field(
-			name="/adminhelp", 
-			value="You are here! Admin commands for Maxima Rank", 
+			name="/adminhelp",
+			value="You are here! Admin commands for Maxima Rank",
 			inline=False
 			)
 		adminhelpEMBED.add_field(
-			name="/award_xp [user] [amount]", 
-			value="Gives a specified [user] [amount] xp", 
+			name="/award_xp [user] [amount]",
+			value="Gives a specified [user] [amount] xp",
 			inline=False
 			)
 		adminhelpEMBED.add_field(
-			name="/role_xp [role] [xp]", 
-			value="Gives a specified [role] [amount] xp", 
+			name="/role_xp [role] [xp]",
+			value="Gives a specified [role] [amount] xp",
 			inline=False
 			)
 		adminhelpEMBED.add_field(
-			name="/act_xp [user] [activity] [act_count] [xp_per_act]", 
-			value="Gives [activity] ([xp_per_act] * [act_count]) XP to a [user]", 
-			inline=False
-			)			
-		adminhelpEMBED.add_field(
-			name="/xp_boost [multiplier] [time]", 
-			value="Start an XP boost event which multiplies all XP by [multiplier] for [time] minutes", 
+			name="/act_xp [user] [activity] [act_count] [xp_per_act]",
+			value="Gives [activity] ([xp_per_act] * [act_count]) XP to a [user]",
 			inline=False
 			)
 		adminhelpEMBED.add_field(
-			name="/xp_boost_end", 
-			value="End an XP boost event manually", 
+			name="/xp_boost [multiplier] [time]",
+			value="Start an XP boost event which multiplies all XP by [multiplier] for [time] minutes",
 			inline=False
 			)
 		adminhelpEMBED.add_field(
-			name="/make_levels [starting_xp] [level_factor] [total_levels]", 
-			value="Make new levels and level barriers based on [starting_xp] where each level is [starting_xp] * level * [level_factor] for [total_levels] levels", 
+			name="/xp_boost_end",
+			value="End an XP boost event manually",
 			inline=False
 			)
 		adminhelpEMBED.add_field(
-			name="/role_level [level_name] [role]", 
-			value="Link a [level_name] in the bot to a [role] in the server", 
+			name="/make_levels [starting_xp] [level_factor] [total_levels]",
+			value="Make new levels and level barriers based on [starting_xp] where each level is [starting_xp] * level * [level_factor] for [total_levels] levels",
 			inline=False
 			)
 		adminhelpEMBED.add_field(
-			name="/import_channel", 
-			value="In the channel this command is used, import activity to Maxima Rank", 
+			name="/role_level [level_name] [role]",
+			value="Link a [level_name] in the bot to a [role] in the server",
 			inline=False
 			)
 		adminhelpEMBED.add_field(
-			name="/ignore_channel [channel ID]", 
-			value="Ignore a channel in the server based on the ID given", 
+			name="/import_channel",
+			value="In the channel this command is used, import activity to Maxima Rank",
+			inline=False
+			)
+		adminhelpEMBED.add_field(
+			name="/ignore_channel [channel ID]",
+			value="Ignore a channel in the server based on the ID given",
 			inline=False
 			)
 
 		return adminhelpEMBED, adminhelpFILE
-	
+
 	async def myrankEMBED(guild_name, main_id, main_user, avatar_id, emoji : list):
 		'''Used for the /myrank command'''
 		#* Some extras here, need to get values of the user using a separate function (my_rank_embed_values)
@@ -146,7 +146,7 @@ class infoEmbeds:
 		role_barriers = await json_read(f"Data/{guild_name} Role Barriers.json")
 		role_barriers = dict(role_barriers)
 		myrankFILE = discord.File(
-			f"Images/Ranks/{role_title}.png", 
+			f"Images/Ranks/{role_title}.png",
 			filename="image.png"
 			)
 
@@ -165,43 +165,43 @@ class infoEmbeds:
 		# If role is max role (Konami), show easter egg text
 		if role_title != "Konami":
 			myrankEMBED = discord.Embed(
-				title=f"You are {role_title} rank!", 
-				description=f"You are {role_barriers[role_title] - xp} XP away from being the next rank!", 
+				title=f"You are {role_title} rank!",
+				description=f"You are {role_barriers[role_title] - xp} XP away from being the next rank!",
 				color=discord.Color.purple()
 				)
 		else:
 			myrankEMBED = discord.Embed(
-				title=f"You are {role_title} rank!", 
-				description=f"You are max rank! Now go outside.", 
+				title=f"You are {role_title} rank!",
+				description=f"You are max rank! Now go outside.",
 				color=discord.Color.purple()
 				)
 		myrankEMBED.set_author(
-			name=main_user, 
+			name=main_user,
 			icon_url="attachment://image.png"
 			)
 		myrankEMBED.set_thumbnail(
 			url=avatar_id
 			)
-		
+
 		#* Embed fields
 		myrankEMBED.add_field(
-			name="Level", 
-			value=f"{level}", 
+			name="Level",
+			value=f"{level}",
 			inline=True
 			)
 		myrankEMBED.add_field(
-			name="XP", 
-			value=f"{xp}", 
+			name="XP",
+			value=f"{xp}",
 			inline=True
 			)
 		myrankEMBED.add_field(
-			name="XP Progress to Next Level", 
-			value=f"{progress_to_next} / {level_xp} ( {percent_xp}% )", 
+			name="XP Progress to Next Level",
+			value=f"{progress_to_next} / {level_xp} ( {percent_xp}% )",
 			inline=False
 			)
 		myrankEMBED.add_field(
-			name="Server Activity", 
-			value=subbed, 
+			name="Server Activity",
+			value=subbed,
 			inline=True
 			)
 
@@ -216,7 +216,7 @@ class infoEmbeds:
 		role_barriers = await json_read(f"Data/{guild_name} Role Barriers.json")
 		role_barriers = dict(role_barriers)
 		rankFILE = discord.File(
-			f"Images/Ranks/{role_title}.png", 
+			f"Images/Ranks/{role_title}.png",
 			filename="image.png"
 			)
 
@@ -235,43 +235,43 @@ class infoEmbeds:
 		# If role is max role (Konami), show easter egg text
 		if role_title != "Konami":
 			rankEMBED = discord.Embed(
-				title=f"{main_user} is {role_title} rank!", 
-				description=f"{main_user} is {role_barriers[role_title] - xp} XP away from being the next rank!", 
+				title=f"{main_user} is {role_title} rank!",
+				description=f"{main_user} is {role_barriers[role_title] - xp} XP away from being the next rank!",
 				color=discord.Color.purple()
 				)
 		else:
 			rankEMBED = discord.Embed(
-				title=f"{main_user} is {role_title} rank!", 
-				description=f"You are max rank! Now go outside.", 
+				title=f"{main_user} is {role_title} rank!",
+				description=f"You are max rank! Now go outside.",
 				color=discord.Color.purple()
 				)
 		rankEMBED.set_author(
-			name=main_user, 
+			name=main_user,
 			icon_url="attachment://image.png"
 			)
 		rankEMBED.set_thumbnail(
 			url=avatar_id
 			)
-		
+
 		#* Embed fields
 		rankEMBED.add_field(
-			name="Level", 
-			value=f"{level}", 
+			name="Level",
+			value=f"{level}",
 			inline=True
 			)
 		rankEMBED.add_field(
-			name="XP", 
-			value=f"{xp}", 
+			name="XP",
+			value=f"{xp}",
 			inline=True
 			)
 		rankEMBED.add_field(
-			name="XP Progress to Next Level", 
-			value=f"{progress_to_next} / {level_xp} ( {percent_xp}% )", 
+			name="XP Progress to Next Level",
+			value=f"{progress_to_next} / {level_xp} ( {percent_xp}% )",
 			inline=False
 			)
 		rankEMBED.add_field(
-			name="Server Activity", 
-			value=subbed, 
+			name="Server Activity",
+			value=subbed,
 			inline=True
 			)
 
@@ -281,7 +281,7 @@ class infoEmbeds:
 		'''Appears when a user levels up to a new rank
 		This is detected using rank_check and update_levels in myfunctions'''
 		rcFILE = discord.File(
-			f"Images/Ranks/{new_role}.png", 
+			f"Images/Ranks/{new_role}.png",
 			filename="image.png")
 		#* This section picks a random quote from a txt file to display in desc. of embed
 		# q_quotes_raw = []
@@ -305,7 +305,7 @@ class infoEmbeds:
 				"You're not an ordinary fella!",
 				"This is the cool Konami sound!",
 				"Can I call you a dancin' master?!",
-				"Look at all that bling!",	
+				"Look at all that bling!",
 				"You showed us... YOUR ULTIMATE DANCE! I can't stop crying buckets of tears!",
 				"Excuse me, is your name Affection?",
 				"Is there an earthquake 'cuz this party's crackin'!",
@@ -354,7 +354,7 @@ class infoEmbeds:
 
 		return rcFILE, rcEMBED
 
-	
+
 	async def lbEMBED(bot, guild_name, guild_img, starting_rank, ending_rank, activity, just_pages:bool):
 		'''Used for the /leaderboard command'''
 		users, length = await sort_leaderboard(guild_name, activity)
@@ -362,14 +362,14 @@ class infoEmbeds:
 		num_pages = int(math.ceil(length/ending_rank))
 		if just_pages is True:
 			return num_pages
-		
+
 		lbEMBED = discord.Embed(
 			title=f"Leaderboard of activity for {guild_name} based on {activity}",
 			description="Gamers",
 			color = discord.Color.purple()
 			)
 		lbEMBED.set_author(
-			name=guild_name, 
+			name=guild_name,
 			icon_url=guild_img
 			)
 		lbEMBED.set_thumbnail(
@@ -381,7 +381,7 @@ class infoEmbeds:
 		try:
 			for user in users[starting_rank - 1:ending_rank]:
 				field_display, emoji_object, role_title = await leaderboard_embed_values(guild_name, user[0], activity, False)
-				
+
 				#* Replaces "emojiX" string values in field_display with the actual emojis
 				emoji = lambda item : discord.utils.get(bot.emojis, name=item)
 				in_embed = map(emoji, emoji_object)
@@ -390,20 +390,20 @@ class infoEmbeds:
 					subbed = re.sub(f"\\bemoji{j}\\b", str(item), field_display)
 					field_display = subbed
 					j += 1
-				
+
 				#* Add the emoji for the specified role_title
 				r_emoji = discord.utils.get(bot.emojis, name=role_title)
 
 				lbEMBED.add_field(
-					name=f"#{i}: {user[1]} {r_emoji} {user[3]}", 
-					value=field_display, 
+					name=f"#{i}: {user[1]} {r_emoji} {user[3]}",
+					value=field_display,
 					inline=False
 					)
 				i += 1
 		except ValueError:
 			for user in users[starting_rank - 1:ending_rank]:
 				field_display, emoji_object, role_title = await leaderboard_embed_values(guild_name, user[0], activity, False)
-				
+
 				#* Replaces "emojiX" string values in field_display with the actual emojis
 				emoji = lambda item : discord.utils.get(bot.emojis, name=item)
 				in_embed = map(emoji, emoji_object)
@@ -412,13 +412,13 @@ class infoEmbeds:
 					subbed = re.sub(f"\\bemoji{j}\\b", str(item), field_display)
 					field_display = subbed
 					j += 1
-				
+
 				#* Add the emoji for the specified role_title
 				r_emoji = discord.utils.get(bot.emojis, name=role_title)
 
 				lbEMBED.add_field(
-					name=f"#{i}: {user[1]} {r_emoji} {user[3]}", 
-					value=field_display, 
+					name=f"#{i}: {user[1]} {r_emoji} {user[3]}",
+					value=field_display,
 					inline=False
 					)
 				i += 1

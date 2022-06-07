@@ -94,14 +94,14 @@ async def update_levels(guild_name, json_object_name : str):
 		next_xp = data_level["levels"][current_level]["total_xp"]
 		new_role = data_level["levels"][current_level]["role_title"]
 		new_role_id = data_level["levels"][current_level]["role_id"]
-	
+
 	#* Update roles by detecting a rank change
 	# TODO: Figure out how to connect this to the on_message event and create an embed
 	role_changed = False
 	if current_role != new_role:
 		print(f"User went from {current_role} to {new_role}! Old role ID: {old_role_id} New rold ID: {new_role_id}")
 		role_changed = True
-	
+
 	return role_changed, new_role, old_role_id, new_role_id
 
 # Updates the user objects for the specified user in users.json file and writes new ones if not found
@@ -120,20 +120,20 @@ async def update_levels(guild_name, json_object_name : str):
 # premium: A boolean, used in on_member_update to know if a user is boosting the server or not (optional)
 async def update_user(guild_name, main_id, main_user, key : str, dump_file: bool, amount_to_add: int, amount_of_xp: int, act_mult: int, boost_mult: int, premium=None):
 	template = {
-		"user_id": main_id, 
-		"name": main_user, 
-		"xp": 0, 
-		"level": 0, 
-		"role_id": 0, 
-		"messages": 0, 
-		"reactions_added": 0, 
-		"reactions_recieved": 0, 
-		"stickers": 0, 
-		"images": 0, 
-		"embeds": 0, 
-		"voice_minutes": 0, 
-		"invites": 0, 
-		"special_xp": 0, 
+		"user_id": main_id,
+		"name": main_user,
+		"xp": 0,
+		"level": 0,
+		"role_id": 0,
+		"messages": 0,
+		"reactions_added": 0,
+		"reactions_recieved": 0,
+		"stickers": 0,
+		"images": 0,
+		"embeds": 0,
+		"voice_minutes": 0,
+		"invites": 0,
+		"special_xp": 0,
 		"is_booster": False
 		}
 	main_json = f"Data/{guild_name} Users.json"
@@ -219,10 +219,10 @@ async def level_barriers(guild_name, starting_xp: int, level_factor: int, total_
 	i = 0
 	role_barriers = {}
 	new_data = {
-		"level": 0, 
-		"level_xp": starting_xp, 
-		"total_xp": starting_xp, 
-		"role_id": role_id, 
+		"level": 0,
+		"level_xp": starting_xp,
+		"total_xp": starting_xp,
+		"role_id": role_id,
 		"role_title": rl[0][0]
 		}
 
@@ -243,23 +243,23 @@ async def level_barriers(guild_name, starting_xp: int, level_factor: int, total_
 		# Get current level based on diff in levels given in rl kwargs
 		cur_level = [(role_name, lvl_min) for role_name, lvl_min in rl[::-1] if n >= lvl_min]
 		cur_level = cur_level[0][0]
-		
+
 		# Get role_id for current level
 		try:
 			for role in rid_data["role_ids"]:
 				if role["role_name"] == cur_level:
 					role_id = role["role_id"]
 		except FileNotFoundError:
-			role_id = 0	
+			role_id = 0
 
 		# Update the role_barrier as the current total_xp for the level
 		role_barriers[cur_level] = total_xp
 
 		new_data = {
-			"level": n_level, 
-			"level_xp": level_xp, 
-			"total_xp": total_xp, 
-			"role_id": role_id, 
+			"level": n_level,
+			"level_xp": level_xp,
+			"total_xp": total_xp,
+			"role_id": role_id,
 			"role_title": cur_level
 			}
 
@@ -267,7 +267,7 @@ async def level_barriers(guild_name, starting_xp: int, level_factor: int, total_
 		if make_json == True:
 			await write_json(new_data, main_json, "levels")
 		i += 1
-	
+
 	await json_dump(rb_json, role_barriers)
 
 	return role_barriers, rl
@@ -302,10 +302,10 @@ async def new_levels(guild_name, starting_xp: int, level_factor: int, total_leve
 	# Create a new levels template (array and object) and make a new levels.json if it doesnt exist
 	i = 0
 	new_data = {
-		"level": 0, 
-		"level_xp": starting_xp, 
-		"total_xp": starting_xp, 
-		"role_id": role_id, 
+		"level": 0,
+		"level_xp": starting_xp,
+		"total_xp": starting_xp,
+		"role_id": role_id,
 		"role_title": rl[0][0]
 		}
 	level_template = {
@@ -322,7 +322,6 @@ async def new_levels(guild_name, starting_xp: int, level_factor: int, total_leve
 	# level_barriers: Creates all the new level objects
 	role_barriers, rl = await level_barriers(guild_name, starting_xp, level_factor, total_levels, True, rl)
 
-	# 
 	if disc_cmd is not None:
 		return role_barriers, rl
 
@@ -451,13 +450,13 @@ async def check_xp_boost(guild_name):
 		xp_boost_mult = xp_obj[0]["multiplier"]
 
 	print(f"XP Boost: {xp_boost_mult} multiplier with No XP being set to {no_xp}")
-	
+
 	return xp_boost_mult, no_xp
 
 # Creates a simple embed for the most general of embed implementations (help, about, etc.)
 #? ARGUMENTS
 # command (string): What command from the bot it should be used on
-# description (default=None, string): Set the description of the embed, optional 
+# description (default=None, string): Set the description of the embed, optional
 async def templateEmbed(command : str, description=None):
 	tempEmbed = discord.Embed(color = discord.Color.purple())
 
@@ -507,20 +506,20 @@ async def my_rank_embed_values(guild_name, main_id, simple : bool):
 	role_title = data_level["role_title"]
 	role_id = data_level["role_id"]
 	progress_to_next = level_xp - (next_xp - xp)
-	
+
 	# Users.json values to be used in the embed field
 	types = (
-		"messages", 
-		"reactions_added", 
-		"reactions_recieved", 
-		"stickers", 
-		"images", 
-		"embeds", 
-		"voice_minutes", 
-		"invites", 
+		"messages",
+		"reactions_added",
+		"reactions_recieved",
+		"stickers",
+		"images",
+		"embeds",
+		"voice_minutes",
+		"invites",
 		"special_xp"
 		)
-	
+
 	# Dicts and lists to match json object keys to json object values and emoji ranks, as well as calculate max_values
 	amounts = {}
 	max_values = {}
@@ -554,7 +553,7 @@ async def my_rank_embed_values(guild_name, main_id, simple : bool):
 
 	#* Embed field to be used in "/myrank"
 	field_display = f"> emoji1 **💬 Messages**: {amounts['messages']}\n> emoji2 **😃 Reactions Added**: {amounts['reactions_added']}\n> emoji3 **🥰 Reactions Recieved**: {amounts['reactions_recieved']}\n> emoji4 **🎭 Stickers**: {amounts['stickers']}\n> emoji5 **🖼️ Images**: {amounts['images']}\n> emoji6 **🔗 Embeds**: {amounts['embeds']}\n> emoji7 **🎙️ Voice (minutes)**: {amounts['voice_minutes']}\n> emoji8 **✉️ Invites**: {amounts['invites']}\n> emoji9 **🌟 Special XP**: {amounts['special_xp']}"
-	
+
 	#* return embed field, emoji list for embed field, and other values for current user
 	# if simple explained in arguments
 	if simple == True:
@@ -587,7 +586,7 @@ async def update_boosters(guild_name, xp):
 			nr_list.append(new_role)
 			await asyncio.sleep(0.2)
 			await json_dump(main_json, data)
-	
+
 	#* Return count and lists
 	return count, rc_dict, nr_list
 
@@ -626,16 +625,16 @@ async def sort_leaderboard(guild_name, activity):
 	#* Load initial users.json
 	main_json = f"Data/{guild_name} Users.json"
 	data = await json_read(main_json)
-	
+
 	#* Create a list of tuples where each tuple is a user and the list contains all users
 	i_users = []
 	for user in data["users"]:
 		i_tuple = (
-			user["user_id"], 
-			user["name"], 
-			user["xp"], 
-			user["level"], 
-			user["messages"], 
+			user["user_id"],
+			user["name"],
+			user["xp"],
+			user["level"],
+			user["messages"],
 			user["reactions_added"],
 			user["reactions_recieved"],
 			user["stickers"],
@@ -646,7 +645,7 @@ async def sort_leaderboard(guild_name, activity):
 			user["special_xp"],
 			user["is_booster"])
 		i_users.append(i_tuple)
-	
+
 	#* Bubble sort the users by activity
 	# TODO: Please code this better aaaaaa
 	length = len(i_users)
@@ -705,7 +704,7 @@ async def sort_leaderboard(guild_name, activity):
 					temp = i_users[n_user]
 					i_users[n_user] = i_users[n_user + 1]
 					i_users[n_user + 1] = temp
-	
+
 	#* Return sorted list of tuples to be used in leaderboard embed
 	return i_users, length
 
@@ -764,7 +763,7 @@ async def leaderboard_embed_values(guild_name, main_id, activity, simple: bool):
 		pass
 
 	role_title = data_level["role_title"]
-	
+
 	# Users.json values to be used in the embed field
 	types = (
 		"xp",
@@ -778,7 +777,7 @@ async def leaderboard_embed_values(guild_name, main_id, activity, simple: bool):
 		"invites",
 		"special_xp"
 		)
-	
+
 	# Dicts and lists to match json object keys to json object values and emoji ranks, as well as calculate max_values
 	amounts = {}
 	max_values = {}
@@ -832,7 +831,7 @@ async def leaderboard_embed_values(guild_name, main_id, activity, simple: bool):
 		field_display = f"> emoji9 ✉️ {act}"
 	elif activity == "special_xp":
 		field_display = f"> emoji10 🌟 {act}"
-	
+
 	#* return embed field, emoji list for embed field, and other values for current user
 	if simple == True:
 		return emoji_object

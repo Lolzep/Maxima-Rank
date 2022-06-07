@@ -29,7 +29,7 @@ bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 82866777560
 #? Small projects
 #* /add_act : Add activity manually. used for importing
 
-#? Large projects 
+#? Large projects
 #* /rank_compare : When given two users, compare their activity (similar to /myrank but with two people)
 
 # Check if user levels up to a new rank, send special embed if True
@@ -41,7 +41,7 @@ async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user
 	# Ignore bots
 	if member.bot == True:
 		return
-	
+
 	# Check the rank to see if the role changed after leveling up
 	role_changed, new_role, old_role_id, new_role_id = await rank_check(guild_name, user_id)
 	# If the role did change after checking the rank...
@@ -104,24 +104,24 @@ async def on_message(message):
 	# Image counts
 	if message.attachments:
 		await update_user(
-			message.guild, message.author.id, message.author.name, 
-			"images", 
+			message.guild, message.author.id, message.author.name,
+			"images",
 			True, 1, 5, 1, xp_boost_mult
 			)
-	
+
 	# Embed counts
 	if message.embeds:
 		await update_user(
-			message.guild, message.author.id, message.author.name, 
-			"embeds", 
+			message.guild, message.author.id, message.author.name,
+			"embeds",
 			True, 1, 5, 1, xp_boost_mult
 			)
 
 	# Sticker counts
 	if message.stickers:
 		await update_user(
-			message.guild, message.author.id, message.author.name, 
-			"stickers", 
+			message.guild, message.author.id, message.author.name,
+			"stickers",
 			True, 1, 3, 1, xp_boost_mult
 			)
 
@@ -129,9 +129,9 @@ async def on_message(message):
 	await check_rank(
 		message.guild.system_channel.send,
 		message.guild,
-		message.guild.id, 
-		message.author.id, 
-		message.author.name, 
+		message.guild.id,
+		message.author.id,
+		message.author.name,
 		message.author.display_avatar
 		)
 
@@ -166,28 +166,28 @@ async def on_reaction_add(reaction, user):
 
 	# For reactions ADDED, add values and xp to respective user
 	await update_user(
-		user.guild, user.id, user.name, 
+		user.guild, user.id, user.name,
 		"reactions_added",
 		True, 1, 1, 1, xp_boost_mult
 		)
 
 	# For reactions RECIEVED, add values and xp to respective user
 	await update_user(
-		reaction.message.guild, reaction.message.author.id, reaction.message.author.name, 
+		reaction.message.guild, reaction.message.author.id, reaction.message.author.name,
 		"reactions_recieved",
 		True, 1, 1, 1, xp_boost_mult
 		)
 
 	# Send embed if user levels up
 	await check_rank(
-		reaction.message.guild.system_channel.send, 
+		reaction.message.guild.system_channel.send,
 		reaction.message.guild,
-		reaction.message.guild.id, 
-		reaction.message.author.id, 
-		reaction.message.author.name, 
+		reaction.message.guild.id,
+		reaction.message.author.id,
+		reaction.message.author.name,
 		reaction.message.author.display_avatar
 		)
-		
+
 
 @bot.event
 async def on_voice_state_update(member, before, after):
@@ -212,17 +212,17 @@ async def on_voice_state_update(member, before, after):
 		# Update voice_minutes to the users.json every 5 minutes
 		if voice_minutes % 5 == 0:
 			await update_user(
-				member.guild , member.id, member.name, 
-				"voice_minutes", 
+				member.guild , member.id, member.name,
+				"voice_minutes",
 				True, 5, 3, 5, xp_boost_mult
 				)
 			# Send embed if user levels up
 			await check_rank(
-				member.guild.system_channel.send, 
+				member.guild.system_channel.send,
 				member.guild,
-				member.guild.id, 
-				member.id, 
-				member.name, 
+				member.guild.id,
+				member.id,
+				member.name,
 				member.display_avatar
 				)
 			continue
@@ -232,18 +232,18 @@ async def on_voice_state_update(member, before, after):
 		# Add voice_minutes not added to the user (1-4 minutes extra)
 		if before.channel is None and after.channel is None:
 			await update_user(
-				member.guild , member.id, member.name, 
-				"voice_minutes", 
+				member.guild , member.id, member.name,
+				"voice_minutes",
 				True, voice_minutes % 5, 3, voice_minutes % 5, xp_boost_mult
 				)
-			
+
 			# Send embed if user levels up
 			await check_rank(
-				member.guild.system_channel.send, 
+				member.guild.system_channel.send,
 				member.guild,
-				member.guild.id, 
-				member.id, 
-				member.name, 
+				member.guild.id,
+				member.id,
+				member.name,
 				member.display_avatar
 				)
 
@@ -264,16 +264,16 @@ async def on_member_update(before, after):
 
 	if before.premium_since is None and after.premium_since is not None:
 		await update_user(
-			before.guild, before.id, before.name, 
-			"is_booster", 
+			before.guild, before.id, before.name,
+			"is_booster",
 			True, 0, 1000, 1, 1, True
 			)
 		print(f"{before.name} is now a booster! They got 1000 XP!")
 		await before.guild.system_channel.send(f"{before.name} was given 1000 XP for becoming a booster!")
 	elif before.premium_since is not None and after.premium_since is None:
 		await update_user(
-			before.guild, before.id, before.name, 
-			"is_booster", 
+			before.guild, before.id, before.name,
+			"is_booster",
 			True, 0, 0, 0, 1, False
 			)
 		print(f"{before.name} is no longer a booster.")
@@ -282,24 +282,24 @@ async def on_member_update(before, after):
 	try:
 		# Send embed if user levels up
 		await check_rank(
-			before.guild.system_channel.send, 
+			before.guild.system_channel.send,
 			before.guild,
-			before.guild.id, 
-			before.id, 
-			before.name, 
+			before.guild.id,
+			before.id,
+			before.name,
 			before.display_avatar
 			)
 	except json.JSONDecodeError:
-		# Used to add a new user if they don't exist 
+		# Used to add a new user if they don't exist
 		await update_user(
-			before.guild, before.id, before.name, 
-			"special_xp", 
+			before.guild, before.id, before.name,
+			"special_xp",
 			True, 0, 0, 0, 1
 		)
 	except UnboundLocalError:
 		await update_user(
-			before.guild, before.id, before.name, 
-			"special_xp", 
+			before.guild, before.id, before.name,
+			"special_xp",
 			True, 0, 0, 0, 1
 		)
 
@@ -331,13 +331,13 @@ async def myrank(ctx):
 
 @bot.slash_command(name="rank", description="Statisitcs about a specified user")
 async def rank(
-	ctx: discord.ApplicationContext, 
+	ctx: discord.ApplicationContext,
 	member: Option(discord.Member, "Member to get id from", required = True)
 ):
 	emoji_object = await my_rank_embed_values(member.guild, member.id, True)
 	emoji = lambda item : discord.utils.get(bot.emojis, name=item)
 	in_embed = map(emoji, emoji_object)
-	
+
 	# in_embed = []
 	# for item in emoji_object:
 	# 	emoji = discord.utils.get(bot.emojis, name=item)
@@ -350,28 +350,28 @@ async def rank(
 async def leaderboard(
 	ctx: discord.ApplicationContext,
 	activity: Option(
-		str, 
-		"Choose what you want to sort by", 
+		str,
+		"Choose what you want to sort by",
 		choices=[
-			"messages", 
-			"reactions_added", 
-			"reactions_recieved", 
-			"stickers", 
-			"images", 
-			"embeds", 
-			"voice_minutes", 
-			"invites", 
+			"messages",
+			"reactions_added",
+			"reactions_recieved",
+			"stickers",
+			"images",
+			"embeds",
+			"voice_minutes",
+			"invites",
 			"special_xp"
-			], 
-			default="Everything", 
+			],
+			default="Everything",
 			required=False
 			),
 	page_length: Option(
-		int, 
-		"How many users on each page?", 
-		min_value=2, 
-		max_value=20, 
-		default=10, 
+		int,
+		"How many users on each page?",
+		min_value=2,
+		max_value=20,
+		default=10,
 		required=False
 		)
 ):
@@ -383,9 +383,9 @@ async def leaderboard(
 	#* Get the number of pages that need to be made based on user count and users/page
 	num_pages = await infoEmbeds.lbEMBED(
 		bot,
-		ctx.guild, 
-		ctx.guild.icon.url, 
-		starting_rank, 
+		ctx.guild,
+		ctx.guild.icon.url,
+		starting_rank,
 		ending_rank,
 		activity,
 		True
@@ -397,11 +397,11 @@ async def leaderboard(
 	while i <= num_pages:
 		lbEMBED = await infoEmbeds.lbEMBED(
 			bot,
-			ctx.guild, 
-			ctx.guild.icon.url, 
-			starting_rank, 
+			ctx.guild,
+			ctx.guild.icon.url,
+			starting_rank,
 			ending_rank,
-			activity, 
+			activity,
 			False
 			)
 		embeds.append(lbEMBED)
@@ -424,25 +424,25 @@ async def adminhelp(ctx):
 @bot.slash_command(name="award_xp", description="Add XP to a specified user or users for being such a good person")
 @commands.has_permissions(manage_messages=True)
 async def award_xp(
-	ctx: discord.ApplicationContext, 
-	member: Option(discord.Member, "Member to get id from", required = True), 
+	ctx: discord.ApplicationContext,
+	member: Option(discord.Member, "Member to get id from", required = True),
 	xp: Option(int, "Amount of XP to give to user", required=True)
 ):
 
 	await update_user(
-		member.guild ,member.id, member.name, 
-		"special_xp", 
+		member.guild ,member.id, member.name,
+		"special_xp",
 		True, xp, xp, 1, 1
 		)
 	await ctx.respond(f"You gave {member.mention} {xp} XP!")
 
 	# Send embed if user levels up
 	await check_rank(
-		member.guild.system_channel.send, 
+		member.guild.system_channel.send,
 		member.guild,
-		member.guild.id, 
-		member.id, 
-		member.name, 
+		member.guild.id,
+		member.id,
+		member.name,
 		member.display_avatar
 		)
 
@@ -456,61 +456,61 @@ async def role_xp(
 
 	for user in role.members:
 		await update_user(
-			user.guild ,user.id, user.name, 
-			"special_xp", 
+			user.guild ,user.id, user.name,
+			"special_xp",
 			True, xp, xp, 1, 1
 			)
 
 		# Send embed if user levels up
 		await check_rank(
-			user.guild.system_channel.send, 
+			user.guild.system_channel.send,
 			user.guild,
-			user.guild.id, 
-			user.id, 
-			user.name, 
+			user.guild.id,
+			user.id,
+			user.name,
 			user.display_avatar
-			)		
+			)
 	await ctx.respond(f"You gave users with the {role.mention} role {xp} XP!")
 
 @bot.slash_command(name="act_xp", description="Increase activity and XP for that activity")
 @commands.has_permissions(manage_messages=True)
 async def act_xp(
-	ctx: discord.ApplicationContext, 
+	ctx: discord.ApplicationContext,
 	member: Option(discord.Member, "Member to get id from", required = True),
 	activity: Option(
-		str, 
-		"Choose the activity to add to", 
+		str,
+		"Choose the activity to add to",
 		choices=[
-			"messages", 
-			"reactions_added", 
-			"reactions_recieved", 
-			"stickers", 
-			"images", 
-			"embeds", 
-			"voice_minutes", 
-			"invites", 
+			"messages",
+			"reactions_added",
+			"reactions_recieved",
+			"stickers",
+			"images",
+			"embeds",
+			"voice_minutes",
+			"invites",
 			"special_xp"
-			], 
+			],
 			required=True
-			),	
-	act_count: Option(int, "Amount of the activity", required=True), 
+			),
+	act_count: Option(int, "Amount of the activity", required=True),
 	xp: Option(int, "Amount of XP to give for each activity", required=True)
 ):
-	
+
 	await update_user(
-		member.guild ,member.id, member.name, 
-		activity, 
+		member.guild ,member.id, member.name,
+		activity,
 		True, act_count, xp, act_count, 1
 		)
 	await ctx.respond(f"You verifyed that {member.mention} had {act_count} '{activity}' and doing so increased their XP by {xp * act_count}!")
 
 	# Send embed if user levels up
 	await check_rank(
-		member.guild.system_channel.send, 
+		member.guild.system_channel.send,
 		member.guild,
-		member.guild.id, 
-		member.id, 
-		member.name, 
+		member.guild.id,
+		member.id,
+		member.name,
 		member.display_avatar
 		)
 
@@ -568,18 +568,18 @@ async def make_levels(
 	await ctx.respond(f"Now making new levels...")
 	role_barriers, rl = await new_levels(
 		ctx.guild,
-		starting_xp, 
-		level_factor, 
-		total_levels, 
-		True, 
-		Newbie=0, 
-		Bronze=3, 
-		Silver=5, 
-		Gold=10, 
-		Platinum=25, 
-		Diamond=50, 
-		Master=100, 
-		Grandmaster=150, 
+		starting_xp,
+		level_factor,
+		total_levels,
+		True,
+		Newbie=0,
+		Bronze=3,
+		Silver=5,
+		Gold=10,
+		Platinum=25,
+		Diamond=50,
+		Master=100,
+		Grandmaster=150,
 		Exalted=175,
 		Galaxy=200,
 		Konami=573
@@ -592,8 +592,8 @@ async def make_levels(
 
 @bot.slash_command(name="role_level", description="Set a level to be tied to a role")
 @option(
-	"l_name", 
-	description="Choose a role to edit", 
+	"l_name",
+	description="Choose a role to edit",
 	choices=["Newbie", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Grandmaster", "Exalted", "Galaxy", "Konami"]
 	)
 @commands.has_permissions(manage_messages=True)
@@ -633,7 +633,7 @@ async def import_channel(
 			"messages",
 			False, 1, 5, 1, 1
 			)
-		
+
 		if user["user_id"] not in msg_dict.keys():
 			msg_dict[user["user_id"]] = 1
 		else:
@@ -644,8 +644,8 @@ async def import_channel(
 		# Image counts
 		if message.attachments != []:
 			data, user = await update_user(
-				message.guild, message.author.id, message.author.name, 
-				"images", 
+				message.guild, message.author.id, message.author.name,
+				"images",
 				False, 1, 5, 1, 1
 				)
 
@@ -655,12 +655,12 @@ async def import_channel(
 				att_dict[user["user_id"]] += 1
 
 		# print(f"{message.author.name}: Message XP Added")
-		
+
 		# Embed counts
 		if message.embeds != []:
 			data, user = await update_user(
-				message.guild, message.author.id, message.author.name, 
-				"embeds", 
+				message.guild, message.author.id, message.author.name,
+				"embeds",
 				False, 1, 5, 1, 1
 				)
 
@@ -674,8 +674,8 @@ async def import_channel(
 		# Sticker counts
 		if message.stickers != []:
 			data, user = await update_user(
-				message.guild, message.author.id, message.author.name, 
-				"stickers", 
+				message.guild, message.author.id, message.author.name,
+				"stickers",
 				False, 1, 3, 1, 1
 				)
 
@@ -685,7 +685,7 @@ async def import_channel(
 				stk_dict[user["user_id"]] += 1
 
 		# print(f"{message.author.name}: Message XP Added")
-		
+
 		# i = History count
 		i += 1
 		if i % 250 == 0:
@@ -705,11 +705,11 @@ async def import_channel(
 				)
 			# Check if user levels up to a new rank, send special embed if True
 			await check_rank(
-				member.guild.system_channel.send, 
+				member.guild.system_channel.send,
 				member.guild,
-				member.guild.id, 
-				member.id, 
-				member.name, 
+				member.guild.id,
+				member.id,
+				member.name,
 				member.display_avatar
 				)
 		except AttributeError:
@@ -731,11 +731,11 @@ async def import_channel(
 				)
 			# Check if user levels up to a new rank, send special embed if True
 			await check_rank(
-				member.guild.system_channel.send, 
+				member.guild.system_channel.send,
 				member.guild,
-				member.guild.id, 
-				member.id, 
-				member.name, 
+				member.guild.id,
+				member.id,
+				member.name,
 				member.display_avatar
 				)
 		except AttributeError:
@@ -744,7 +744,7 @@ async def import_channel(
 			pass
 		await asyncio.sleep(0.1)
 
-	await bot_msg.edit(content=f"Finished reading all data! Now adding activity and XP to each user.\nCurrently on embeds...")	
+	await bot_msg.edit(content=f"Finished reading all data! Now adding activity and XP to each user.\nCurrently on embeds...")
 	# Embeds
 	for users, embeds in emb_dict.items():
 		print(f"Added {users} embeds count")
@@ -757,11 +757,11 @@ async def import_channel(
 				)
 			# Check if user levels up to a new rank, send special embed if True
 			await check_rank(
-				member.guild.system_channel.send, 
+				member.guild.system_channel.send,
 				member.guild,
-				member.guild.id, 
-				member.id, 
-				member.name, 
+				member.guild.id,
+				member.id,
+				member.name,
 				member.display_avatar
 				)
 		except AttributeError:
@@ -770,7 +770,7 @@ async def import_channel(
 			pass
 		await asyncio.sleep(0.1)
 
-	await bot_msg.edit(content=f"Finished reading all data! Now adding activity and XP to each user.\nCurrently on stickers...")	
+	await bot_msg.edit(content=f"Finished reading all data! Now adding activity and XP to each user.\nCurrently on stickers...")
 	# Stickers
 	for users, stickers in stk_dict.items():
 		print(f"Added {users} sticker count")
@@ -783,11 +783,11 @@ async def import_channel(
 				)
 			# Check if user levels up to a new rank, send special embed if True
 			await check_rank(
-				member.guild.system_channel.send, 
+				member.guild.system_channel.send,
 				member.guild,
-				member.guild.id, 
-				member.id, 
-				member.name, 
+				member.guild.id,
+				member.id,
+				member.name,
 				member.display_avatar
 				)
 		except AttributeError:
