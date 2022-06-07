@@ -142,7 +142,8 @@ async def on_message(message):
 @bot.event
 async def on_reaction_add(reaction, user):
 	# Ignore bots and that one guy
-	if reaction.message.author.bot == True or reaction.message.author.id == 591118835764166678:
+	if reaction.message.author.bot == True or user.id == 591118835764166678:
+		print(f"{user.name} ({user.id}): Reactions ignored")
 		return
 
 	# Ignore channel if channel is ignored (/ignore_channel)
