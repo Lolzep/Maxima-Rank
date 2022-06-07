@@ -1,3 +1,4 @@
+from audioop import mul
 import json
 import os
 import sys
@@ -428,10 +429,12 @@ async def update_xp_boost(guild_name, is_active, multiplier, no_xp=False):
 		await json_read(xp_json)
 		# Read, then write
 		await json_dump(xp_json, xp_template)
+		print(f"XP Boost file updated with is_active set to {is_active}, multiplier set to {multiplier} and no_xp set to {no_xp}")
 	except FileNotFoundError:
 		# If file hasn't been made, just makes a new one with a xp_boost object
 		await new_file(xp_json)
 		await json_dump(xp_json, xp_template)
+		print(f"New XP Boost file created")
 
 # Checks the XP Boost.json for an active XP boost event, returns a mult of 1 if False or the current mult if True
 #? ARGUMENTS
@@ -446,6 +449,8 @@ async def check_xp_boost(guild_name):
 	xp_boost_mult = 1
 	if xp_obj[0]["is_active"] == True:
 		xp_boost_mult = xp_obj[0]["multiplier"]
+
+	print(f"The is a {xp_boost_mult} multiplier with No XP being set to {no_xp}")
 	
 	return xp_boost_mult, no_xp
 

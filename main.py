@@ -523,6 +523,7 @@ async def xp_boost(
 	time: int
 ):
 	await update_xp_boost(ctx.guild, True, multiplier, False)
+	print("XP Boost started!")
 	await ctx.respond(f"XP boost event started for {time} minutes!")
 	await asyncio.sleep(time * 60)
 	await update_xp_boost(ctx.guild, False, multiplier, False)
@@ -535,6 +536,7 @@ async def xp_boost_end(
 ):
 	multiplier = 1
 	await update_xp_boost(ctx.guild, False, multiplier, False)
+	print("XP Boost ended!")
 
 @bot.slash_command(name="no_xp", description="Stop all activity tracking for a specified amount of minutes")
 @option("multiplier", description="How much should XP be multiplied by?")
