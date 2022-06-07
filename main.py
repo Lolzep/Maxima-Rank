@@ -30,7 +30,7 @@ bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 82866777560
 #* /add_act : Add activity manually. used for importing
 
 #? Large projects 
-#* None as of now
+#* /rank_compare : When given two users, compare their activity (similar to /myrank but with two people)
 
 # Check if user levels up to a new rank, send special embed if True
 async def check_rank(discord_object_to_send, guild_name, guild_id, user_id, user_name, user_avatar):
@@ -141,8 +141,8 @@ async def on_message(message):
 
 @bot.event
 async def on_reaction_add(reaction, user):
-	# Ignore bots
-	if reaction.message.author.bot == True:
+	# Ignore bots and that one guy
+	if reaction.message.author.bot == True or reaction.message.author.id == 591118835764166678:
 		return
 
 	# Ignore channel if channel is ignored (/ignore_channel)
