@@ -450,7 +450,7 @@ async def check_xp_boost(guild_name):
 	if xp_obj[0]["is_active"] == True:
 		xp_boost_mult = xp_obj[0]["multiplier"]
 
-	print(f"The is a {xp_boost_mult} multiplier with No XP being set to {no_xp}")
+	print(f"XP Boost: {xp_boost_mult} multiplier with No XP being set to {no_xp}")
 	
 	return xp_boost_mult, no_xp
 

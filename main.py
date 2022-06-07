@@ -524,7 +524,7 @@ async def xp_boost(
 ):
 	await update_xp_boost(ctx.guild, True, multiplier, False)
 	print("XP Boost started!")
-	await ctx.respond(f"XP boost event started for {time} minutes!")
+	await ctx.respond(f"XP boost event started for {time} minutes with a {multiplier} multiplier!")
 	await asyncio.sleep(time * 60)
 	await update_xp_boost(ctx.guild, False, multiplier, False)
 	await ctx.respond(f"{ctx.author.mention} The XP boost event has ended!")
