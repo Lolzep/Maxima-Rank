@@ -141,6 +141,10 @@ async def on_message(message):
 
 @bot.event
 async def on_reaction_add(reaction, user):
+	# Ignore bots
+	if reaction.message.author.bot == True:
+		return
+
 	# Ignore channel if channel is ignored (/ignore_channel)
 	try:
 		channel_check = await check_channel(reaction.message.guild, reaction.message.channel.id)
