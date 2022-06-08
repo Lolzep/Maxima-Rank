@@ -16,7 +16,8 @@ Note: This is for a Windows install
 4. Run the bot in [Python 3.10](https://www.python.org/downloads/) by installing Python 3.10 and entering the following into a command prompt (ex. cmd, Powershell):</br>
 Install dependencies:</br>
 `py -3 -m pip install -U py-cord --pre` Pycord to run Discord API</br>
-`pip install asyncio` Asyncio, needed for Pycord</br>
+`python -m pip install -U scikit-image` scikit, needed for image editing</br>
+`pip install aiofiles` aiofiles, needed for asyncio file i/o</br>
 `pip install dotenv` dotenv, needed for reading .env file</br>
 Run bot:</br>
 `cd "dir/to/the/bot/folder/Monke Rank"`</br>

@@ -561,6 +561,103 @@ async def my_rank_embed_values(guild_name, main_id, simple : bool):
 	else:
 		return field_display, emoji_object, xp, level, level_xp, progress_to_next, role_title, role_id
 
+async def compare_rank_embed_values(guild_name, main_id, right_or_left=False, bot_object=None, simple=None):
+	#* Load initial json, find user who sent command
+	main_json = f"Data/{guild_name} Users.json"
+	levels_json = f"Data/{guild_name} Levels.json"
+	data = await json_read(main_json)
+
+	user_ids = []
+	for items in data["users"]:
+		user_ids.append(items["user_id"])
+
+	user_id_index = user_ids.index(main_id)
+	user = data["users"][user_id_index]
+
+	#* Find current level in levels.json
+	level = user["level"]
+	xp = user["xp"]
+
+	data_level = await json_read(levels_json)
+	data_level = data_level["levels"][level]
+
+	#* A metric ton of variables for appending as a field in embed
+	# Users.json values
+	xp = user["xp"]
+	level = user["level"]
+	next_xp = data_level["total_xp"]
+	level_xp = data_level["level_xp"]
+	role_title = data_level["role_title"]
+	role_id = data_level["role_id"]
+	progress_to_next = level_xp - (next_xp - xp)
+
+	# Users.json values to be used in the embed field
+	types = (
+		"messages",
+		"reactions_added",
+		"reactions_recieved",
+		"stickers",
+		"images",
+		"embeds",
+		"voice_minutes",
+		"invites",
+		"special_xp"
+		)
+
+	# Dicts and lists to match json object keys to json object values and emoji ranks, as well as calculate max_values
+	amounts = {}
+	max_values = {}
+	ranks = {"MR_D": 0.00, "MR_C": 0.02, "MR_B": 0.05, "MR_A": 0.20, "MR_S": 0.50, "MR_SS": 0.75, "MR_MAX": 1.00}
+	embed_emj = "MR_D"
+	emoji_object = []
+
+	#* Match keys in "types" to keys in Users.json and calculate the max_value using itemgetter
+	# Append all to respective dicts (amounts, max_values)
+	for key in types:
+		amounts[key] = user[key]
+
+		max_value = max(data["users"], key=itemgetter(key))
+		max_values[key] = max_value[key]
+
+	#* Calculate what emoji to be used for the respective amount based on the max_value
+	# ie. User has 6 messages, max messages in the server is 60, 6/60 = 10% = D Rank Emoji
+	# Append each emoji for each activity in a list
+	for (k,amt), (k2, mx) in zip(amounts.items(), max_values.items()):
+		try:
+			ratio = amt / mx
+		except ZeroDivisionError:
+			ratio = 0.00
+
+		for (emj, k3) in ranks.items():
+			if ratio < k3:
+				continue
+			else:
+				embed_emj = emj
+		emoji_object.append(embed_emj)
+		emoji = lambda item : discord.utils.get(bot_object.emojis, name=item)
+		in_embed = list(map(emoji, emoji_object))
+
+	#* Embed fields to be used in "/myrank"
+	fields = []
+	i = 0
+	for act in types:
+		if right_or_left == False:
+			field = f"{in_embed[i]} {amounts[act]}"
+			fields.append(field)
+			i += 1
+		elif right_or_left == True:
+			field = f"{amounts[act]} {in_embed[i]}"
+			fields.append(field)
+			i += 1
+
+	#* return embed field, emoji list for embed field, and other values for current user
+	# if simple explained in arguments
+	if simple is not None:
+		return emoji_object, in_embed
+	else:
+		return fields, xp, level, role_title
+
+
 # Update the xp values of boosted members in the server
 #? ARGUMENTS
 # guild_name: guild name retrieved from discord api command

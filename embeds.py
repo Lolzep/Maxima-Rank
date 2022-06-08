@@ -6,7 +6,11 @@ import math
 import aiofiles
 import asyncio
 
-from myfunctions import templateEmbed, my_rank_embed_values,sort_leaderboard, json_read, leaderboard_embed_values
+from matplotlib import pyplot as plt
+from skimage.transform import rescale
+import numpy as np
+
+from myfunctions import templateEmbed, my_rank_embed_values, compare_rank_embed_values, sort_leaderboard, json_read, leaderboard_embed_values
 
 VERSION = os.popen('git rev-parse HEAD').read()
 COMMIT_MESSAGE = os.popen('git show --pretty=format:%s -s HEAD').read()
@@ -219,7 +223,7 @@ class infoEmbeds:
 			f"Images/Ranks/{role_title}.png",
 			filename="image.png"
 			)
-
+		
 		#* Replaces "emojiX" string values in field_display with the actual emojis
 		i = 1
 		for item in emoji:
@@ -276,6 +280,67 @@ class infoEmbeds:
 			)
 
 		return rankEMBED, rankFILE
+
+	async def c_rankEMBED(bot, guild_name, main_id1, main_id2, main_user1, main_user2, avatar_id1, avatar_id2, emoji1 : list, emoji2 : list):
+		'''Used for the /compare_rank command'''
+		#* Some extras here, need to get values of the user using a separate function (my_rank_embed_values)
+		#* This function also returns the emoji ranks to be shown next to the values in emoji_object
+		fields1, xp1, level1, role_title1 = await compare_rank_embed_values(guild_name, main_id1, False, bot)
+		fields2, xp2, level2, role_title2 = await compare_rank_embed_values(guild_name, main_id2, True, bot)
+
+		role_barriers = await json_read(f"Data/{guild_name} Role Barriers.json")
+		role_barriers = dict(role_barriers)
+		# c_rankFILE = discord.File(
+		# 	f"Images/Ranks/{role_title1}.png",
+		# 	filename="image.png"
+		# 	)
+
+		r_emoji1 = discord.utils.get(bot.emojis, name=role_title1)
+		r_emoji2 = discord.utils.get(bot.emojis, name=role_title2)
+		types = (
+			"💬 Messages: ", 
+			"😃 Reactions Added: ",
+			"🥰 Reactions Recieved: ",
+			"🎭 Stickers: ",
+			"🖼️ Images: ",
+			"🔗 Embeds: ",
+			"🎙️ Voice (minutes): ",
+			"✉️ Invites: ",
+			"🌟 Special XP: ")
+
+		#* Embed and embed fields
+		c_rankEMBED = discord.Embed(
+			title=f"{main_user1} vs. {main_user2}",
+			description=f"Who games the hardest?",
+			color=discord.Color.purple()
+			)
+		c_rankEMBED.set_author(
+			name=f"{main_user1} vs. {main_user2}",
+			icon_url=avatar_id1
+			)
+		c_rankEMBED.set_thumbnail(
+			url=avatar_id2
+			)
+
+		s_field = ""
+		i = 0
+		for act in types:
+			s_field += f"> **{act}**{fields1[i]} vs. {fields2[i]}\n"
+			i += 1
+
+		#* Embed fields
+		c_rankEMBED.add_field(
+			name="Level",
+			value=f"{r_emoji1} {level1} vs. {level2} {r_emoji2}",
+			inline=False
+			)
+		c_rankEMBED.add_field(
+			name="Server Activity",
+			value=f"{s_field}",
+			inline=False
+			)
+
+		return c_rankEMBED
 
 	async def rcEMBED(main_user, author_id, new_role):
 		'''Appears when a user levels up to a new rank

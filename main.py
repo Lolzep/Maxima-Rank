@@ -10,7 +10,7 @@ from discord.commands import Option
 from discord.ext import commands, pages
 from discord.ext.commands import MissingPermissions
 from dotenv import load_dotenv
-from myfunctions import update_user, my_rank_embed_values, rank_check, new_levels, update_roles, update_channel_ignore, check_channel, update_xp_boost, check_xp_boost
+from myfunctions import update_user, my_rank_embed_values, compare_rank_embed_values, rank_check, new_levels, update_roles, update_channel_ignore, check_channel, update_xp_boost, check_xp_boost
 from embeds import *
 
 load_dotenv()
@@ -345,6 +345,44 @@ async def rank(
 
 	rankEMBED, rankFILE = await infoEmbeds.rankEMBED(member.guild, member.id, member.display_name, member.display_avatar, in_embed)
 	await ctx.respond(file=rankFILE, embed=rankEMBED)
+
+@bot.slash_command(name="compare_rank", description="Statisitcs about a specified user")
+async def compare_rank(
+	ctx: discord.ApplicationContext,
+	compared_member1: Option(discord.Member, "First member to compare", required = True),
+	compared_member2: Option(discord.Member, "Second  member to compare", required = True)
+):
+	print(f"{compared_member1.name} is being compared with {compared_member2.name}!")
+
+	emoji_object1, in_embed1 = await compare_rank_embed_values(
+		compared_member1.guild,
+		compared_member1.id, 
+		False,
+		bot,
+		True
+		)
+
+	emoji_object2, in_embed2 = await compare_rank_embed_values(
+		compared_member2.guild, 
+		compared_member2.id,
+		False, 
+		bot,
+		True
+		)
+
+	c_rankEMBED = await infoEmbeds.c_rankEMBED(
+		bot,
+		compared_member1.guild, 
+		compared_member1.id, 
+		compared_member2.id,
+		compared_member1.display_name, 
+		compared_member2.display_name, 
+		compared_member1.display_avatar, 
+		compared_member2.display_avatar, 
+		in_embed1, 
+		in_embed2
+		)
+	await ctx.respond(embed=c_rankEMBED)
 
 @bot.slash_command(name="leaderboard", description="Activity leaderboard for the server")
 async def leaderboard(
