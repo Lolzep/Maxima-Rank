@@ -3,12 +3,6 @@ import os
 import re
 import random
 import math
-import aiofiles
-import asyncio
-
-from matplotlib import pyplot as plt
-from skimage.transform import rescale
-import numpy as np
 
 from myfunctions import templateEmbed, my_rank_embed_values, compare_rank_embed_values, sort_leaderboard, json_read, leaderboard_embed_values
 
