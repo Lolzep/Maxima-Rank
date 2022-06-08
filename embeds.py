@@ -38,6 +38,7 @@ class infoEmbeds:
 		aboutEMBED.add_field(
 			name="Contributors",
 			value="Lolzep #5723",
+			value="☆LEO!☆ #7340",
 			inline=False
 			)
 
@@ -217,7 +218,7 @@ class infoEmbeds:
 			f"Images/Ranks/{role_title}.png",
 			filename="image.png"
 			)
-		
+
 		#* Replaces "emojiX" string values in field_display with the actual emojis
 		i = 1
 		for item in emoji:
@@ -292,13 +293,13 @@ class infoEmbeds:
 		r_emoji1 = discord.utils.get(bot.emojis, name=role_title1)
 		r_emoji2 = discord.utils.get(bot.emojis, name=role_title2)
 		types = (
-			"💬 Messages: ", 
+			"💬 Messages: ",
 			"😃 Reactions Added: ",
 			"🥰 Reactions Recieved: ",
 			"🎭 Stickers: ",
-			"🖼️ Images: ",
+			"🖼️ Images: "
 			"🔗 Embeds: ",
-			"🎙️ Voice (minutes): ",
+			"🎙️ Voice (minutes): "
 			"✉️ Invites: ",
 			"🌟 Special XP: ")
 
