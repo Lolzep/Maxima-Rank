@@ -37,8 +37,7 @@ class infoEmbeds:
 			)
 		aboutEMBED.add_field(
 			name="Contributors",
-			value="Lolzep #5723",
-			value="☆LEO!☆ #7340",
+			value="Lolzep #5723\n☆LEO!☆ #7340",
 			inline=False
 			)
 
