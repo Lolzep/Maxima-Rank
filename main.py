@@ -206,12 +206,23 @@ async def on_voice_state_update(member, before, after):
 
 	# While the user is in a voice chat (including switching to different voice chats)...
 	while before.channel is None and after.channel is not None:
+		# Check if there is at least two users in the voice channel for activity to count
+		act_channel = after.channel.id
+		ac_users = after.channel.members
+		acu_ids = []
+		for mem in ac_users:
+			acu_ids.append(mem.id)
+		if len(acu_ids) <= 1:
+			print("Only one user. Not adding activity.")
+			return
 		# Add 1 voice_minute every 60 seconds
 		await asyncio.sleep(60)
+		print(f"{member.name} is currently in voice chat")
 		voice_minutes += 1
 
 		# Update voice_minutes to the users.json every 5 minutes
 		if voice_minutes % 5 == 0:
+			print(f"{member.name} had 25 XP added for 5 minutes!")
 			await update_user(
 				member.guild , member.id, member.name,
 				"voice_minutes",
@@ -232,6 +243,7 @@ async def on_voice_state_update(member, before, after):
 		# Update users.json with updated voice_minutes, xp, and levels
 		# Add voice_minutes not added to the user (1-4 minutes extra)
 		if before.channel is None and after.channel is None:
+			print(f"{member.name} has left voice chat (+ {voice_minutes % 5 * 5} XP)")
 			await update_user(
 				member.guild , member.id, member.name,
 				"voice_minutes",
