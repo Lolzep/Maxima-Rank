@@ -23,7 +23,7 @@ intents.reactions = True
 intents.members = True
 intents.messages = True
 
-bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 828667775605669888, 744622412267782234, 172710383025389570])
+bot = discord.Bot(intents=intents, debug_guilds=[273567091368656898, 828667775605669888, 744622412267782234, 172710383025389570, 1084366404830113792])
 
 #? Command ideas!
 
