@@ -864,7 +864,7 @@ async def ignore_channel(
 	ctx: discord.ApplicationContext,
 	channel: str,
 ):
-	if len(channel) != 18:
+	if len(channel) <= 18:
 		await ctx.respond(f"Please enter a valid channel ID")
 		return
 	try:
