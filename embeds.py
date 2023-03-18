@@ -294,7 +294,7 @@ class infoEmbeds:
 		types = (
 			"💬 Messages: ",
 			"😃 Reactions Added: ",
-			"🥰 Reactions Recieved: ",
+			"🥰 Reactions Earned: ",
 			"🎭 Stickers: ",
 			"🖼️ Images: "
 			"🔗 Embeds: ",
